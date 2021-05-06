@@ -1,5 +1,6 @@
-from useful_functions import *
-import type_curves as tc
+from _model.useful_functions import *
+import _model.type_curves as tc
+
 import pandas as pd
 
 # mode input folder from useful_functions -

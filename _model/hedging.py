@@ -1,8 +1,9 @@
-import model_drivers
-import model_control
-from useful_functions import *
-import lookup
-import prices as pr
+import _model.model_drivers as model_drivers
+import _model.model_control as model_control
+from _model.useful_functions import *
+import _model.lookup as lookup
+import _model.prices as pr
+
 import re
 # import bootstrapper_charts as bc
 

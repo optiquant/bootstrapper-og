@@ -1,9 +1,10 @@
+import _model.model_drivers as model_drivers
+import _model.model_control as model_control
+from _model.useful_functions import *
+
 import pandas as pd
 import os
-import model_drivers
-import model_control
 from collections import namedtuple
-from useful_functions import *
 import chart_studio.plotly as py
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go

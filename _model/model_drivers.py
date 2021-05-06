@@ -1,11 +1,12 @@
-import model_inputs
-import pandas as pd
-import prices as pr
+import _model.model_inputs as model_inputs
+import _model.prices as pr
+import _model.model_control as model_control
+from _model.useful_functions import *
+import _model.type_curves as tc
+
 from collections import namedtuple
+import pandas as pd
 import pprint
-import model_control
-from useful_functions import *
-import type_curves as tc
 
 # ----------------------------------------------------------------------------------------------------------------------#
 # ----------------------------------------------------# ATTRIBUTES #----------------------------------------------------#

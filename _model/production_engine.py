@@ -1,10 +1,11 @@
+import _model.model_control as model_control
+import _model.model_drivers as model_drivers
+from _model.useful_functions import *
+
 import pandas as pd
 import numpy as np
-import model_control
-import model_drivers
 from collections import namedtuple
 from pandas.tseries.offsets import *
-from useful_functions import *
 import pprint
 
 # ---------------------------------------------------------------------------------------------------------------------#

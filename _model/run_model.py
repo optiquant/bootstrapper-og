@@ -1,2 +1,2 @@
 # runs the model
-import scheduler
+import _model.scheduler

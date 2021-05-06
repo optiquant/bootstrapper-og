@@ -1,4 +1,3 @@
-
 def lookup(lookup_identifier='rev_boots'):
     '''A collection of dictionaries to map more complex relationships.'''
     global rev_boots

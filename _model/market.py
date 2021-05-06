@@ -1,5 +1,5 @@
-from useful_functions import *
-import model_drivers
+from _model.useful_functions import *
+import _model.model_drivers as model_drivers
 import pprint
 
 fees_schedule = model_drivers.get_model_level_drivers()['fees_schedule']

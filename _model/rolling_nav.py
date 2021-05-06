@@ -1,10 +1,11 @@
-import return_functions
-import model_control
-import model_drivers
+import _model.return_functions as return_functions
+import _model.model_control as model_control
+import _model.model_drivers as model_drivers
+from _model.useful_functions import *
+
 import pandas as pd
 from pandas.tseries.offsets import MonthEnd
 import pprint
-from useful_functions import *
 
 # variables needed
 # for each sub-asset modeled:

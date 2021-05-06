@@ -1,17 +1,18 @@
+from _model.type_curves import TypeCurve
+from _model.useful_functions import *
+import _model.model_control as model_control
+import _model.model_drivers as model_drivers
+import _model.market as market
+import _model.prices as prices
+import _model.production_engine as production_engine
+import _model.return_functions as return_functions
+import _model.bootstrapper_charts as bootstrapper_charts
+
 import pandas as pd
 import numpy as np
 import pprint
 from collections import namedtuple
-from type_curves import TypeCurve
 from pandas.tseries.offsets import *
-from useful_functions import *
-import model_control
-import model_drivers
-import market
-import prices
-import production_engine
-import return_functions
-import bootstrapper_charts
 
 # ---------------------------------------------------------------------------------------------------------------------#
 # ----------------------------------------------------# ATTRIBUTES #---------------------------------------------------#

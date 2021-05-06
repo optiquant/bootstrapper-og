@@ -1,4 +1,5 @@
-from useful_functions import *
+from _model.useful_functions import *
+
 import os
 import pandas as pd
 import numpy as np

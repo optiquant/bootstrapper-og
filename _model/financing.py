@@ -1,11 +1,12 @@
-import model_control
-import lookup
-import model_drivers
-import hedging
-import pandas as pd
+import _model.model_control
+import _model.lookup
+import _model.model_drivers
+import _model.hedging
+from _model.useful_functions import *
+
 from collections import namedtuple
+import pandas as pd
 from pandas.tseries.offsets import MonthEnd, MonthBegin
-from useful_functions import *
 
 # ----------------------------------------------------------------------------------------------------------------------#
 # ----------------------------------------------------# ATTRIBUTES #----------------------------------------------------#

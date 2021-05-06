@@ -1,6 +1,7 @@
-import model_control
+import _model.model_control as model_control
+from _model.useful_functions import *
+
 import pandas as pd
-from useful_functions import *
 import numpy as np
 import math
 import datetime as dt
@@ -11,13 +12,13 @@ import gzip
 from collections import *
 import IPython.display as display
 import win32com.client as win32  # for outlook emailing
-from kaleido.scopes.plotly import PlotlyScope
 from sklearn.neighbors import KernelDensity
 
 pd.set_option('display.max_columns', None)
 # pd.set_option('display.max_rows', None)
 
 # PLOTLY
+from kaleido.scopes.plotly import PlotlyScope
 import plotly as py
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -752,9 +753,9 @@ def run_mcs_data_maker(c_nick=None):
         # update all
         for c_name in commodity_reference:
             c_nick = get_comdty_nick(c_name)
-            data_maker(c_nick, future_month_index)
+            data_maker(c_nick)
     else:
-        data_maker(c_nick, future_month_index)
+        data_maker(c_nick)
 
 
 def get_mcs_data_historical(c_nick):
