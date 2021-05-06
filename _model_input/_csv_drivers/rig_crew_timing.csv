@@ -1,0 +1,19 @@
+Rig Crew #,Rig Crew 1
+AFE TO SPUD,-91
+PLANNING TO SPUD,-122
+PERMITTED TO SPUD,-91
+LOCATION BUILD TO SPUD,-31
+Pad spud (relative to first well on pad),-1
+Well Spud to TD (within pad),10
+"Skid (TD to Well Spud, within pad)",0
+Final TD to RR (within pad),0
+Rig Move (to next pad),45
+RR to Frac Start,5
+Stim (frac duration) per well,11
+Stim to Post-Stim,1
+Post Stim Drillout (per well on pad),3
+Completion end to POP,1
+Frac Fleet Move (to next pad),45
+1st Oil (relative to POP),0
+Turned to LOE (relative to POP),30
+Post Drill Filing Req (relative to Spud),90
