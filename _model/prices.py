@@ -51,41 +51,50 @@ scenario_filepaths_all = model_control.get_scenario_filepaths_all()
 # ---------------------------------------------- ROOT FOLDERS ----------------------------------------------
 def root_folder_daily_prices():
     '''Returns filepath for daily price updates.'''
-    filepath = f'C:/Users/vdesai/Git/bootstrapper-og/daily_price_updates/'
+    filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\daily_price_updates\\'
     print(f'/n| Daily price updates location: {filepath}')
-    return {'parent_folder': filepath.strip('daily_price_updates/'),
+    return {'parent_folder': filepath.strip('daily_price_updates\\'),
             'root_folder': filepath}
 
 
 def root_folder_comex_data():
     '''Returns filepath for all comex data.'''
-    filepath = f'C:/Users/vdesai/Git/bootstrapper-og/settlements_comex/'
+    filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\settlements_comex\\'
     print(f'\n| COMEX data location: {filepath}')
-    return {'parent_folder': filepath.strip('comex_settlements/'),
+    return {'parent_folder': filepath.strip('settlements_comex\\'),
             'root_folder': filepath}
 
 
 def root_folder_mcs_data(c_nick):
     '''Returns filepath for MCS price data.'''
     c_code = get_comdty_code(c_nick)
-    filepath = f'C:/Users/vdesai/Git/bootstrapper-og/_price_data/{c_code}/mcs_prices/'
+    filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\_price_data\\{c_code}\\mcs_prices\\'
     print(f'\n| MCS data location: {filepath}')
-    return {'parent_folder': filepath.strip('mcs_prices/'),
+    return {'parent_folder': filepath.strip('mcs_prices\\'),
             'root_folder': filepath}
 
 
 def root_folder_nymex_data():
     '''Returns filepath for all nymex data.'''
-    filepath = f'C:/Users/vdesai/Git/bootstrapper-og/settlements_nymex/'
+    filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\settlements_nymex\\'
     print(f'\n| NYMEX data location: {filepath}')
-    return {'parent_folder': filepath.strip('nymex_settlements/'),
+    return {'parent_folder': filepath.strip('settlements_nymex\\'),
             'root_folder': filepath}
 
 
-def root_folder_price_data(c_nick, as_of_date):
+def root_folder_price_data(c_nick):
+    '''Returns filepath for daily price data for the commodity.'''
+    c_code = get_comdty_code(c_nick, print_result=True)
+    filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\_price_data\\{c_code}\\'
+    print(f'\n| Price data location: {filepath}')
+    return {'parent_folder': filepath.strip(f'{c_code}\\'),
+            'root_folder': filepath}
+
+
+def get_price_data_filepath(c_nick, as_of_date):
     '''Returns filepath to store price_data json files for commodity. Returns dict of {folder, filepath}'''
     c_code = get_comdty_code(c_nick)
-    folder = f'C:/Users/vdesai/Git/bootstrapper-og/_price_data/{c_code}/'
+    folder = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\_price_data\\{c_code}\\'
     filepath = folder + f'_prices_{c_code}_{string_date(as_of_date)}.json'
     print(f'\n| Price data location: {filepath}')
     return {'parent_folder': folder,
@@ -203,8 +212,8 @@ def save_updated_prices(product_descriptions: list):
 
                 price_data = make_price_data(data)
 
-                folder, filepath = (root_folder_price_data(c_nick, nymex_trade_date)['parent_folder'],
-                                    root_folder_price_data(c_nick, nymex_trade_date)['root_folder'])
+                folder, filepath = (get_price_data_filepath(c_nick, nymex_trade_date)['parent_folder'],
+                                    get_price_data_filepath(c_nick, nymex_trade_date)['root_folder'])
                 save_to_json(price_data, folder, filepath)
 
             except (AttributeError, ValueError, FileNotFoundError, NameError):
@@ -412,7 +421,7 @@ def get_price_data(c_nick, as_of_date, nearest_prev=True):
          '''
     c_code = get_comdty_code(c_nick)
     as_of_date = string_date(as_of_date)
-    filepath = root_folder_price_data(c_nick, as_of_date)['root_folder']
+    filepath = get_price_data_filepath(c_nick, as_of_date)['root_folder']
     if os.path.isfile(filepath):
         results = pd.read_json(filepath)
         return results
@@ -472,11 +481,11 @@ def get_dates(c_nick, date_type='start'):
     c_code = get_comdty_code(c_nick)
     global nymex_trade_date
     try:
-        filepath = root_folder_price_data(c_nick, as_of_date=nymex_trade_date)['parent_folder']
+        filepath = get_price_data_filepath(c_nick, as_of_date=nymex_trade_date)['parent_folder']
     except NameError:
         nymex_trade_date = input(f'| Enter trade date (m/d/yy) >> ')
         nymex_trade_date = pd.to_datetime(nymex_trade_date, utc=True)
-        filepath = root_folder_price_data(c_nick, as_of_date=nymex_trade_date)['parent_folder']
+        filepath = get_price_data_filepath(c_nick, as_of_date=nymex_trade_date)['parent_folder']
 
     if date_type in ['start', 'end']:
         prices_available = [_ for _ in os.listdir(filepath)]
@@ -1855,7 +1864,7 @@ def get_mcs_start_end_dates(sim_end):
         'ethane': SimDates(sim_start='2013-01-01', sim_end=sim_end),
         'propane': SimDates(sim_start='2013-01-01', sim_end=sim_end),
         'n_butane': SimDates(sim_start='2013-01-01', sim_end=sim_end),
-        'iso_butane': SimDates(sim_start='2013-01-01', sim_end=sim_end),
+        'iso_butane': SimDates(sim_start='2019-10-22', sim_end=sim_end),
         'nat_gasoline': SimDates(sim_start='2013-01-01', sim_end=sim_end)
     }
     return mcs_start_end_dates
@@ -2393,7 +2402,7 @@ def price_simulator(c_nick: str,
         price_simulations[c_code][scenario_time_stamp] = results_dict
 
         # save _scenario summary to the price_data folder
-        folder = root_folder_price_data(c_nick, as_of_date=strip_pricing_date)['root_folder']
+        folder = get_price_data_filepath(c_nick, as_of_date=strip_pricing_date)['root_folder']
         filename = f'{c_code}_{min(hist_trade_dates)}_{max(hist_trade_dates)}_n_{rand_samples}_summary_stats.json'
         save_to_json(summary_stats, folder, folder + filename, df_name='summary_stats')
 
