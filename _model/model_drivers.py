@@ -126,9 +126,6 @@ def initialize():
     global scenario_time_stamp
     scenario_time_stamp = model_control.scenario_time_stamp
 
-    global is_test_scenario
-    is_test_scenario = model_control.is_test_scenario
-
     global local_scenario_folder
     local_scenario_folder = model_control.local_scenario_folder
 

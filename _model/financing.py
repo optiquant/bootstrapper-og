@@ -1,7 +1,7 @@
-import _model.model_control
-import _model.lookup
-import _model.model_drivers
-import _model.hedging
+import _model.model_control as model_control
+import _model.lookup as lookup
+import _model.model_drivers as model_drivers
+import _model.hedging as hedging
 from _model.useful_functions import *
 
 from collections import namedtuple

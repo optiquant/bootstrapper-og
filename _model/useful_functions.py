@@ -29,7 +29,7 @@ def useful_functions(func_to_add=None, toPrint=False):
 
 def root_folder_model_input():
     '''Root folder for csv drivers'''
-    filepath = f'C:/Users/vdesai/Desktop/Model/Python/___mcs_model/_csv_drivers/'
+    filepath = f'C:/Users/vdesai/Git/bootstrapper-og/_model_input/_csv_drivers/'
     print(f'\n| Model input root folder: {filepath}')
     return {'parent_folder': filepath.strip('_csv_drivers/'),
             'root_folder': filepath}
