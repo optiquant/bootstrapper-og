@@ -26,17 +26,13 @@ Attributes of model_control are of the following types:
 # ----------------------------------------------------------------------------------------------------------------------#
 
 modeled_wells_all = [
-    "FARMAR DD S548HM",
-    "FARMAR DC S545HM",
-    "FARMAR DB S544HU",
-    "FARMAR DA S541HM",
+    "MUNSON C N283HU",
     "MUNSON C N284HM",
     "MUNSON C N285HU",
     "MUNSON C N286HM",
-    "MUNSON C N287HM",
-    "FARMAR CB PU N731HM",
-    "FARMAR CC PU N734HU",
+    "FARMAR CB PU N734HU",
     "FARMAR CC PU N735HM",
+    "FARMAR CC PU N736HU",
     "FARMAR CD PU N738HU"
     # "Foreland I DUC 1",
     # "Foreland I DUC 2",
@@ -57,16 +53,21 @@ modeled_wells_all = [
 # False --> model will only use the input working capital balance (excel-based)
 include_remaining_pdp_capex = True
 pdp_wells_with_remaining_capex = [
-    "HALCOMB A S271HU",
-    "HALCOMB A S288HM",
-    "HALCOMB A S287HU",
-    "HALCOMB A S286HD",
-    "HALCOMB A S273HU",
-    "HALCOMB A S274HM",
-    "HALCOMB A S274HA",
-    "MUNSON C S284HM",
-    "MUNSON C S285HU",
-    "MUNSON C S286HM"
+    # "HALCOMB A S271HU",
+    # "HALCOMB A S288HM",
+    # "HALCOMB A S287HU",
+    # "HALCOMB A S286HD",
+    # "HALCOMB A S273HU",
+    # "HALCOMB A S274HM",
+    # "HALCOMB A S274HA",
+    # "MUNSON C S284HM",
+    # "MUNSON C S285HU",
+    # "MUNSON C S286HM",
+    "FARMAR DD S548HM",
+    "FARMAR DC S545HM",
+    "FARMAR DB S544HU",
+    "FARMAR DA S541HM",
+
 ]
 
 # gas marketing expenses for sub-asset
@@ -115,10 +116,10 @@ reassigned_type_curve_areas = {
 }
 
 # balance sheet date (used for capital structure at model start)
-balance_sheet_date = '12/31/20'
-model_start_date = '1/1/21'
+balance_sheet_date = '3/31/21'
+model_start_date = '4/1/21'
 
-strip_pricing_date = '5/7/21'
+strip_pricing_date = '5/19/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 

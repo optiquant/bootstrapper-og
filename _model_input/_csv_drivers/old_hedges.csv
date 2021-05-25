@@ -1,20 +1,20 @@
 trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_months,vol_per_month,vol_unit,swap_price,call_price,premium,contract_start_mth,contract_end_mth,contract_length_months,contract_total_volume
-44320,Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,0,Bbl,45,54.4,0,44592,44926,12,0
-44320,Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,0,Bbl,45,50.57,0,44957,45291,12,0
-44320,Bank,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Dec,0,MMBtu,2.5,4,0,44957,45291,12,0
-44320,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Dec,0,MMBtu,2.5,3.5,0,44681,44926,9,0
-44320,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
-44320,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
-44320,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44320,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.22,0,0,44592,44926,12,0
-44320,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44320,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.65,0,0,44592,44926,12,0
-44320,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44320,Bank,NGL,n-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
-44320,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44320,Bank,NGL,iso-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
-44320,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44320,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2022,Jan - Dec,0,gal,1.1,0,0,44592,44926,12,0
+44336,Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,0,Bbl,45,54.4,0,44592,44926,12,0
+44336,Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,0,Bbl,45,50.57,0,44957,45291,12,0
+44336,Bank,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Dec,0,MMBtu,2.5,4,0,44957,45291,12,0
+44336,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Dec,0,MMBtu,2.5,3.5,0,44681,44926,9,0
+44336,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
+44336,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
+44336,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44336,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.22,0,0,44592,44926,12,0
+44336,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44336,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.65,0,0,44592,44926,12,0
+44336,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44336,Bank,NGL,n-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
+44336,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44336,Bank,NGL,iso-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
+44336,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44336,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2022,Jan - Dec,0,gal,1.1,0,0,44592,44926,12,0
 44306,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2021,Oct - Dec,70000,MMBtu,2.5,3.67,0,44500,44561,3,210000
 44299,RBC Capital Markets,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Dec,120000,MMBtu,2.25,2.89,0,44957,45291,12,1440000
 44299,RBC Capital Markets,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Dec,280000,MMBtu,2.25,2.9,0,44681,44926,9,2520000
