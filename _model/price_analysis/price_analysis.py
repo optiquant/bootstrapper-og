@@ -8,6 +8,7 @@ import glob
 from datetime import datetime
 import csv
 from pprint import pprint
+from pandas.tseries.offsets import MonthEnd
 
 import matplotlib.pyplot as plt
 import matplotlib
@@ -280,17 +281,19 @@ def build_absolute_time_indexes(num_contract_months: int, summary_stats: dict):
 
 '''Calculates the Wet Gas Price Index (WGX).'''
 
-trade_date = '5/14/21'
+trade_date = '5/24/21'
 trade_date = pd.to_datetime(trade_date, utc=True)
+
 c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
 mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
 price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
-
 print(price_data_folders)
 
 # save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
 # save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
 save_to_folder = r'T:/Finance-Strategy/Price Analysis/seasonal index/'
+
+default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
 convert_gal_to_mmbtu = False
 gal_mmbtu_conv_ratio = pr.get_conversion_ratios()['gal/mmbtu - energy']
 ngl_nicks = get_ngl_nicks()
@@ -312,8 +315,6 @@ excluded_prices = {
     'nat_gasoline': [0.00]
 }
 
-
-
 # number of gallons per mcf
 gal_per_mcf = {
     k: sum(v) for k, v in {'ethane': [3.14],
@@ -323,7 +324,6 @@ gal_per_mcf = {
                            'nat_gasoline': [0.16, 0.15, 0.26]
                            }.items()
 }
-
 print(gal_per_mcf)
 
 wg_price_start = '1/1/2010'
@@ -372,102 +372,195 @@ month_pairs = [(1, 2),
 # dict to store calculated historical settlement price deltas for each month-pair
 historical_month_deltas = {}
 
-for c_nick_index, c_nick in enumerate(price_components):
-    #c_nick = c_nicks[3]
 
-    historical_date_range = [string_date(_) for _ in pd.date_range(start=wg_price_start,
-                                                                   end=mcs_start_end_dates[c_nick].sim_end,
-                                                                   freq='d',
-                                                                   tz='UTC')]
+def historical_strip_shape(commodity_list: list):
+    for c_nick_index, c_nick in enumerate(commodity_list):
+        # c_nick = c_nicks[3]
 
-    # get all price files for this commodity, from the source folder for JSON price data
-    files = glob.glob(f'{price_data_folders[c_nick]}/_prices_*', recursive=True)
-    print(f'\n| All files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
+        historical_date_range = [string_date(_) for _ in pd.date_range(start=wg_price_start,
+                                                                       end=mcs_start_end_dates[c_nick].sim_end,
+                                                                       freq='d',
+                                                                       tz='UTC')]
 
-    # exclude files that do not contain a historical date
-    files = [f for f in files for date in historical_date_range if date in f]
-    print(f'\n| Filtered files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
+        # get all price files for this commodity, from the source folder for JSON price data
+        files = glob.glob(f'{price_data_folders[c_nick]}/_prices_*', recursive=True)
+        print(f'\n| All files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
 
-    historical_month_deltas[c_nick] = {k: [] for k in month_pairs}
+        # exclude files that do not contain a historical date
+        files = [f for f in files for date in historical_date_range if date in f]
+        print(f'\n| Filtered files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
 
-    for f_num, file in enumerate(files):
-        # print(f'| Loading {f_num}: {file}')
-        with open(files[f_num], 'r') as f:
-            json_file = json.load(f)
+        historical_month_deltas[c_nick] = {k: [] for k in month_pairs}
 
-        # print(json_file['contract_mth'], json_file['settle_price'])
+        for f_num, file in enumerate(files):
+            # print(f'| Loading {f_num}: {file}')
+            with open(files[f_num], 'r') as f:
+                json_file = json.load(f)
 
-        # valid month pairs in data (so that irregular contract month data is excldued)
-        data_month_pairs = [_ for _ in json_file['contract_mth'].values()]
-        data_month_pairs = [(x, y) for x, y in zip(data_month_pairs[:-1], data_month_pairs[1:]) if (x, y) in month_pairs]
-        data_month_pairs = dict(zip([_ for _ in json_file['contract_mth'].keys()], data_month_pairs))
-        # print(data_month_pairs)
+            # print(json_file['contract_mth'], json_file['settle_price'])
 
-        # calculate price deltas
-        price_deltas = {
-            k: json_file['settle_price'][str(int(k)+1)]-json_file['settle_price'][k] for k, v in data_month_pairs.items()
+            # valid month pairs in data (so that irregular contract month data is excldued)
+            data_month_pairs = [_ for _ in json_file['contract_mth'].values()]
+            data_month_pairs = [(x, y) for x, y in zip(data_month_pairs[:-1], data_month_pairs[1:]) if
+                                (x, y) in month_pairs]
+            data_month_pairs = dict(zip([_ for _ in json_file['contract_mth'].keys()], data_month_pairs))
+            # print(data_month_pairs)
+
+            # calculate price deltas
+            price_deltas = {
+                k: json_file['settle_price'][str(int(k) + 1)] - json_file['settle_price'][k] for k, v in
+                data_month_pairs.items()
+            }
+
+            # drop price deltas of zero, and merge price deltas with month pairs
+            price_deltas = {k: (data_month_pairs[k], price_delta) for k, price_delta in price_deltas.items() if
+                            price_delta != 0}
+            # print(price_deltas)
+
+            # populate the historical month delta data for this commodity
+            for k, (month_pair, price_delta) in price_deltas.items():
+                historical_month_deltas[c_nick][month_pair].append(price_delta)
+
+        print(historical_month_deltas[c_nick])
+        # save to folder
+        for month_pair in historical_month_deltas[c_nick]:
+            data = historical_month_deltas[c_nick][month_pair]
+            # suffix = str(month_pair).replace('(', '').replace(')', '').replace(', ', '-')
+            suffix = str(month_pair)
+            save_to_json(df=pd.DataFrame(data, index=range(len(data)), columns=[c_nick]),
+                         folder=f'{save_to_folder}/raw_data/',
+                         filepath=f'{save_to_folder}/raw_data/{string_date(trade_date)}_month_deltas_{c_nick}_{suffix}.json'
+                         )
+
+        chart_data = [(k, historical_month_deltas[c_nick][k]) for k in month_pairs]
+        print(chart_data)
+
+        chart_xlims = {
+            'hh': [-0.5, 0.5],
+            'waha_gas_diff': [-0.3, 0.3],
+            'hsc_gas_diff': [-0.5, 0.5],
+            'ethane': [-0.03, 0.03],
+            'propane': [-0.1, 0.1],
+            'n_butane': [-0.1, 0.1],
+            'iso_butane': [-0.1, 0.1],
+            'nat_gasoline': [-0.1, 0.1],
+        }
+        chart_xformats = {
+            'hh': '.2f',
+            'waha_gas_diff': '.2f',
+            'hsc_gas_diff': '.2f',
+            'ethane': '.3f',
+            'propane': '.3f',
+            'n_butane': '.3f',
+            'iso_butane': '.3f',
+            'nat_gasoline': '.3f',
         }
 
-        # drop price deltas of zero, and merge price deltas with month pairs
-        price_deltas = {k: (data_month_pairs[k], price_delta) for k, price_delta in price_deltas.items() if price_delta != 0}
-        # print(price_deltas)
+        fig, axs = plt.subplots(12, figsize=(8, 12), sharex=True, sharey=False)
+        for i, (month_pair, price_delta) in enumerate(chart_data):
+            # chart_coords = (i, c_nick_index)
+            chart_coords = i
+            print(chart_coords, month_pair)
+            axs[chart_coords].hist(price_delta, bins=200)
+            axs[chart_coords].set_title(f'Month delta: {month_pair}')
+            axs[chart_coords].grid(b=True, which='major', axis='x', color='lightgray')
+            axs[chart_coords].set_xticks(np.arange(chart_xlims[c_nick][0],
+                                                   chart_xlims[c_nick][1],
+                                                   chart_xlims[c_nick][1] / 10))
+            axs[chart_coords].set_xticklabels(axs[chart_coords].get_xticks(), rotation=45)
+            axs[chart_coords].get_xaxis().set_major_formatter(
+                matplotlib.ticker.FuncFormatter(lambda x, p: format(float(x), chart_xformats[c_nick])))
+            axs[chart_coords].get_yaxis().set_major_formatter(
+                matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 
-        # populate the historical month delta data for this commodity
-        for k, (month_pair, price_delta) in price_deltas.items():
-            historical_month_deltas[c_nick][month_pair].append(price_delta)
+        plt.xlim(chart_xlims[c_nick])
+        fig.tight_layout()
+        fig.suptitle(f'{get_comdty_name(c_nick)} | {get_comdty_code(c_nick)}')
+        fig.subplots_adjust(top=0.93)
+        plt.show()
 
-    print(historical_month_deltas[c_nick])
 
-    chart_data = [(k, historical_month_deltas[c_nick][k]) for k in month_pairs]
-    print(chart_data)
-
-    chart_xlims = {
-        'hh': [-0.5, 0.5],
-        'waha_gas_diff': [-0.3, 0.3],
-        'hsc_gas_diff': [-0.5, 0.5],
-        'ethane': [-0.03, 0.03],
-        'propane': [-0.1, 0.1],
-        'n_butane': [-0.1, 0.1],
-        'iso_butane': [-0.1, 0.1],
-        'nat_gasoline': [-0.1, 0.1],
-    }
-    chart_xformats = {
-        'hh': '.2f',
-        'waha_gas_diff': '.2f',
-        'hsc_gas_diff': '.2f',
-        'ethane': '.3f',
-        'propane': '.3f',
-        'n_butane': '.3f',
-        'iso_butane': '.3f',
-        'nat_gasoline': '.3f',
+def summary_stats_by_month_pair():
+    # statistics for month deltas
+    # read in the data from the raw_data folder
+    read_in_root = {
+        c_nick: f'{save_to_folder}/raw_data/{string_date(trade_date)}_month_deltas_{c_nick}' for c_nick in c_nicks
     }
 
+    print(read_in_root)
+    summary_stats = {}
+
+    for _mp in month_pairs:
+        month_pair = str(_mp)
+        summary_stats[month_pair] = {}
+        for c_nick, filepath in read_in_root.items():
+            filepath = f'{filepath}_{month_pair}.json'
+            with open(filepath) as f:
+                json_file = json.load(f)
+                data = [_ for _ in json_file[c_nick].values()]
+
+            summary_stats[month_pair][c_nick] = pd.DataFrame(data, columns=[c_nick]).describe(default_percentiles)
+            save_to_json(df=summary_stats[month_pair][c_nick],
+                         folder=f'{save_to_folder}/summary_stats/',
+                         filepath=f'{save_to_folder}/summary_stats/{string_date(trade_date)}_stats_{c_nick}_{month_pair}.json'
+                         )
+        print(f'\n| Summary stats for {month_pair}:\n{summary_stats[month_pair]}')
 
 
-    fig, axs = plt.subplots(12, figsize=(8, 12), sharex=True, sharey=False)
-    for i, (month_pair, price_delta) in enumerate(chart_data):
-        # chart_coords = (i, c_nick_index)
-        chart_coords = i
-        print(chart_coords, month_pair)
-        axs[chart_coords].hist(price_delta, bins=200)
-        axs[chart_coords].set_title(f'Month delta: {month_pair}')
-        axs[chart_coords].grid(b=True, which='major', axis='x', color='lightgray')
-        axs[chart_coords].set_xticks(np.arange(chart_xlims[c_nick][0],
-                                               chart_xlims[c_nick][1],
-                                               chart_xlims[c_nick][1]/10))
-        axs[chart_coords].set_xticklabels(axs[chart_coords].get_xticks(), rotation=45)
-        axs[chart_coords].get_xaxis().set_major_formatter(
-            matplotlib.ticker.FuncFormatter(lambda x, p: format(float(x), chart_xformats[c_nick])))
-        axs[chart_coords].get_yaxis().set_major_formatter(
-            matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 
-    plt.xlim(chart_xlims[c_nick])
-    fig.tight_layout()
-    fig.suptitle(f'{get_comdty_name(c_nick)} | {get_comdty_code(c_nick)}')
-    fig.subplots_adjust(top=0.93)
-    plt.show()
+# calculate historical strip shapes
+# historical_strip_shape(commodity_list=c_nicks)
+
+# calculate summary stats
+# summary_stats_by_month_pair()
+
+# calculate the next month from the last front month settle
+# read in the data from the summary_stats folder
+read_in_root = {
+    c_nick: f'{save_to_folder}/summary_stats/{string_date(trade_date)}_stats_{c_nick}' for c_nick in c_nicks
+}
+print(read_in_root)
+
+model_prices = pd.read_excel('T:/Finance-Strategy/daily_price_updates/TCR - Model Prices.xlsx',
+                             parse_dates=True, index_col=[1])
+print(model_prices)
+
+# get the WGX price components for the front month
+current_month = trade_date+MonthEnd(1)
+price_scenarios = [f'Strip {string_date(trade_date)}', *[str(int(_*100))+"%" for _ in default_percentiles]]
+print(price_scenarios)
+
+strip_start = string_date(current_month+MonthEnd(1))
+strip_end = string_date(current_month+MonthEnd(24))
+strip_dates = pd.date_range(start=strip_start, end=strip_end, freq='M', normalize=True, tz='UTC')
+print(f'\n| Strip dates:\n  {strip_dates}\n')
+
+wgx = {}
+
+for pr_scen in price_scenarios:
+    wgx[pr_scen] = {}
+    for strip_month in strip_dates:
+        if 'strip' in pr_scen.lower():
+            wgx_components = dict(model_prices.loc[strip_month, [get_comdty_name(c_nick) for c_nick in price_components]])
+            # replace comdty names with c_nicks
+            wgx_components = {get_comdty_nick(c_name, search_term_type='comdty_name'): v for c_name, v in wgx_components.items()}
+            print(f'| {string_date(strip_month)} >> {wgx_components}')
+
+            # calculate WGX
+            # WGX = (hh + waha) * mmbtu-mcf-wet-gas conv + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
+            # the strip start / front month settle should be given.
+            wgx[pr_scen][string_date(strip_month)] = (wgx_components['hh'] + wgx_components['waha_gas_diff']) / mmbtu_per_mcf_wet_gas + \
+                                                     (wgx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf['ethane'] + \
+                                                     (wgx_components['propane'] - t_and_f_per_ngl_gal) * gal_per_mcf['propane'] + \
+                                                     (wgx_components['n_butane'] - t_and_f_per_ngl_gal) * gal_per_mcf['n_butane'] + \
+                                                     (wgx_components['iso_butane'] - t_and_f_per_ngl_gal) * gal_per_mcf['iso_butane'] + \
+                                                     (wgx_components['nat_gasoline'] - t_and_f_per_ngl_gal) * gal_per_mcf['nat_gasoline']
+        else:
+            # todo: build futures by price scenario july onwards
+            wgx[pr_scen][string_date(strip_month)] = 0.0
+
+print(f'\n| WGX as of {string_date(trade_date)}: {wgx}')
 
 
-'''Formula: 
-wet gas price = (hh + waha) * mmbtu-mcf conv - wet gas + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
 
+# overlay / compare with the strip
