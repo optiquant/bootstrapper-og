@@ -10,6 +10,7 @@ import csv
 from pprint import pprint
 
 import matplotlib.pyplot as plt
+import matplotlib
 
 # PLOTLY
 from kaleido.scopes.plotly import PlotlyScope
@@ -277,12 +278,11 @@ def build_absolute_time_indexes(num_contract_months: int, summary_stats: dict):
 # --- wet gas price index --- #
 
 
-'''Calculates the TCR Wet Gas Price Index (TCRWG) for this month. Formula:
-        wet gas price = (hh + waha) * mmbtu-mcf conv - wet gas + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
+'''Calculates the Wet Gas Price Index (WGX).'''
 
 trade_date = '5/14/21'
 trade_date = pd.to_datetime(trade_date, utc=True)
-c_nicks = ['hh', 'waha_gas_diff', 'hsc_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
+c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
 mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
 price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
 
@@ -299,7 +299,20 @@ mcs_start_end_dates = pr.get_mcs_start_end_dates(sim_end=trade_date)
 mmbtu_per_mcf_wet_gas = 1.25
 mmbtu_per_mcf_dry_gas = 0.96
 t_and_f_per_ngl_gal = 0.08
+
 error_log = []
+excluded_prices = {
+    'hh': [0.00],
+    'waha_gas_diff': [0.00],
+    'hsc_gas_diff': [0.00],
+    'ethane': [0.00],
+    'propane': [0.00],
+    'iso_butane': [0.00],
+    'n_butane': [0.00],
+    'nat_gasoline': [0.00]
+}
+
+
 
 # number of gallons per mcf
 gal_per_mcf = {
@@ -339,8 +352,8 @@ wet_gas_price = {
     'last_trade_date': {},
 }
 
-wet_gas_comdty_code = 'WGI'
-wet_gas_comdty_desc = 'Wet Gas Index (WGI)'
+wet_gas_comdty_code = 'WGX'
+wet_gas_comdty_desc = 'Wet Gas Index (WGX)'
 
 # month pairs used to calculate price changes
 month_pairs = [(1, 2),
@@ -359,61 +372,102 @@ month_pairs = [(1, 2),
 # dict to store calculated historical settlement price deltas for each month-pair
 historical_month_deltas = {}
 
-# for c_nick, value in price_components.items():
-c_nick = 'hh'
+for c_nick_index, c_nick in enumerate(price_components):
+    #c_nick = c_nicks[3]
 
-historical_date_range = [string_date(_) for _ in pd.date_range(start=wg_price_start,
-                                                               end=mcs_start_end_dates[c_nick].sim_end,
-                                                               freq='d',
-                                                               tz='UTC')]
+    historical_date_range = [string_date(_) for _ in pd.date_range(start=wg_price_start,
+                                                                   end=mcs_start_end_dates[c_nick].sim_end,
+                                                                   freq='d',
+                                                                   tz='UTC')]
 
-# get all price files for this commodity, from the source folder for JSON price data
-files = glob.glob(f'{price_data_folders[c_nick]}/_prices_*', recursive=True)
-print(f'\n| All files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
+    # get all price files for this commodity, from the source folder for JSON price data
+    files = glob.glob(f'{price_data_folders[c_nick]}/_prices_*', recursive=True)
+    print(f'\n| All files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
 
-# exclude files that do not contain a historical date
-files = [f for f in files for date in historical_date_range if date in f]
-print(f'\n| Filtered files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
+    # exclude files that do not contain a historical date
+    files = [f for f in files for date in historical_date_range if date in f]
+    print(f'\n| Filtered files >> count: {len(files)}\n|-- first file: {files[0]}\n|-- last file: {files[-1]}')
 
-historical_month_deltas[c_nick] = {k: [] for k in month_pairs}
+    historical_month_deltas[c_nick] = {k: [] for k in month_pairs}
 
-for f_num, file in enumerate(files):
-    # print(f'| Loading {f_num}: {file}')
-    with open(files[f_num], 'r') as f:
-        json_file = json.load(f)
+    for f_num, file in enumerate(files):
+        # print(f'| Loading {f_num}: {file}')
+        with open(files[f_num], 'r') as f:
+            json_file = json.load(f)
 
-    # print(json_file['contract_mth'], json_file['settle_price'])
+        # print(json_file['contract_mth'], json_file['settle_price'])
 
-    # valid month pairs in data (so that irregular contract month data is excldued)
-    data_month_pairs = [_ for _ in json_file['contract_mth'].values()]
-    data_month_pairs = [(x, y) for x, y in zip(data_month_pairs[:-1], data_month_pairs[1:]) if (x, y) in month_pairs]
-    data_month_pairs = dict(zip([_ for _ in json_file['contract_mth'].keys()], data_month_pairs))
-    # print(data_month_pairs)
+        # valid month pairs in data (so that irregular contract month data is excldued)
+        data_month_pairs = [_ for _ in json_file['contract_mth'].values()]
+        data_month_pairs = [(x, y) for x, y in zip(data_month_pairs[:-1], data_month_pairs[1:]) if (x, y) in month_pairs]
+        data_month_pairs = dict(zip([_ for _ in json_file['contract_mth'].keys()], data_month_pairs))
+        # print(data_month_pairs)
 
-    # calculate price deltas
-    price_deltas = {k: json_file['settle_price'][str(int(k)+1)]-json_file['settle_price'][k] for k, v in data_month_pairs.items()}
-    # merge price deltas with month pairs
-    price_deltas = {k: (data_month_pairs[k], pd) for k, pd in price_deltas.items()}
-    # print(price_deltas)
+        # calculate price deltas
+        price_deltas = {
+            k: json_file['settle_price'][str(int(k)+1)]-json_file['settle_price'][k] for k, v in data_month_pairs.items()
+        }
 
-    # populate the historical month delta data for this commodity
-    for k, mp_pd in price_deltas.items():
-        historical_month_deltas[c_nick][mp_pd[0]].append(mp_pd[1])
+        # drop price deltas of zero, and merge price deltas with month pairs
+        price_deltas = {k: (data_month_pairs[k], price_delta) for k, price_delta in price_deltas.items() if price_delta != 0}
+        # print(price_deltas)
 
-print(historical_month_deltas[c_nick])
+        # populate the historical month delta data for this commodity
+        for k, (month_pair, price_delta) in price_deltas.items():
+            historical_month_deltas[c_nick][month_pair].append(price_delta)
 
-chart_data = [(k, historical_month_deltas[c_nick][k]) for k in month_pairs]
-print(chart_data)
+    print(historical_month_deltas[c_nick])
 
-fig, axs = plt.subplots(12,figsize=(5, 12), sharex=True, sharey=False)
-for i, (mp, pd) in enumerate(chart_data):
-    # chart_coords = (np.mod(i, 4), np.mod(i, 3))
-    chart_coords = i
-    print(chart_coords, mp)
-    axs[chart_coords].hist(pd, bins=200)
-    axs[chart_coords].set_title(f'Month delta: {mp}')
+    chart_data = [(k, historical_month_deltas[c_nick][k]) for k in month_pairs]
+    print(chart_data)
+
+    chart_xlims = {
+        'hh': [-0.5, 0.5],
+        'waha_gas_diff': [-0.3, 0.3],
+        'hsc_gas_diff': [-0.5, 0.5],
+        'ethane': [-0.03, 0.03],
+        'propane': [-0.1, 0.1],
+        'n_butane': [-0.1, 0.1],
+        'iso_butane': [-0.1, 0.1],
+        'nat_gasoline': [-0.1, 0.1],
+    }
+    chart_xformats = {
+        'hh': '.2f',
+        'waha_gas_diff': '.2f',
+        'hsc_gas_diff': '.2f',
+        'ethane': '.3f',
+        'propane': '.3f',
+        'n_butane': '.3f',
+        'iso_butane': '.3f',
+        'nat_gasoline': '.3f',
+    }
 
 
-fig.tight_layout()
-plt.xlim([-0.5, 0.5])
-plt.show()
+
+    fig, axs = plt.subplots(12, figsize=(8, 12), sharex=True, sharey=False)
+    for i, (month_pair, price_delta) in enumerate(chart_data):
+        # chart_coords = (i, c_nick_index)
+        chart_coords = i
+        print(chart_coords, month_pair)
+        axs[chart_coords].hist(price_delta, bins=200)
+        axs[chart_coords].set_title(f'Month delta: {month_pair}')
+        axs[chart_coords].grid(b=True, which='major', axis='x', color='lightgray')
+        axs[chart_coords].set_xticks(np.arange(chart_xlims[c_nick][0],
+                                               chart_xlims[c_nick][1],
+                                               chart_xlims[c_nick][1]/10))
+        axs[chart_coords].set_xticklabels(axs[chart_coords].get_xticks(), rotation=45)
+        axs[chart_coords].get_xaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda x, p: format(float(x), chart_xformats[c_nick])))
+        axs[chart_coords].get_yaxis().set_major_formatter(
+            matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+
+    plt.xlim(chart_xlims[c_nick])
+    fig.tight_layout()
+    fig.suptitle(f'{get_comdty_name(c_nick)} | {get_comdty_code(c_nick)}')
+    fig.subplots_adjust(top=0.93)
+    plt.show()
+
+
+'''Formula: 
+wet gas price = (hh + waha) * mmbtu-mcf conv - wet gas + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
+
