@@ -397,14 +397,11 @@ def historical_strip_shape(commodity_list: list):
             with open(files[f_num], 'r') as f:
                 json_file = json.load(f)
 
-            # print(json_file['contract_mth'], json_file['settle_price'])
-
             # valid month pairs in data (so that irregular contract month data is excldued)
             data_month_pairs = [_ for _ in json_file['contract_mth'].values()]
             data_month_pairs = [(x, y) for x, y in zip(data_month_pairs[:-1], data_month_pairs[1:]) if
                                 (x, y) in month_pairs]
             data_month_pairs = dict(zip([_ for _ in json_file['contract_mth'].keys()], data_month_pairs))
-            # print(data_month_pairs)
 
             # calculate price deltas
             price_deltas = {
@@ -415,7 +412,6 @@ def historical_strip_shape(commodity_list: list):
             # drop price deltas of zero, and merge price deltas with month pairs
             price_deltas = {k: (data_month_pairs[k], price_delta) for k, price_delta in price_deltas.items() if
                             price_delta != 0}
-            # print(price_deltas)
 
             # populate the historical month delta data for this commodity
             for k, (month_pair, price_delta) in price_deltas.items():
