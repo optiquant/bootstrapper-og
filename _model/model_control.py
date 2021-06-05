@@ -33,7 +33,7 @@ modeled_wells_all = [
     "FARMAR CB PU N734HU",
     "FARMAR CC PU N735HM",
     "FARMAR CC PU N736HU",
-    "FARMAR CD PU N738HU"
+    "FARMAR CD PU N738HU",
     # "Foreland I DUC 1",
     # "Foreland I DUC 2",
     # "Foreland I DUC 3",
@@ -41,7 +41,6 @@ modeled_wells_all = [
     # "Foreland I DUC 5",
     # "Foreland I DUC 6",
     # "Foreland I DUC 7",
-    # "Foreland I DUC 8"
 ]
 
 
@@ -90,10 +89,10 @@ generic_well_count_by_sub_asset = {
     'Tracker': 110,
     'AMCo': 40,
     'LeasingI': 51, #0,
-    'Ganador': 0,#90,
+    'Ganador': 90,#90,
     'Foreland I': 0,
-    'LeasingII': 0,#60,
-    'Discovery': 12 #125
+    'LeasingII': 60,#60,
+    'Discovery': 125 #125
 }
 # monthly driver tab codes for PDP input and historical financials
 driver_input_codes = {
@@ -119,8 +118,8 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '5/19/21'
-flat_oil_scenario = False
+strip_pricing_date = '5/28/21'
+flat_oil_scenario = True
 flat_gas_scenario = False
 
 model_months = 600
@@ -306,16 +305,11 @@ def get_flat_oil_price():
     global flat_oil_scenario
     global flat_oil_start_date
     if flat_oil_scenario and 'flat_oil_price' not in globals():
-        flat_oil_price = input(f'\n| Enter flat oil price to model ($/Bbl) >>> ')
+        flat_oil_price = float(input(f'\n| Enter flat oil price to model ($/Bbl) >>> '))
         flat_oil_start_date = pd.to_datetime(input(f'| Enter flat price start date (m/d/yy) >>> '))
-        try:
-            flat_oil_price = float(flat_oil_price)
-            print(f'| Modeling flat oil price of ${flat_oil_price: .3f}/Bbl')
-        except (TypeError, AttributeError):
-            flat_oil_scenario = input(f'!! Invalid oil price. Run flat oil price scenario? Y/N >>> ')
-            if flat_oil_scenario.lower() == 'y':
-                get_flat_oil_price()
-    elif flat_oil_scenario and 'flat_oil_price' in globals():
+        print(f'| Modeling flat oil price of ${flat_oil_price: .3f}/Bbl')
+        return flat_oil_price
+    elif 'flat_oil_price' in globals():
         return flat_oil_price
     else:
         print('| Running strip prices for oil.\n')
@@ -326,16 +320,11 @@ def get_flat_gas_price():
     global flat_gas_scenario
     global flat_gas_start_date
     if flat_gas_scenario and 'flat_gas_price' not in globals():
-        flat_gas_price = input(f'\n| Enter flat gas price to model ($/MMBtu) >>> ')
+        flat_gas_price = float(input(f'\n| Enter flat gas price to model ($/MMBtu) >>> '))
         flat_gas_start_date = pd.to_datetime(input(f'| Enter flat price start date (m/d/yy) >>> '))
-        try:
-            flat_gas_price = float(flat_gas_price)
-            print(f'| Modeling flat gas price of ${flat_gas_price: .3f}/MMBtu')
-        except (TypeError, AttributeError):
-            flat_gas_scenario = input(f'!! Invalid gas price. Run flat gas price scenario? Y/N >>> ')
-            if flat_gas_scenario.lower() == 'y':
-                get_flat_gas_price()
-    elif flat_gas_scenario and 'flat_gas_price' in globals():
+        print(f'| Modeling flat gas price of ${flat_gas_price: .3f}/MMBtu')
+        return flat_gas_price
+    elif 'flat_gas_price' in globals():
         return flat_gas_price
     else:
         print('| Running strip prices for gas.\n')
@@ -355,14 +344,21 @@ def get_non_mcs_scenario_label():
     # create the correct label for the non MCS price scenario
     global flat_oil_scenario
     global flat_gas_scenario
-    if flat_oil_scenario and flat_gas_scenario:
-        _non_mcs_scenario_label = f'\${get_flat_oil_price():.0f} WTI/\${get_flat_gas_price():.3f} HH'
-    elif flat_oil_scenario and not (flat_gas_scenario):
-        _non_mcs_scenario_label = f'\${get_flat_oil_price():.0f} WTI/Strip {strip_pricing_date}'
-    elif not (flat_oil_scenario) and flat_gas_scenario:
-        _non_mcs_scenario_label = f'\${get_flat_gas_price():.3f} HH/Strip {strip_pricing_date}'
-    else:
-        _non_mcs_scenario_label = f"Strip {strip_pricing_date}"
+    global _non_mcs_scenario_label
+
+    if '_non_mcs_scenario_label' not in globals():
+        if flat_oil_scenario and flat_gas_scenario:
+            fop = get_flat_oil_price()
+            fgp = get_flat_gas_price()
+            _non_mcs_scenario_label = f'${fop:.0f} WTI/\${fgp:.3f} HH'
+        elif flat_oil_scenario and not (flat_gas_scenario):
+            fop = get_flat_oil_price()
+            _non_mcs_scenario_label = f'${fop:.0f} WTI/Strip {strip_pricing_date}'
+        elif not (flat_oil_scenario) and flat_gas_scenario:
+            fgp = get_flat_gas_price()
+            _non_mcs_scenario_label = f'${fgp:.3f} HH/Strip {strip_pricing_date}'
+        else:
+            _non_mcs_scenario_label = f"Strip {strip_pricing_date}"
 
     return _non_mcs_scenario_label
 

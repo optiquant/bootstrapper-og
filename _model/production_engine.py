@@ -607,9 +607,14 @@ def calc_gross_wellhead_production():
         pop_date = pd.to_datetime(well_pop_dates_dict[well]).normalize()
         pop_month = pop_date + MonthEnd(1)
         # get shift index for this well
-
         shift_index = model_period_indexed[pop_month.replace(tzinfo=None)]
-
+        # get active month for this subasset
+        subasset = model_drivers.get_sub_asset(well_name=well)
+        month_prior_to_active = pd.to_datetime(asset_level_drivers.at[subasset, 'Asset Active Date'], utc=True) + MonthEnd(-1)
+        try:
+            month_index_prior_to_active = model_period_indexed[month_prior_to_active.replace(tzinfo=None)]
+        except KeyError:
+            month_index_prior_to_active = -1
 
         mf1 = (pop_month.day - pop_date.day + 1) / pop_month.day
         mf2 = 1 - mf1
@@ -631,6 +636,11 @@ def calc_gross_wellhead_production():
             mf2_series = type_curves_modeled_dict[comdty].loc[:, well].copy(deep=True).shift(1).fillna(0) * mf2
             adjusted_series = mf1_series + mf2_series
             type_curves_modeled_dict[comdty].loc[:, well] = adjusted_series.copy(deep=True)
+
+            # zero out months prior to asset active, if any
+            if month_index_prior_to_active != -1:
+                type_curves_modeled_dict[comdty].loc[:month_index_prior_to_active, well] = 0.0
+
             print(f'|-- {type_curves_modeled_dict[comdty].loc[:, well]}')
             print(f'|-- ADJUSTED {well}| mf1 = {mf1}, mf2 = {mf2}')
 

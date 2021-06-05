@@ -1963,11 +1963,13 @@ def simulate_prices_all(sim_end, inflation_adjusted: bool):
 def update_flat_model_prices(model_prices):
     # if flat price scenario is true
     if model_control.flat_oil_scenario:
-        model_prices.loc[string_date(model_control.get_flat_oil_start_date()):, 'WTI CMA'] = model_control.get_flat_oil_price()
-        model_prices.loc[string_date(model_control.get_flat_oil_start_date()):, 'WTI Oil'] = model_control.get_flat_oil_price()
+        flat_oil_start_date = string_date(model_control.get_flat_oil_start_date())
+        model_prices.loc[flat_oil_start_date:, 'WTI CMA'] = model_control.get_flat_oil_price()
+        model_prices.loc[flat_oil_start_date:, 'WTI Oil'] = model_control.get_flat_oil_price()
 
     if model_control.flat_gas_scenario:
-        model_prices.loc[string_date(model_control.get_flat_gas_start_date()):, 'HH Gas'] = model_control.get_flat_gas_price()
+        flat_gas_start_date = string_date(model_control.get_flat_gas_start_date())
+        model_prices.loc[flat_gas_start_date:, 'HH Gas'] = model_control.get_flat_gas_price()
     return model_prices
 
 

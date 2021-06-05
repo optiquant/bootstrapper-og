@@ -39,7 +39,7 @@ def load_historical_financials(driver_input_codes: dict):
 
         hist_financials.drop(columns=['Date'], inplace=True)
         hist_financials = clean_up_csv_load(hist_financials)
-        hist_financials.fillna(0.0,inplace=True)
+        hist_financials.fillna(0.0, inplace=True)
         # other initialization adjustments
         print(f'Historical Financials by Sub-Asset loaded >> hist_financials_{code}')
         hist_financials_dict[sub_asset] = hist_financials
@@ -67,7 +67,7 @@ def load_pdp_drivers(driver_input_codes: dict):
 
 
 
-def load_current_hedges(alt_filepath = None):
+def load_current_hedges(alt_filepath=None):
     '''Loads current_hedges from csv.'''
     if alt_filepath:
         # todo: update this to pull from the alt_filepath
@@ -138,27 +138,12 @@ def load_production_splitter():
 def load_rig_crew_timing():
     '''Loads rig crew timing.'''
     # Rig crew timing in relative days
+    filepath = input_folder + '/rig_crew_timing.csv'
+    rig_crew_timing = pd.read_csv(filepath, index_col=0)
     rig_crew_timing = {
-        "afe_to_spud": pd.to_timedelta(-91, unit='d'),
-        "planning_to_spud": pd.to_timedelta(-122, unit='d'),
-        "permitted_to_spud": pd.to_timedelta(-91, unit='d'),
-        "location_build_to_spud": pd.to_timedelta(-31, unit='d'),
-        "pad_spud_to_first_well_spud": pd.to_timedelta(-1, unit='d'),
-        "spud_to_td": pd.to_timedelta(10, unit='d'),
-        "skid_td_to_next_spud": pd.to_timedelta(0, unit='d'),
-        "final_td_to_rig_release": pd.to_timedelta(0, unit='d'),
-        "rig_move_to_next_pad": pd.to_timedelta(90, unit='d'),
-        "rig_release_to_frac_start": pd.to_timedelta(5, unit='d'),
-        "frac_days_per_well": pd.to_timedelta(11, unit='d'),
-        "frac_end_to_drill_out_start": pd.to_timedelta(1, unit='d'),
-        "drill_out_days_per_well": pd.to_timedelta(3, unit='d'),
-        "completion_end_to_pop_date": pd.to_timedelta(1, unit='d'),
-        "frac_fleet_move_to_next_pad": pd.to_timedelta(90, unit='d'),
-        "pop_date_to_first_oil": pd.to_timedelta(0, unit='d'),
-        "pop_date_to_loe": pd.to_timedelta(30, unit='d'),
-        "spud_to_post_drill_filing_req": pd.to_timedelta(90, unit='d')
+        k: pd.to_timedelta(int(v), unit='d') for k, v in zip(rig_crew_timing.index, rig_crew_timing.values)
     }
-    print('\n\n| Rig crew timing loaded >> rig_crew_timing')
+    print(f'\n| Rig crew timing loaded >> {rig_crew_timing}')
     return rig_crew_timing
 
 
@@ -195,7 +180,7 @@ def load_asset_level_drivers(load_all=True):
     asset_level_drivers['Asset Active Date'] = [
         xldate_to_datetime(
             pd.to_numeric(_)) for _ in asset_level_drivers['Asset Active Date']]
-    if load_all==False:
+    if not load_all:
         asset_level_drivers = asset_level_drivers[asset_level_drivers['Run Model For Sub-Asset?'] == 'Yes']
     print(f'\n\n| Asset-Level Drivers loaded >> asset_level_drivers')
     return asset_level_drivers

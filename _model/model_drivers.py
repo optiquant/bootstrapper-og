@@ -3,6 +3,7 @@ import _model.prices as pr
 import _model.model_control as model_control
 from _model.useful_functions import *
 import _model.type_curves as tc
+from pandas.tseries.offsets import MonthEnd
 
 from collections import namedtuple
 import pandas as pd
@@ -95,11 +96,17 @@ def get_model_level_drivers():
 
 
 def get_bootstrap_prices():
+    global bootstrap_prices
     if "bootstrap_prices" not in globals():
         return initialize()
     else:
-        global bootstrap_prices
         return bootstrap_prices
+
+
+def get_boots_template_df():
+    global boots_template_df
+    return boots_template_df
+
 
 def initialize():
     # load model strip prices and model period to model_price_dict
@@ -243,10 +250,13 @@ def initialize():
     current_hedges = model_inputs.load_current_hedges()
 
     # load PDP, infra capex, working cap balance
+    global asset_level_drivers
+    asset_level_drivers = get_asset_level_drivers()
+
     global pdp_input_dict
     pdp_input_dict = model_inputs.load_pdp_drivers(model_control.driver_input_codes)
     # filter down to modeled sub-assets only
-    pdp_input_dict = {k: v for k, v in pdp_input_dict.items() if k in get_asset_level_drivers().index}
+    pdp_input_dict = {k: v for k, v in pdp_input_dict.items() if k in asset_level_drivers.index}
     print(f'| PDP Inputs Modeled:\n {pdp_input_dict}')
 
     # load infrastructure capex in boots_template_df format
@@ -259,6 +269,10 @@ def initialize():
     # adjust to model period
     for subasset, pdp_df in pdp_input_dict.items():
         pdp_input_for_sub_asset = pdp_input_dict[subasset]
+        # zero out each asset's PDP before the active date
+        month_prior_to_asset_active = pd.to_datetime(asset_level_drivers.at[subasset, 'Asset Active Date'], utc=None) + MonthEnd(
+            -1)
+        pdp_input_for_sub_asset.at[:month_prior_to_asset_active, :] = 0.0
         pdp_input_for_sub_asset = pdp_input_for_sub_asset.loc[
                                   [_ for _ in pdp_input_for_sub_asset.index if _ in model_period], :]
         pdp_input_for_sub_asset.fillna(0, inplace=True)

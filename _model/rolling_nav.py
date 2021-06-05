@@ -173,22 +173,25 @@ def initialize():
     pprint.pprint(net_realized_prices)
 
     global currentPDP_discount_rate
-    try:
-        currentPDP_discount_rate = float(
-            input(f'\n>>> Enter discount rate for PDP (used for current PDP and converted PUDs) >>> '))
-    except (ValueError, KeyError):
-        currentPDP_discount_rate = 0.12
+    # try:
+    #     currentPDP_discount_rate = float(
+    #         input(f'\n>>> Enter discount rate for PDP (used for current PDP and converted PUDs) >>> '))
+    # except (ValueError, KeyError):
+    #     currentPDP_discount_rate = 0.12
+
+    currentPDP_discount_rate = 0.12
     print(f'| Using PDP discount rate of {currentPDP_discount_rate * 100:.2f}%')
 
     global newPDP_discount_rate
     newPDP_discount_rate = currentPDP_discount_rate
 
     global dev_program_discount_rate
-    try:
-        dev_program_discount_rate = float(
-            input(f'\n>>> Enter discount rate for dev program (remaining PUDs at time t) >>> '))
-    except (ValueError, KeyError):
-        dev_program_discount_rate = 0.25
+    # try:
+    #     dev_program_discount_rate = float(
+    #         input(f'\n>>> Enter discount rate for dev program (remaining PUDs at time t) >>> '))
+    # except (ValueError, KeyError):
+    #     dev_program_discount_rate = 0.25
+    dev_program_discount_rate = 0.25
     print(f'| Using PUD discount rate of {dev_program_discount_rate * 100:.2f}%')
 
     # dev program total cash flow
@@ -847,7 +850,8 @@ def save_master_outputs():
 def run_rolling_nav():
     print('\n| Rolling NAV module')
     _q = input('\n>>> Run rolling NAV module? (Y/N)')
-    if _q.lower() == 'y':
+    # _q = 'y'
+    if _q.lower() != 'n':
         initialize()
         calc_rolling_pv(for_currentPDP=True, for_newPDP=True)
         grand_total_rolling_pv()

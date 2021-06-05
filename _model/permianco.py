@@ -19,7 +19,7 @@ from kaleido.scopes.plotly import PlotlyScope
 # ----------------------------------------------------------------------------------------------------------------------#
 
 # permianco bond prices
-local_filepath = r'C:/\Users/\vdesai/\Desktop/\Model/\Python/\___mcs_model/\bond-comps'
+local_filepath = r'C:\/Users\/vdesai\/Git\/bootstrapper-og\/bond-comps\/'
 network_filepath = r'\/FILE01\/TDrive\/Finance-Strategy\/PermianCo Credit Comps\/'
 
 local_filename = sorted(os.listdir(local_filepath))[-1]
@@ -659,5 +659,5 @@ def run_bond_comps():
 # ----------------------------------------------------# EXECUTION #----------------------------------------------------#
 # ---------------------------------------------------------------------------------------------------------------------#
 
-run_bond_comps()
+# run_bond_comps()
 

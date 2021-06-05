@@ -1,20 +1,24 @@
 trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_months,vol_per_month,vol_unit,swap_price,call_price,premium,contract_start_mth,contract_end_mth,contract_length_months,contract_total_volume
-44336,Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,0,Bbl,45,54.4,0,44592,44926,12,0
-44336,Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,0,Bbl,45,50.57,0,44957,45291,12,0
-44336,Bank,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Dec,0,MMBtu,2.5,4,0,44957,45291,12,0
-44336,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Dec,0,MMBtu,2.5,3.5,0,44681,44926,9,0
-44336,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
-44336,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
-44336,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44336,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.22,0,0,44592,44926,12,0
-44336,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44336,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.65,0,0,44592,44926,12,0
-44336,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44336,Bank,NGL,n-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
-44336,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44336,Bank,NGL,iso-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
-44336,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44336,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2022,Jan - Dec,0,gal,1.1,0,0,44592,44926,12,0
+44350,Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,20000,Bbl,55,65,0,44592,44651,3,60000
+44350,Bank,Oil,WTI,Collars - 2-Way,2022,Apr - Jun,44666.66667,Bbl,55,65,0,44681,44742,3,134000
+44350,Bank,Oil,WTI,Collars - 2-Way,2022,Jul - Sep,38666.66667,Bbl,55,65,0,44773,44834,3,116000
+44350,Bank,Oil,WTI,Collars - 2-Way,2022,Oct - Dec,32333.33333,Bbl,55,65,0,44865,44926,3,97000
+44350,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Jan - Mar,0,MMBtu,2.75,4,0,44592,44651,3,0
+44350,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Jun,0,MMBtu,2.75,4,0,44681,44742,3,0
+44350,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Jul - Sep,0,MMBtu,2.75,4,0,44773,44834,3,0
+44350,Bank,Gas,Henry Hub,Collars - 2-Way,2022,Oct - Dec,0,MMBtu,2.75,3.5,0,44865,44926,3,0
+44350,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
+44350,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
+44350,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44350,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.22,0,0,44592,44926,12,0
+44350,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44350,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.65,0,0,44592,44926,12,0
+44350,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44350,Bank,NGL,n-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
+44350,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44350,Bank,NGL,iso-Butane,Swaps - Fixed Price,2022,Jan - Dec,0,gal,0.75,0,0,44592,44926,12,0
+44350,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44350,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2022,Jan - Dec,0,gal,1.1,0,0,44592,44926,12,0
 44327,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Mar,12500,Bbl,55,59.3,0,44957,45016,3,37500
 44321,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Mar,75000,MMBtu,2.25,4.3,0,44957,45016,3,225000
 44306,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2021,Oct - Dec,70000,MMBtu,2.5,3.67,0,44500,44561,3,210000
@@ -33,23 +37,23 @@ trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_mon
 44175,RBC Capital Markets,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,5000,Bbl,42,50.4,0,44592,44651,3,15000
 44175,RBC Capital Markets,Oil,WTI,Collars - 2-Way,2021,Apr - Dec,5000,Bbl,42,50.4,0,44316,44561,9,45000
 44175,Wells Fargo,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,4000,Bbl,40,48.3,0,44957,45291,12,48000
-44168,Wells Fargo,Oil,WTI,Collars - 2-Way,2021,Jul - Sep,5000,Bbl,42,47.75,0,44408,44469,3,15000
-44168,Wells Fargo,Oil,WTI,Collars - 2-Way,2021,Apr - Jun,10000,Bbl,42,48.5,0,44316,44377,3,30000
-44168,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,15000,Bbl,42,46,0,44592,44651,3,45000
-44168,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,10000,Bbl,42,47.5,0,44592,44651,3,30000
-44168,Wells Fargo,Oil,WTI,Collars - 2-Way,2021,Apr - Dec,10000,Bbl,42,47.5,0,44316,44561,9,90000
+44168,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Jul - Sep,5000,Bbl,42,47.75,0,44408,44469,3,15000
+44168,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Apr - Jun,10000,Bbl,42,48.5,0,44316,44377,3,30000
+44168,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,15000,Bbl,42,46,0,44592,44651,3,45000
+44168,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Mar,10000,Bbl,42,47.5,0,44592,44651,3,30000
+44168,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Apr - Dec,10000,Bbl,42,47.5,0,44316,44561,9,90000
 44159,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,3000,Bbl,40,48.1,0,44592,44926,12,36000
 44159,Wells Fargo,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,3000,Bbl,40,47.55,0,44957,45291,12,36000
-44158,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,4000,Bbl,40,46.35,0,44957,45291,12,48000
-44158,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,4000,Bbl,40,46.3,0,44592,44926,12,48000
-44158,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Jul - Dec,4000,Bbl,40,46.45,0,44408,44561,6,24000
+44158,Wells Fargo,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,4000,Bbl,40,46.35,0,44957,45291,12,48000
+44158,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,4000,Bbl,40,46.3,0,44592,44926,12,48000
+44158,Wells Fargo,Oil,WTI,Collars - 2-Way,2021,Jul - Dec,4000,Bbl,40,46.45,0,44408,44561,6,24000
 44153,Wells Fargo,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,3000,Bbl,40,46.6,0,44957,45291,12,36000
 44153,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,3000,Bbl,40,46.35,0,44592,44926,12,36000
-44144,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,2000,Bbl,40,45.55,0,44592,44926,12,24000
-44144,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,5000,Bbl,40,46.25,0,44957,45291,12,60000
+44144,Wells Fargo,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,2000,Bbl,40,45.55,0,44592,44926,12,24000
+44144,Wells Fargo,Oil,WTI,Collars - 2-Way,2023,Jan - Dec,5000,Bbl,40,46.25,0,44957,45291,12,60000
 44118,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Jul - Dec,6000,Bbl,40,45.3,0,44408,44561,6,36000
-44113,RBC Capital Markets,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2021,Jan - Dec,252000,gal,0.917,0,0,44227,44561,12,3024000
-44113,RBC Capital Markets,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2020,Oct - Dec,252000,gal,0.917,0,0,44135,44196,3,756000
+44113,Wells Fargo,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2021,Jan - Dec,252000,gal,0.917,0,0,44227,44561,12,3024000
+44113,Wells Fargo,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2020,Oct - Dec,252000,gal,0.917,0,0,44135,44196,3,756000
 44113,Wells Fargo,NGL,Non-TET Propane,Swaps - Fixed Price,2021,Jan - Dec,147000,gal,0.50125,0,0,44227,44561,12,1764000
 44113,Wells Fargo,NGL,Non-TET Propane,Swaps - Fixed Price,2020,Oct - Dec,147000,gal,0.50125,0,0,44135,44196,3,441000
 44113,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2021,Jul - Dec,6000,Bbl,40,45.9,0,44408,44561,6,36000
@@ -76,7 +80,7 @@ trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_mon
 44088,Fifth Third Bank,NGL,n-Butane,Swaps - Fixed Price,2021,Jan - Dec,294000,gal,0.53375,0,0,44227,44561,12,3528000
 44088,Fifth Third Bank,NGL,n-Butane,Swaps - Fixed Price,2020,Oct - Dec,294000,gal,0.53375,0,0,44135,44196,3,882000
 44088,Fifth Third Bank,NGL,iso-Butane,Swaps - Fixed Price,2021,Jan - Dec,84000,gal,0.555,0,0,44227,44561,12,1008000
-44088,Fifth Third Bank,NGL,iso-Butane,Swaps - Fixed Price,2020,Oct - Dec,84000,gal,0.555,0,0,44135,44196,3,252000
+44088,RBC Capital Markets,NGL,iso-Butane,Swaps - Fixed Price,2020,Oct - Dec,84000,gal,0.555,0,0,44135,44196,3,252000
 44088,RBC Capital Markets,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2021,Jan - Jun,336000,gal,0.82675,0,0,44227,44377,6,2016000
 44088,RBC Capital Markets,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2020,Oct - Dec,336000,gal,0.82675,0,0,44135,44196,3,1008000
 44085,Wells Fargo,Gas,Waha Diff,Swaps - Fixed Price,2021,Oct - Dec,60000,MMBtu,-0.29,0,0,44500,44561,3,180000
@@ -91,7 +95,7 @@ trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_mon
 44085,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2020,Nov - Dec,50000,MMBtu,2.5,4.61,0,44165,44196,2,100000
 44077,Fifth Third Bank,Oil,WTI,Swaps - Fixed Price,2022,Jan - Dec,4000,Bbl,45.15,0,0,44592,44926,12,48000
 44077,Fifth Third Bank,Oil,WTI,Swaps - Fixed Price,2021,Jul - Dec,4000,Bbl,45.15,0,0,44408,44561,6,24000
-44048,RBC Capital Markets,Gas,Waha Diff,Swaps - Fixed Price,2021,Apr - Dec,50000,MMBtu,-0.45,0,0,44316,44561,9,450000
+44048,RBC Capital Markets,Gas,Waha Diff,Swaps - Fixed Price,2021,Apr - Dec,100000,MMBtu,-0.45,0,0,44316,44561,9,900000
 44048,RBC Capital Markets,Gas,Waha Diff,Swaps - Fixed Price,2021,Jan - Mar,50000,MMBtu,-0.45,0,0,44227,44286,3,150000
 44033,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,3000,Bbl,35,52,0,44592,44926,12,36000
 44014,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jan - Dec,3000,Bbl,35,49,0,44592,44926,12,36000
@@ -131,7 +135,7 @@ trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_mon
 43833,Wells Fargo,Oil,WTI,Collars - 2-Way,2020,Jan - Dec,6000,Bbl,57,62.65,0,43861,44196,12,72000
 43829,RBC Capital Markets,Oil,WTI,Swaps - Fixed Price,2020,Jan - Jun,6000,Bbl,60.26,0,0,43861,44012,6,36000
 43819,ABN Amro,Gas,Waha Diff,Swaps - Fixed Price,2020,Jan - Dec,100000,MMBtu,-1.395,0,0,43861,44196,12,1200000
-43803,ABN Amro,Oil,WTI,Collars - 2-Way,2021,Jul - Sep,15000,Bbl,50,55,0,44408,44469,3,45000
+43803,Wells Fargo,Oil,WTI,Collars - 2-Way,2021,Jul - Sep,15000,Bbl,50,55,0,44408,44469,3,45000
 43802,Wells Fargo,Gas,Henry Hub,Swaps - Fixed Price,2021,Jul - Sep,85000,MMBtu,2.34,0,0,44408,44469,3,255000
 43802,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2021,Jan - Mar,100000,MMBtu,2.3,3.36,0,44227,44286,3,300000
 43802,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2021,Jan - Mar,15000,MMBtu,2.3,3.35,0,44227,44286,3,45000
