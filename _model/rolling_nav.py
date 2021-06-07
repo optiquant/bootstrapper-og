@@ -849,8 +849,8 @@ def save_master_outputs():
 
 def run_rolling_nav():
     print('\n| Rolling NAV module')
-    _q = input('\n>>> Run rolling NAV module? (Y/N)')
-    # _q = 'y'
+    # _q = input('\n>>> Run rolling NAV module? (Y/N)')
+    _q = 'y'
     if _q.lower() != 'n':
         initialize()
         calc_rolling_pv(for_currentPDP=True, for_newPDP=True)

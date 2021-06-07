@@ -1,14 +1,14 @@
 SUB-ASSET,Farmar,Munson,Foreland I,Ganador,Discovery,FORE ONLY,FORE FULL,Tracker,AMCo,ESTE,LeasingI,LeasingII
 PARENTCO,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA,PRO FORMA
 GENERAL MODEL DRIVERS, , , , , , , , , , , , 
-Run Model For Sub-Asset?,Yes,Yes,No,No,No,No,No,No,No,No,Yes,No
-Core Asset,Yes,No,No,No,No,No,No,No,No,No,No,No
+Run Model For Sub-Asset?,No,No,No,No,No,No,No,No,No,No,No,Yes
+Core Asset,No,No,No,No,No,No,No,No,No,No,No,Yes
 Main Asset Name,Farmar,Munson,Foreland I,Ganador,Discovery,Munson,Munson,Tracker,AMCo,ESTE,LeasingI,LeasingII
-Asset Active Date,43182,44075,44470,44470,44378,44044,43891,44287,44378,44197,44287,44470
-Generic Pad Order,2,3,3,1,1,3,3,1,2,1,1,2
+Asset Active Date,43182,44075,44470,44470,44378,44044,43891,44287,44378,44197,44287,44378
+Generic Pad Order,2,3,3,1,1,3,3,1,2,1,1,1
 Pads Completed In Sequence,1,-1,-1,2,2,-1,-1,3,1,2,3,1
-FIRST WELL IN GROUP,WANORECK A PU N131HM,Munson/Well 1,Munson/Well 1,Ganador/Well 1,Discovery/Well 1,Munson/Well 1,Munson/Well 1,Tracker/Well 1,AMCo/Well 1,ESTE/Well 1,LeasingI/Well 1,LeasingII/Well 1
-Dev Wells In Group (Rank 2 + 3),93,8,7,90,125,8,8,110,51,153,51,60
+FIRST WELL IN GROUP,WANORECK A PU N131HM,Munson/Well 1,Munson/Well 1,Ganador/Well 1,Discovery/Well 1,Munson/Well 1,Munson/Well 1,Tracker/Well 1,AMCo/Well 1,ESTE/Well 1,LeasingI/Well 1,LeasingII//Well 1
+Dev Wells In Group (Rank 2 + 3),93,8,7,90,125,8,8,110,51,153,51,32
 Annual SG&A ($k),6150,0,0,0,0,0,0,0,0,6000,0,0
 GAS / NGL DRIVERS, , , , , , , , , , , , 
 Gas Shrink,0.25,0.25,0.25,0.28,0.28,0.25,0.25,0.27,0.25,0.25,0.25,0.25
