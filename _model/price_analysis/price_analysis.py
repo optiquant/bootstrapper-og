@@ -502,6 +502,8 @@ def summary_stats_by_month_pair():
                          )
         print(f'\n| Summary stats for {month_pair}:\n{summary_stats[month_pair]}')
 
+        return summary_stats
+
 
 
 # calculate historical strip shapes
@@ -537,6 +539,7 @@ for pr_scen in price_scenarios:
     wgx[pr_scen] = {}
     for strip_month in strip_dates:
         if 'strip' in pr_scen.lower():
+            # component prices
             wgx_components = dict(model_prices.loc[strip_month, [get_comdty_name(c_nick) for c_nick in price_components]])
             # replace comdty names with c_nicks
             wgx_components = {get_comdty_nick(c_name, search_term_type='comdty_name'): v for c_name, v in wgx_components.items()}
@@ -552,11 +555,50 @@ for pr_scen in price_scenarios:
                                                      (wgx_components['iso_butane'] - t_and_f_per_ngl_gal) * gal_per_mcf['iso_butane'] + \
                                                      (wgx_components['nat_gasoline'] - t_and_f_per_ngl_gal) * gal_per_mcf['nat_gasoline']
         else:
-            # todo: build futures by price scenario july onwards
+            # placeholder for the MCS data
             wgx[pr_scen][string_date(strip_month)] = 0.0
 
 print(f'\n| WGX as of {string_date(trade_date)}: {wgx}')
 
+# re-sort month_pairs
+curr_month_pair = (np.mod(current_month.month, 12), np.mod(current_month.month, 12)+1)
+print(f'curr_month_pair: {curr_month_pair}')
+curr_month_pair_index = month_pairs.index(curr_month_pair)
+print(f'curr_month_pair_index: {curr_month_pair_index}')
+resorted_month_pairs = month_pairs[curr_month_pair_index:]+month_pairs[:curr_month_pair_index]
+print(f'resorted_month_pairs: {resorted_month_pairs}')
+
+wgx_components = {}
+for month_pair in resorted_month_pairs:
+    # todo: futures by price scenario --> build by month-pair, for current month-pair onwards
+    # get the component data for this month-pair
+    # note this object has a different structure >> values are dataframes of summary stats for all price scenarios
+    month_pair = f'{month_pair}'
+    wgx_components[month_pair] = {c_nick: pd.read_json(read_in_root[c_nick] + f'_{month_pair}.json') for c_nick in
+                                  price_components}
+
+print(wgx_components)
+#
+# # replace comdty names with c_nicks
+# wgx_components = {get_comdty_nick(c_name, search_term_type='comdty_name'): v for c_name, v in
+#                   wgx_components.items()}
+# print(f'| {string_date(strip_month)} >> {wgx_components}')
+#
+# # calculate WGX
+# # WGX = (hh + waha) * mmbtu-mcf-wet-gas conv + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
+# # the strip start / front month settle should be given.
+# wgx[pr_scen][string_date(strip_month)] = (wgx_components['hh'] + wgx_components[
+#     'waha_gas_diff']) / mmbtu_per_mcf_wet_gas + \
+#                                          (wgx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+#                                              'ethane'] + \
+#                                          (wgx_components['propane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+#                                              'propane'] + \
+#                                          (wgx_components['n_butane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+#                                              'n_butane'] + \
+#                                          (wgx_components['iso_butane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+#                                              'iso_butane'] + \
+#                                          (wgx_components['nat_gasoline'] - t_and_f_per_ngl_gal) * \
+#                                          gal_per_mcf['nat_gasoline']
 
 
 # overlay / compare with the strip

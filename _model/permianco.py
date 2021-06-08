@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import numpy as np
 import win32com.client as win32  # for outlook emailing
+import re
 
 pd.set_option('display.max_columns', None)
 
@@ -22,7 +23,7 @@ from kaleido.scopes.plotly import PlotlyScope
 local_filepath = r'C:\/Users\/vdesai\/Git\/bootstrapper-og\/bond-comps\/'
 network_filepath = r'\/FILE01\/TDrive\/Finance-Strategy\/PermianCo Credit Comps\/'
 
-local_filename = sorted(os.listdir(local_filepath))[-1]
+local_filename = sorted(filter(lambda x: ".csv" in x,os.listdir(local_filepath)))[-1]
 
 as_of_date = pd.to_datetime(local_filename.strip(".csv").split("-")[1])
 _q = input(f"\n| PermianCo bond comps updating as of >> {string_date(as_of_date)} >> Hit enter to continue.")
@@ -112,9 +113,11 @@ def load_bond_prices():
 # clean up bond prices
 def clean_up_bond_prices(bond_prices):
     # drop first row (info)
-    bond_prices.columns = [_.lower().strip().replace(" ", '_') for _ in bond_prices.columns]
+    bond_prices.columns = [_.lower().strip().replace(" ", '_').replace("-", "") for _ in bond_prices.columns]
     bond_prices.reset_index(inplace=True, drop=True)
+    # replace the nans in columns other than 'eom_amount_outstanding'
     bond_prices.fillna('nan', inplace=True)
+    bond_prices.loc[:, 'eom_amount_outstanding'] = [0.0 if _ == "nan" else _ for _ in bond_prices.loc[:, 'eom_amount_outstanding'].values]
     print(bond_prices.columns)
 
     dropped_indexes = []
@@ -659,5 +662,5 @@ def run_bond_comps():
 # ----------------------------------------------------# EXECUTION #----------------------------------------------------#
 # ---------------------------------------------------------------------------------------------------------------------#
 
-# run_bond_comps()
+run_bond_comps()
 
