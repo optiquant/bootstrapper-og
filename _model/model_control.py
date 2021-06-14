@@ -26,15 +26,15 @@ Attributes of model_control are of the following types:
 # ----------------------------------------------------------------------------------------------------------------------#
 
 modeled_wells_all = [
-    "MUNSON C N283HU",
-    "MUNSON C N284HM",
-    "MUNSON C N285HU",
-    "MUNSON C N286HM",
-    "MUNSON C N287HU",
-    "FARMAR CB PU N734HU",
-    "FARMAR CC PU N735HM",
-    "FARMAR CC PU N736HU",
-    "FARMAR CD PU N738HU",
+    # "MUNSON C N283HU",
+    # "MUNSON C N284HM",
+    # "MUNSON C N285HU",
+    # "MUNSON C N286HM",
+    # "MUNSON C N287HU",
+    # "FARMAR CB PU N734HU",
+    # "FARMAR CC PU N735HM",
+    # "FARMAR CC PU N736HU",
+    # "FARMAR CD PU N738HU",
     # "Foreland I DUC 1",
     # "Foreland I DUC 2",
     # "Foreland I DUC 3",
@@ -45,7 +45,11 @@ modeled_wells_all = [
     # "LeasingII//Well 1",
     # "LeasingII//Well 2",
     # "LeasingII//Well 3",
-    # "LeasingII//Well 4"
+    # "LeasingII//Well 4",
+    "MunsonLeasing//Well 1",
+    "MunsonLeasing//Well 2",
+    "MunsonLeasing//Well 3",
+    "MunsonLeasing//Well 4"
 ]
 
 
@@ -67,10 +71,10 @@ pdp_wells_with_remaining_capex = [
     # "MUNSON C S284HM",
     # "MUNSON C S285HU",
     # "MUNSON C S286HM",
-    "FARMAR DD S548HM",
-    "FARMAR DC S545HM",
-    "FARMAR DB S544HU",
-    "FARMAR DA S541HM",
+    # "FARMAR DD S548HM",
+    # "FARMAR DC S545HM",
+    # "FARMAR DB S544HU",
+    # "FARMAR DA S541HM",
 
 ]
 
@@ -78,6 +82,7 @@ pdp_wells_with_remaining_capex = [
 include_pdp_gas_marketing = {
     'Farmar': True,
     'Munson': True,
+    'MunsonLeasing': True,
     'Tracker': False,
     'AMCo': False,
     'LeasingI': False,
@@ -96,13 +101,15 @@ generic_well_count_by_sub_asset = {
     'LeasingI': 51, #0,
     'Ganador': 90,#90,
     'Foreland I': 0,
-    'LeasingII': 32,#60,
-    'Discovery': 125 #125
+    'LeasingII': 36,#60,
+    'Discovery': 125, #125
+    'MunsonLeasing': 32
 }
 # monthly driver tab codes for PDP input and historical financials
 driver_input_codes = {
     'Farmar': 0,
     'Munson': 1,
+    'MunsonLeasing': 3,
     'Tracker': 6,
     'AMCo': 7,
     'LeasingI': 8,
@@ -123,9 +130,9 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '5/28/21'
-flat_oil_scenario = False
-flat_gas_scenario = False
+strip_pricing_date = '6/9/21'
+flat_oil_scenario = True
+flat_gas_scenario = True
 
 model_months = 600
 chart_months = 24
@@ -366,7 +373,6 @@ def get_non_mcs_scenario_label():
             _non_mcs_scenario_label = f"Strip {strip_pricing_date}"
 
     return _non_mcs_scenario_label
-
 
 
 def initialize():

@@ -604,6 +604,8 @@ def midrange_color(med_color, lim_color, percentile=0.5, to_print=False):
 
 
 def hex_to_rgba(hex_color='#ffffff', a=None, values=True):
+    '''Returns RGB(A) equivalent for a hexadecimal color input. Set values=True to return a 3- or 4-tuple of RGB(A) values.
+    Set values=False to return the RGBA values in string format --> 'rgba(r, g, b, a)'. '''
     r, g, b = list(int(hex_color.lstrip('#')[i:i + 2], base=16) for i in (0, 2, 4))
     if a is not None:
         if not (values):
