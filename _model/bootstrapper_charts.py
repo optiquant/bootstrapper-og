@@ -31,10 +31,12 @@ _grid_color = hex_to_rgba('#dcdcdc', a=1.0, values=False)
 
 # other colors
 generic_bright_blue = hex_to_rgba('#488fff', a=1.0, values=True)
-generic_dark_blue = hex_to_rgba('#992088', a=1.0, values=True)
-generic_purple = hex_to_rgba('#d277e5', a=1.0, values=True)
+dark_magenta = hex_to_rgba('#992088', a=1.0, values=True)
+soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=True)
 generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=True)
 generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=True)
+light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
+
 
 bold_red = hex_to_rgba('#aa0000', a=1.0, values=True)
 bold_dark_green = hex_to_rgba('#005500', a=1.0, values=True)
@@ -66,15 +68,15 @@ ngl_colors = ChartColor(color_1=ngl_blue,
                         )
 generic_blues = ChartColor(color_1=generic_pale_blue,
                            color_2=generic_bright_blue,
-                           color_3=generic_dark_blue,
-                           color_4=generic_purple,
+                           color_3=dark_magenta,
+                           color_4=soft_magenta,
                            color_5=generic_pale_grey
                            )
-other_colors = ChartColor(color_1=pastel_orange,
-                          color_2=bold_orange,
-                          color_3=bold_red,
-                          color_4=generic_yellow,
-                          color_5=bold_dark_green
+other_colors = ChartColor(color_1=dark_magenta,
+                          color_2=generic_yellow,
+                          color_3=light_blue,
+                          color_4=pastel_orange,
+                          color_5=bold_orange
                           )
 
 
@@ -254,10 +256,10 @@ def bootstrapper_charts(chart_data_filepaths=[],
             print(chart_df)
 
             # colors for this chart
-            base_color = [v for k, v in chart_color_mapper.items() if any([_ in chart_name for _ in k])]
-            median_color = base_color[0].color_1
-            strip_color = base_color[0].color_3
-            limit_color = base_color[0].color_2
+            base_colors = [v for k, v in chart_color_mapper.items() if any([_ in chart_name for _ in k])][0]
+            median_color = base_colors.color_1
+            limit_color = base_colors.color_2
+            strip_color = base_colors.color_3
             print(f'| median_color: {median_color}\n| strip_color: {strip_color}\n| limit_color: {limit_color}')
             # x axis values. note: y values are defined in the for-loop for each data series below
             x_vals = [string_date(pd.to_datetime(_) - MonthBegin(1)) for _ in model_period[:len(chart_df.index)]]

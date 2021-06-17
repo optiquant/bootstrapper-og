@@ -26,15 +26,15 @@ Attributes of model_control are of the following types:
 # ----------------------------------------------------------------------------------------------------------------------#
 
 modeled_wells_all = [
-    # "MUNSON C N283HU",
-    # "MUNSON C N284HM",
-    # "MUNSON C N285HU",
-    # "MUNSON C N286HM",
-    # "MUNSON C N287HU",
-    # "FARMAR CB PU N734HU",
-    # "FARMAR CC PU N735HM",
-    # "FARMAR CC PU N736HU",
-    # "FARMAR CD PU N738HU",
+    "MUNSON C N283HU",
+    "MUNSON C N284HM",
+    "MUNSON C N285HU",
+    "MUNSON C N286HM",
+    "MUNSON C N287HU",
+    "FARMAR CB PU N734HU",
+    "FARMAR CC PU N735HM",
+    "FARMAR CC PU N736HU",
+    "FARMAR CD PU N738HU",
     # "Foreland I DUC 1",
     # "Foreland I DUC 2",
     # "Foreland I DUC 3",
@@ -46,10 +46,10 @@ modeled_wells_all = [
     # "LeasingII//Well 2",
     # "LeasingII//Well 3",
     # "LeasingII//Well 4",
-    "MunsonLeasing//Well 1",
-    "MunsonLeasing//Well 2",
-    "MunsonLeasing//Well 3",
-    "MunsonLeasing//Well 4"
+    # "MunsonLeasing//Well 1",
+    # "MunsonLeasing//Well 2",
+    # "MunsonLeasing//Well 3",
+    # "MunsonLeasing//Well 4"
 ]
 
 
@@ -71,10 +71,10 @@ pdp_wells_with_remaining_capex = [
     # "MUNSON C S284HM",
     # "MUNSON C S285HU",
     # "MUNSON C S286HM",
-    # "FARMAR DD S548HM",
-    # "FARMAR DC S545HM",
-    # "FARMAR DB S544HU",
-    # "FARMAR DA S541HM",
+    "FARMAR DD S548HM",
+    "FARMAR DC S545HM",
+    "FARMAR DB S544HU",
+    "FARMAR DA S541HM",
 
 ]
 
@@ -130,9 +130,9 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '6/9/21'
-flat_oil_scenario = True
-flat_gas_scenario = True
+strip_pricing_date = '6/15/21'
+flat_oil_scenario = False
+flat_gas_scenario = False
 
 model_months = 600
 chart_months = 24

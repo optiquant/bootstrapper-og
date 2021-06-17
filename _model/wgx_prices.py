@@ -21,6 +21,129 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
+
+'''Calculates the Wet Gas Price Index (WGX).'''
+
+trade_date = input('| Enter as of date for gas index update (m/d/yy) >> ')
+trade_date = pd.to_datetime(trade_date, utc=True)
+
+_whichindex = input('| Which index to calculate? Dry gas (D) / Wet Gas (W) / Vent Gas (V) >> ').lower()
+if _whichindex == 'd':
+    print('|-- Dry gas selected.')
+    c_nicks = ['hh', 'waha_gas_diff']
+else:
+    print('|-- Wet or vent gas selected.')
+    c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
+
+mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
+price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
+print(price_data_folders)
+
+# save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
+# save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
+save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
+root_folder = r'T:/Finance-Strategy/WGX/'
+
+default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
+convert_gal_to_mmbtu = False
+gal_mmbtu_conv_ratio = pr.get_conversion_ratios()['gal/mmbtu - energy']
+ngl_nicks = get_ngl_nicks()
+mcs_start_end_dates = pr.get_mcs_start_end_dates(sim_end=trade_date)
+
+
+error_log = []
+excluded_prices = {
+    'hh': [0.00],
+    'waha_gas_diff': [0.00],
+    'hsc_gas_diff': [0.00],
+    'ethane': [0.00],
+    'propane': [0.00],
+    'iso_butane': [0.00],
+    'n_butane': [0.00],
+    'nat_gasoline': [0.00]
+}
+
+# read in inputs
+gx_gas_sample_input_df = pd.read_excel(root_folder+"__GAS SAMPLE INPUT/gx_gas_sample_input.xlsx", sheet_name='input', index_col=[1])
+gx_gas_sample_input = dict(gx_gas_sample_input_df)
+print(gx_gas_sample_input)
+
+
+input_map = {
+    "Wet Gas BTU/CF": 'mmbtu_per_mcf_wet_gas',
+    "Tailgate BTU/CF": 'mmbtu_per_mcf_dry_gas',
+    "Ethane": None,
+    "Propane": None,
+    "Isobutane": None,
+    "Nor Butane": None,
+    "Nat Gasoline": None,
+    "Nat Gasoline": None,
+    "Hexanes": None
+}
+
+mmbtu_per_mcf_wet_gas = gx_gas_sample_input['value'].at['wet_gas_btu_cf']
+mmbtu_per_mcf_dry_gas = gx_gas_sample_input['value'].at['dry_gas_btu_cf']
+t_and_f_per_ngl_gal = gx_gas_sample_input['value'].at['ngl_tf_per_gal']
+
+# number of gallons per mcf
+gal_per_mcf = {
+    k: sum(v) for k, v in {'ethane': [gx_gas_sample_input['value'].at['c2']],
+                           'propane': [gx_gas_sample_input['value'].at['c3']],
+                           'n_butane': [gx_gas_sample_input['value'].at['nc4']],
+                           'iso_butane': [gx_gas_sample_input['value'].at['ic4']],
+                           'nat_gasoline': [gx_gas_sample_input['value'].at['ic5'],
+                                            gx_gas_sample_input['value'].at['nc5'],
+                                            gx_gas_sample_input['value'].at['c6']
+                                            ]
+                           }.items()
+}
+print(f'\n| gal_per_mcf >> {gal_per_mcf}')
+
+_1 = input('| Hit enter to continue if gas sample is ok >> ')
+gx_start_date = '1/1/2010'
+
+if _whichindex == 'd':
+    gx_c_nick = 'dgx'
+    gx_c_code = 'DGX'
+    gx_c_name = 'Dry Gas Index (DGX)'
+    gx_c_unit = '$/Mcf'
+
+elif _whichindex == 'w':
+    gx_c_nick = 'wgx'
+    gx_c_code = 'WGX'
+    gx_c_name = 'Wet Gas Index (WGX)'
+    gx_c_unit = '$/Mcf'
+
+elif _whichindex == 'v':
+    gx_c_nick = 'vgx'
+    gx_c_code = 'VGX'
+    gx_c_name = 'Vent Gas Index (VGX)'
+    gx_c_unit = '$/Mcf'
+
+
+
+# month pairs used to calculate price changes
+month_pairs = [(1, 2),
+               (2, 3),
+               (3, 4),
+               (4, 5),
+               (5, 6),
+               (6, 7),
+               (7, 8),
+               (8, 9),
+               (9, 10),
+               (10, 11),
+               (11, 12),
+               (12, 1)]
+
+# dict to store calculated historical settlement price deltas for each month-pair
+historical_month_deltas = {}
+
+
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------------- FUNCTIONS ----------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
 def extract_futures_by_index(future_months: int):
     '''Extracts the first future_months number of futures prices for the set of commodity indexes in c_nicks. Saves results to a csv file in the save_to_folder.
     Args:
@@ -255,35 +378,11 @@ def build_absolute_time_indexes(num_contract_months: int, summary_stats: dict):
         summary_stats[c_nick].to_csv(f'{save_to_folder}\\{filename}')
 
 
-# --- relative time index --- #
-# future_months = 24
-# error_log = []
-# summary_stats = {}
-# chart_data = {}
-#
-# extract_futures_by_index(future_months=future_months)
-# build_relative_time_indexes(future_months=future_months, summary_stats=summary_stats)
-
-
-# --- absolute time index --- #
-# # 12 contract months --> Jan - Dec
-# num_contract_months = 12
-# error_log = []
-# summary_stats = {}
-# chart_data = {}
-#
-# extract_futures_by_month(num_contract_months=num_contract_months)
-# build_absolute_time_indexes(num_contract_months=num_contract_months, summary_stats=summary_stats)
-
-
-# --- wet gas price index --- #
-
-
 def historical_strip_shape(commodity_list: list):
     for c_nick_index, c_nick in enumerate(commodity_list):
         # c_nick = c_nicks[3]
 
-        historical_date_range = [string_date(_) for _ in pd.date_range(start=wgx_start_date,
+        historical_date_range = [string_date(_) for _ in pd.date_range(start=gx_start_date,
                                                                        end=mcs_start_end_dates[c_nick].sim_end,
                                                                        freq='d',
                                                                        tz='UTC')]
@@ -442,38 +541,47 @@ def calc_wgx(summary_stats: dict):
 
     wgx = {}
 
+    if _whichindex == 'w' or _whichindex == 'v':
+        btu_adj = mmbtu_per_mcf_wet_gas
+    else:
+        btu_adj = mmbtu_per_mcf_dry_gas
+
     for pr_scen in price_scenarios:
         wgx[pr_scen] = {}
         for strip_month in strip_dates:
             if 'strip' in pr_scen.lower():
                 # component prices
-                wgx_components = dict(
-                    model_prices.loc[strip_month, [get_comdty_name(c_nick) for c_nick in price_components]])
+                gx_components = dict(
+                    model_prices.loc[strip_month, [get_comdty_name(c_nick) for c_nick in c_nicks]])
                 # replace comdty names with c_nicks
-                wgx_components = {get_comdty_nick(c_name, search_term_type='comdty_name'): v for c_name, v in
-                                  wgx_components.items()}
-                print(f'| {string_date(strip_month)} >> {wgx_components}')
+                gx_components = {get_comdty_nick(c_name, search_term_type='comdty_name'): v for c_name, v in
+                                  gx_components.items()}
+                print(f'| {string_date(strip_month)} >> {gx_components}')
 
                 # calculate WGX
                 # WGX = (hh + waha) * mmbtu-mcf-wet-gas conv + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
                 # the strip start / front month settle should be given.
-                wgx[pr_scen][string_date(strip_month)] = (wgx_components['hh'] + wgx_components[
-                    'waha_gas_diff']) / mmbtu_per_mcf_wet_gas + \
-                                                         (wgx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
-                                                             'ethane'] + \
-                                                         (wgx_components['propane'] - t_and_f_per_ngl_gal) * \
-                                                         gal_per_mcf[
-                                                             'propane'] + \
-                                                         (wgx_components['n_butane'] - t_and_f_per_ngl_gal) * \
-                                                         gal_per_mcf[
-                                                             'n_butane'] + \
-                                                         (wgx_components['iso_butane'] - t_and_f_per_ngl_gal) * \
-                                                         gal_per_mcf[
-                                                             'iso_butane'] + \
-                                                         (wgx_components['nat_gasoline'] - t_and_f_per_ngl_gal) * \
-                                                         gal_per_mcf['nat_gasoline']
+                wgx[pr_scen][string_date(strip_month)] = (gx_components['hh'] + gx_components[
+                    'waha_gas_diff']) * btu_adj
 
-    print(f'\n| WGX as of {string_date(trade_date)}: {wgx}')
+                if _whichindex != 'd':
+                    wgx[pr_scen][string_date(strip_month)] += (gx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+                                                                 'ethane'] + \
+                                                             (gx_components['propane'] - t_and_f_per_ngl_gal) * \
+                                                             gal_per_mcf[
+                                                                 'propane'] + \
+                                                             (gx_components['n_butane'] - t_and_f_per_ngl_gal) * \
+                                                             gal_per_mcf[
+                                                                 'n_butane'] + \
+                                                             (gx_components['iso_butane'] - t_and_f_per_ngl_gal) * \
+                                                             gal_per_mcf[
+                                                                 'iso_butane'] + \
+                                                             (gx_components['nat_gasoline'] - t_and_f_per_ngl_gal) * \
+                                                             gal_per_mcf['nat_gasoline']
+
+
+
+    print(f'\n| {gx_c_code} as of {string_date(trade_date)}: {wgx}')
 
     # re-sort month_pairs
     curr_month_pair = (np.mod(pd.to_datetime(strip_start).month, 12), np.mod(pd.to_datetime(strip_start).month, 12) + 1)
@@ -486,19 +594,19 @@ def calc_wgx(summary_stats: dict):
     # todo: futures by price scenario --> build by month-pair, for current month-pair onwards
     # get the component data for this month-pair
     # note this object has a different structure >> values are dataframes of summary stats for all price scenarios
-    print(f'| Reading WGX component statistics...')
-    wgx_components = {f'{month_pair}': {c_nick: summary_stats[f'{month_pair}'][c_nick] for c_nick in
-                                        price_components} for month_pair in resorted_month_pairs}
+    print(f'| Reading {gx_c_code} component statistics...')
+    gx_components = {f'{month_pair}': {c_nick: summary_stats[f'{month_pair}'][c_nick] for c_nick in
+                                        c_nicks} for month_pair in resorted_month_pairs}
 
-    print(wgx_components)
+    print(gx_components)
 
     # iterator for the strip months
     strip_contract_dates = [_ for _ in wgx[price_scenarios[0]]]
 
-    wgx_prices = pd.DataFrame(index=price_scenarios[1:], columns=strip_contract_dates).fillna(0.0)
+    gx_prices = pd.DataFrame(index=price_scenarios[1:], columns=strip_contract_dates).fillna(0.0)
     # set the initial month equal to the latest front month settlement price for WGX - for all price scenarios (as an anchor point)
     front_month_settle = wgx[price_scenarios[0]][strip_contract_dates[0]]
-    wgx_prices.at[:, strip_contract_dates[0]] = front_month_settle
+    gx_prices.at[:, strip_contract_dates[0]] = front_month_settle
 
     # populate the rest of the curve and price scenarios based on the latest front month settle
     for pr_scen in price_scenarios[1:]:
@@ -508,42 +616,44 @@ def calc_wgx(summary_stats: dict):
 
             _mpair = f'{(pd.to_datetime(contract).month, np.mod(pd.to_datetime(contract).month, 12) + 1)}'
             # calculate the WGX price scenarios for this strip month, anchoring to the prior
-            wgx_prices.at[pr_scen, contract] = wgx_prices.at[pr_scen, prior_month] + \
-                                                   (wgx_components[_mpair]['hh'].at[pr_scen, 'hh'] +
-                                                    wgx_components[_mpair]['waha_gas_diff'].at[
-                                                        pr_scen, 'waha_gas_diff']) / mmbtu_per_mcf_wet_gas + \
-                                                   (wgx_components[_mpair]['ethane'].at[pr_scen, 'ethane']) * \
+            gx_prices.at[pr_scen, contract] = gx_prices.at[pr_scen, prior_month] + (
+                    gx_components[_mpair]['hh'].at[pr_scen, 'hh'] +
+                    gx_components[_mpair]['waha_gas_diff'].at[pr_scen, 'waha_gas_diff']) * btu_adj
+
+            if _whichindex != 'd':
+                gx_prices.at[pr_scen, contract] += (gx_components[_mpair]['ethane'].at[pr_scen, 'ethane']) * \
                                                    gal_per_mcf['ethane'] + \
-                                                   (wgx_components[_mpair]['propane'].at[pr_scen, 'propane']) * \
+                                                   (gx_components[_mpair]['propane'].at[pr_scen, 'propane']) * \
                                                    gal_per_mcf['propane'] + \
-                                                   (wgx_components[_mpair]['n_butane'].at[pr_scen, 'n_butane']) * \
+                                                   (gx_components[_mpair]['n_butane'].at[pr_scen, 'n_butane']) * \
                                                    gal_per_mcf['n_butane'] + \
-                                                   (wgx_components[_mpair]['iso_butane'].at[pr_scen, 'iso_butane']) * \
+                                                   (gx_components[_mpair]['iso_butane'].at[pr_scen, 'iso_butane']) * \
                                                    gal_per_mcf['iso_butane'] + \
-                                                   (
-                                                   wgx_components[_mpair]['nat_gasoline'].at[pr_scen, 'nat_gasoline']) * \
+                                                   (gx_components[_mpair]['nat_gasoline'].at[pr_scen, 'nat_gasoline']) * \
                                                    gal_per_mcf['nat_gasoline']
 
+
+
     # append the strip
-    wgx_prices.loc[price_scenarios[0], strip_contract_dates] = [_ for _ in wgx[price_scenarios[0]].values()]
+    gx_prices.loc[price_scenarios[0], strip_contract_dates] = [_ for _ in wgx[price_scenarios[0]].values()]
 
-    print(f'\n| WGX simulated prices >>\n{wgx_prices}')
+    print(f'\n| {gx_c_code} simulated prices >>\n{gx_prices}')
 
-    wgx_prices = wgx_prices.transpose()
+    gx_prices = gx_prices.transpose()
 
-    save_to_excel(wgx_prices,
+    save_to_excel(gx_prices,
                   folder=save_to_folder,
-                  filename=f'wgx_sim_prices_{string_date(trade_date)}_fm_{strip_start.replace("/", "_")}-{strip_end.replace("/", "_")}.xlsx'
+                  filename=f'{gx_c_nick}_sim_prices_{string_date(trade_date)}_fm_{strip_start.replace("/", "_")}-{strip_end.replace("/", "_")}.xlsx'
                   )
 
-    return wgx_prices
+    return gx_prices
 
 
 def save_and_show(fig):
     # save and show figure
-    filename_html = f'wgx_prices_{string_date(trade_date)}.html'
-    filename_png = f'wgx_prices_{string_date(trade_date)}.png'
-    filename_pdf = f'wgx_prices_{string_date(trade_date)}.pdf'
+    filename_html = f'{gx_c_nick}_prices_{string_date(trade_date)}.html'
+    filename_png = f'{gx_c_nick}_prices_{string_date(trade_date)}.png'
+    filename_pdf = f'{gx_c_nick}_prices_{string_date(trade_date)}.pdf'
 
     network_folder = save_to_folder
 
@@ -559,124 +669,33 @@ def save_and_show(fig):
     # show fig
     fig.show()
 
-'''Calculates the Wet Gas Price Index (WGX).'''
 
-trade_date = input('| Enter as of date for WGX update (m/d/yy) >> ')
-trade_date = pd.to_datetime(trade_date, utc=True)
+#----------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------------- EXECUTION ----------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
 
-c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
-mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
-price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
-print(price_data_folders)
-
-# save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
-# save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
-save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
-root_folder = r'T:/Finance-Strategy/WGX/'
-
-default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
-convert_gal_to_mmbtu = False
-gal_mmbtu_conv_ratio = pr.get_conversion_ratios()['gal/mmbtu - energy']
-ngl_nicks = get_ngl_nicks()
-mcs_start_end_dates = pr.get_mcs_start_end_dates(sim_end=trade_date)
+# --- relative time index --- #
+# future_months = 24
+# error_log = []
+# summary_stats = {}
+# chart_data = {}
+#
+# extract_futures_by_index(future_months=future_months)
+# build_relative_time_indexes(future_months=future_months, summary_stats=summary_stats)
 
 
-error_log = []
-excluded_prices = {
-    'hh': [0.00],
-    'waha_gas_diff': [0.00],
-    'hsc_gas_diff': [0.00],
-    'ethane': [0.00],
-    'propane': [0.00],
-    'iso_butane': [0.00],
-    'n_butane': [0.00],
-    'nat_gasoline': [0.00]
-}
-
-# read in inputs
-wgx_gas_sample_input_df = pd.read_excel(root_folder+"__GAS SAMPLE INPUT/wgx_gas_sample_input.xlsx", sheet_name='input', index_col=[1])
-wgx_gas_sample_input = dict(wgx_gas_sample_input_df)
-print(wgx_gas_sample_input)
+# --- absolute time index --- #
+# # 12 contract months --> Jan - Dec
+# num_contract_months = 12
+# error_log = []
+# summary_stats = {}
+# chart_data = {}
+#
+# extract_futures_by_month(num_contract_months=num_contract_months)
+# build_absolute_time_indexes(num_contract_months=num_contract_months, summary_stats=summary_stats)
 
 
-input_map = {
-    "Wet Gas BTU/CF": 'mmbtu_per_mcf_wet_gas',
-    "Tailgate BTU/CF": 'mmbtu_per_mcf_dry_gas',
-    "Ethane": None,
-    "Propane": None,
-    "Isobutane": None,
-    "Nor Butane": None,
-    "Nat Gasoline": None,
-    "Nat Gasoline": None,
-    "Hexanes": None
-}
-
-mmbtu_per_mcf_wet_gas = wgx_gas_sample_input['value'].at['wet_gas_btu_cf']
-mmbtu_per_mcf_dry_gas = wgx_gas_sample_input['value'].at['dry_gas_btu_cf']
-t_and_f_per_ngl_gal = wgx_gas_sample_input['value'].at['ngl_tf_per_gal']
-
-# number of gallons per mcf
-gal_per_mcf = {
-    k: sum(v) for k, v in {'ethane': [wgx_gas_sample_input['value'].at['c2']],
-                           'propane': [wgx_gas_sample_input['value'].at['c3']],
-                           'n_butane': [wgx_gas_sample_input['value'].at['nc4']],
-                           'iso_butane': [wgx_gas_sample_input['value'].at['ic4']],
-                           'nat_gasoline': [wgx_gas_sample_input['value'].at['ic5'],
-                                            wgx_gas_sample_input['value'].at['nc5'],
-                                            wgx_gas_sample_input['value'].at['c6']
-                                            ]
-                           }.items()
-}
-print(f'\n| gal_per_mcf >> {gal_per_mcf}')
-
-_1 = input('| Hit enter to continue if gas sample is ok >> ')
-wgx_start_date = '1/1/2010'
-
-# for each trade date, calculate the wet gas price
-price_components = {
-    'hh': None,
-    'waha_gas_diff': None,
-    'ethane': None,
-    'propane': None,
-    'n_butane': None,
-    'iso_butane': None,
-    'nat_gasoline': None,
-}
-
-wet_gas_price = {
-    'comdty_code': {},
-    'comdty_desc': {},
-    'trade_date': {},
-    'contract_date': {},
-    'contract_year': {},
-    'contract_mth': {},
-    'settle_price': {},
-    'open_interest': {},
-    'volume': {},
-    'last_trade_date': {},
-}
-
-wgx_c_nick = 'wgx'
-wgx_c_code = 'WGX'
-wgx_c_name = 'Wet Gas Index (WGX)'
-wgx_c_unit = '$/Mcf'
-
-# month pairs used to calculate price changes
-month_pairs = [(1, 2),
-               (2, 3),
-               (3, 4),
-               (4, 5),
-               (5, 6),
-               (6, 7),
-               (7, 8),
-               (8, 9),
-               (9, 10),
-               (10, 11),
-               (11, 12),
-               (12, 1)]
-
-# dict to store calculated historical settlement price deltas for each month-pair
-historical_month_deltas = {}
+# --- seasonal index --- #
 
 # calculate historical strip shapes
 historical_strip_shape(commodity_list=c_nicks)
@@ -685,11 +704,14 @@ historical_strip_shape(commodity_list=c_nicks)
 summary_stats = summary_stats_by_month_pair()
 
 # calc WGX
-wgx_prices = calc_wgx(summary_stats)
+gx_prices = calc_wgx(summary_stats)
 
+
+#----------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------- CHARTS ------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
 
 # make charts with legends
-# todo: show the WGX futures curve with statistical spread - annotate with the gas sample composition
 fig = make_subplots(
     rows=2,
     cols=1,
@@ -726,14 +748,14 @@ other_colors = ChartColor(color_1=pastel_orange,
                           color_5=bold_dark_green
                           )
 
-for pr_scen in wgx_prices.columns:
+for pr_scen in gx_prices.columns:
     try:
         pr_scen_float = float(pr_scen.strip('%'))/100
     except ValueError:
         pr_scen_float = pr_scen
 
-    _y = [_ for _ in wgx_prices.loc[:, pr_scen].values]
-    _x = [string_date(pd.to_datetime(_, utc=True)+MonthEnd(-1)+Day(1)) for _ in wgx_prices.index]
+    _y = [_ for _ in gx_prices.loc[:, pr_scen].values]
+    _x = [string_date(pd.to_datetime(_, utc=True)+MonthEnd(-1)+Day(1)) for _ in gx_prices.index]
     _mode = ['lines+markers' if pr_scen_float in [pr_scen, 0.5, 0.25, 0.75] else
              'markers'][0]
     _markercolor = [base_colors.color_2 if pr_scen_float == pr_scen else
@@ -757,7 +779,7 @@ for pr_scen in wgx_prices.columns:
     chart_data[pr_scen] = go.Scattergl(
         y=_y,
         x=_x,
-        name=f'WGX | {pr_scen}',
+        name=f'{gx_c_code} | {pr_scen}',
         mode=_mode,
         marker=dict(color=_markercolor,
                     size=_markersize,
@@ -821,7 +843,7 @@ fig.update_xaxes(dict(title_text=f'Futures Contract',
                  row=1,
                  col=1)
 # Update yaxis properties
-fig.update_yaxes(dict(title_text=f'{wgx_c_code} | {wgx_c_unit}',
+fig.update_yaxes(dict(title_text=f'{gx_c_code} | {gx_c_unit}',
                       tickformat=',.2f',
                       nticks=20,
                       tickfont_size=_font_size,
@@ -834,7 +856,7 @@ fig.update_yaxes(dict(title_text=f'{wgx_c_code} | {wgx_c_unit}',
 
 _width = 1500
 _height = 1250
-fig.update_layout(title=f'{wgx_c_name} Futures | As of {string_date(trade_date)}',
+fig.update_layout(title=f'{gx_c_name} Futures | As of {string_date(trade_date)}',
                   plot_bgcolor='rgba(255,255,255,1.0)',
                   width=_width,
                   height=_height,
@@ -849,12 +871,12 @@ fig.update_layout(title=f'{wgx_c_name} Futures | As of {string_date(trade_date)}
 
 
 # add a gas composition table as chart #2
-print(wgx_gas_sample_input_df)
-chart_df = wgx_gas_sample_input_df.reset_index()
+print(gx_gas_sample_input_df)
+chart_df = gx_gas_sample_input_df.reset_index()
 chart_df = chart_df[['metric', 'id', 'unit', 'value']]
 num_columns = len(chart_df.columns)
 chart_df.rename(columns={'id': 'ID',
-                         'metric': 'WGX Component',
+                         'metric': f'{gx_c_code} Component',
                          'unit': 'Unit',
                          'value': 'Value'}, inplace=True)
 column_alignment = ['left'] + ['center'] * (num_columns - 1)
