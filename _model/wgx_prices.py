@@ -523,8 +523,10 @@ def calc_wgx(summary_stats: dict):
     # }
     # print(read_in_root)
 
-    model_prices = pd.read_excel('T:/Finance-Strategy/daily_price_updates/TCR - Model Prices.xlsx',
-                                 parse_dates=True, index_col=[1])
+    # model_prices = pd.read_excel('T:/Finance-Strategy/daily_price_updates/TCR - Model Prices.xlsx',
+    #                              parse_dates=True, index_col=[1])
+
+    model_prices = pr.get_model_prices(strip_pricing_date=string_date(trade_date), start_date=string_date('7/31/20'))
     print(model_prices)
 
     # get the WGX price components for the front month
@@ -562,7 +564,7 @@ def calc_wgx(summary_stats: dict):
                 # WGX = (hh + waha) * mmbtu-mcf-wet-gas conv + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
                 # the strip start / front month settle should be given.
                 wgx[pr_scen][string_date(strip_month)] = (gx_components['hh'] + gx_components[
-                    'waha_gas_diff']) * btu_adj
+                    'waha_gas_diff']) / btu_adj
 
                 if _whichindex != 'd':
                     wgx[pr_scen][string_date(strip_month)] += (gx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
@@ -618,7 +620,7 @@ def calc_wgx(summary_stats: dict):
             # calculate the WGX price scenarios for this strip month, anchoring to the prior
             gx_prices.at[pr_scen, contract] = gx_prices.at[pr_scen, prior_month] + (
                     gx_components[_mpair]['hh'].at[pr_scen, 'hh'] +
-                    gx_components[_mpair]['waha_gas_diff'].at[pr_scen, 'waha_gas_diff']) * btu_adj
+                    gx_components[_mpair]['waha_gas_diff'].at[pr_scen, 'waha_gas_diff']) / btu_adj
 
             if _whichindex != 'd':
                 gx_prices.at[pr_scen, contract] += (gx_components[_mpair]['ethane'].at[pr_scen, 'ethane']) * \
