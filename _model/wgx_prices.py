@@ -651,6 +651,11 @@ def calc_wgx(summary_stats: dict):
     return gx_prices
 
 
+#----------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------- CHARTS ------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------#
+
+
 def save_and_show(fig):
     # save and show figure
     filename_html = f'{gx_c_nick}_prices_{string_date(trade_date)}.html'
@@ -670,6 +675,197 @@ def save_and_show(fig):
 
     # show fig
     fig.show()
+
+
+def make_charts():
+    # make charts with legends
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        horizontal_spacing=0.1,
+        vertical_spacing=0.12,
+        specs=[[{"type": "xy"}], [{"type": "table"}]]
+    )
+
+    chart_data = {}
+
+    # colors
+    light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
+    dark_magenta = hex_to_rgba('#992088', a=1.0, values=False)
+    soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=False)
+    generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=False)
+    generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=False)
+    bold_red = hex_to_rgba('#aa0000', a=1.0, values=False)
+    bold_dark_green = hex_to_rgba('#005500', a=1.0, values=False)
+    pastel_orange = hex_to_rgba('#e39f58', a=1.0, values=False)
+    bold_orange = hex_to_rgba('#ff8202', a=1.0, values=False)
+    generic_yellow = hex_to_rgba('#ffc332', a=1.0, values=False)
+    ChartColor = namedtuple('ChartColor', ['color_1', 'color_2', 'color_3', 'color_4', 'color_5'])
+    base_colors = ChartColor(color_1=generic_pale_blue,
+                             color_2=light_blue,
+                             color_3=dark_magenta,
+                             color_4=soft_magenta,
+                             color_5=generic_pale_grey
+                             )
+    other_colors = ChartColor(color_1=pastel_orange,
+                              color_2=bold_orange,
+                              color_3=bold_red,
+                              color_4=generic_yellow,
+                              color_5=bold_dark_green
+                              )
+
+    for pr_scen in gx_prices.columns:
+        try:
+            pr_scen_float = float(pr_scen.strip('%')) / 100
+        except ValueError:
+            pr_scen_float = pr_scen
+
+        _y = [_ for _ in gx_prices.loc[:, pr_scen].values]
+        _x = [string_date(pd.to_datetime(_, utc=True) + MonthEnd(-1) + Day(1)) for _ in gx_prices.index]
+        _mode = ['lines+markers' if pr_scen_float in [pr_scen, 0.5, 0.25, 0.75] else
+                 'markers'][0]
+        _markercolor = [base_colors.color_2 if pr_scen_float == pr_scen else
+                        base_colors.color_3 if pr_scen_float == 0.5 else
+                        other_colors.color_2 if pr_scen_float in [0.25, 0.75] else
+                        other_colors.color_1 if pr_scen_float in [0.10, 0.90] else
+                        other_colors.color_4][0]
+        _markersize = [11 if pr_scen_float in [pr_scen, 0.5] else
+                       10 if pr_scen_float in [0.25, 0.75] else
+                       8][0]
+        _markersymbol = ['circle-dot' if pr_scen_float in [pr_scen, 0.5] else
+                         'triangle-down' if pr_scen_float < 0.50 else
+                         'triangle-up'
+                         ][0]
+        _line_width = 2.0
+        _dash_dot = ['dash' if pr_scen_float in [0.50, 0.25, 0.75] else
+                     None][0]
+        _font_size = 12
+
+        chart_data[pr_scen] = go.Scattergl(
+            y=_y,
+            x=_x,
+            name=f'{gx_c_code} | {pr_scen}',
+            mode=_mode,
+            marker=dict(color=_markercolor,
+                        size=_markersize,
+                        symbol=_markersymbol
+                        ),
+            line=dict(width=_line_width,
+                      dash=_dash_dot,
+                      color=_markercolor),
+            text=[f' {_:,.2f}' for idx, _ in enumerate(_y)],  # alternating: if np.mod(idx,2) == 0 else ''
+            textposition=['top center' if np.mod(idx, 2) == 0 else 'bottom center' for idx, _ in
+                          enumerate(_y)],
+            textfont_size=_font_size,
+            textfont_color=_markercolor,
+            textfont_family='sans-serif'
+        )
+
+    for pr_scen, series in chart_data.items():
+        fig.add_trace(series, row=1, col=1)
+
+        # add annotations for strip pricing
+        if 'Strip' in series['name']:
+            for idx, x in enumerate(series['x']):
+                y = series['y'][idx]
+                num_format = f'{y: ,.2f}'
+                # if this is a leverage chart, make it 0.00x
+                print(f'| Strip annotations: x = {x}, y = {y}')
+                fig.add_annotation(
+                    x=x,
+                    y=y,
+                    xref="x",
+                    yref="y",
+                    text=num_format,
+                    showarrow=True,
+                    font=dict(
+                        family="sans-serif",
+                        size=_font_size + 1,
+                        color=series['marker']['color']
+                    ),
+                    align="center",
+                    arrowhead=None,
+                    arrowsize=1,
+                    arrowwidth=1,
+                    arrowcolor=series['marker']['color'],
+                    ax=0 if np.mod(idx, 2) == 0 else 0,
+                    ay=-25 if np.mod(idx, 2) == 0 else 25,
+                    bordercolor=None,
+                    borderwidth=None,
+                    borderpad=1,
+                    bgcolor='white',
+                    opacity=1.00,
+                    row=1,
+                    col=1
+                )
+
+    # Update xaxis properties
+    fig.update_xaxes(dict(title_text=f'Futures Contract',
+                          nticks=25,
+                          tickangle=-45,
+                          tickfont_size=_font_size,
+                          gridcolor='rgba(175,175,175,0.75)'),
+                     row=1,
+                     col=1)
+    # Update yaxis properties
+    fig.update_yaxes(dict(title_text=f'{gx_c_code} | {gx_c_unit}',
+                          tickformat=',.2f',
+                          nticks=20,
+                          tickfont_size=_font_size,
+                          linecolor='rgba(100,100,100,0.75)',
+                          zeroline=True,
+                          zerolinecolor='rgba(80,80,80,0.75)',
+                          gridcolor='rgba(200,200,200,0.75)'),
+                     row=1,
+                     col=1)
+
+    _width = 1500
+    _height = 1250
+    fig.update_layout(title=f'{gx_c_name} Futures | As of {string_date(trade_date)}',
+                      plot_bgcolor='rgba(255,255,255,1.0)',
+                      width=_width,
+                      height=_height,
+                      showlegend=True,
+                      legend=dict(title_text=None,  # 'Percentile Outcomes',
+                                  orientation='v',
+                                  y=1.00,
+                                  x=1.01,
+                                  font_size=_font_size)
+                      )
+
+    # add a gas composition table as chart #2
+    print(gx_gas_sample_input_df)
+    chart_df = gx_gas_sample_input_df.reset_index()
+    chart_df = chart_df[['metric', 'id', 'unit', 'value']]
+    num_columns = len(chart_df.columns)
+    chart_df.rename(columns={'id': 'ID',
+                             'metric': f'{gx_c_code} Component',
+                             'unit': 'Unit',
+                             'value': 'Value'}, inplace=True)
+    column_alignment = ['left'] + ['center'] * (num_columns - 1)
+    column_font_colors = ['rgb(40,40,40)'] * (num_columns)
+    component_table = go.Table(
+        header=dict(values=[_ for _ in chart_df.columns],
+                    font=dict(color=hex_to_rgba('#bc50aa', a=1.0, values=False),
+                              size=_font_size),
+                    line_color='rgba(200,200,200,0.75)',
+                    fill_color='white',
+                    height=28,
+                    align=column_alignment),
+        cells=dict(values=[chart_df.loc[:, _].tolist() for _ in chart_df.columns],
+                   align=column_alignment,
+                   line=dict(color='rgba(200,200,200,0.75)'),
+                   font=dict(color=column_font_colors,
+                             size=_font_size),
+                   format=[None] * (num_columns - 1) + [",.3f"],
+                   # prefix = [None] + ['$'] *2,
+                   # suffix=[None] * 4,
+                   height=28,
+                   fill=dict(color=['rgba(245,245,245, 1.00)'] + ['white'] * (num_columns - 1))))
+    fig.add_trace(component_table, row=2, col=1)
+
+    save_and_show(fig)
+
 
 
 #----------------------------------------------------------------------------------------------------------------------#
@@ -707,205 +903,3 @@ summary_stats = summary_stats_by_month_pair()
 
 # calc WGX
 gx_prices = calc_wgx(summary_stats)
-
-
-#----------------------------------------------------------------------------------------------------------------------#
-#-------------------------------------------------- CHARTS ------------------------------------------------------------#
-#----------------------------------------------------------------------------------------------------------------------#
-
-# make charts with legends
-fig = make_subplots(
-    rows=2,
-    cols=1,
-    horizontal_spacing=0.1,
-    vertical_spacing=0.12,
-    specs=[[{"type": "xy"}], [{"type": "table"}]]
-)
-
-
-chart_data = {}
-
-# colors
-light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
-dark_magenta = hex_to_rgba('#992088', a=1.0, values=False)
-soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=False)
-generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=False)
-generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=False)
-bold_red = hex_to_rgba('#aa0000', a=1.0, values=False)
-bold_dark_green = hex_to_rgba('#005500', a=1.0, values=False)
-pastel_orange = hex_to_rgba('#e39f58', a=1.0, values=False)
-bold_orange = hex_to_rgba('#ff8202', a=1.0, values=False)
-generic_yellow = hex_to_rgba('#ffc332', a=1.0, values=False)
-ChartColor = namedtuple('ChartColor', ['color_1', 'color_2', 'color_3', 'color_4', 'color_5'])
-base_colors = ChartColor(color_1=generic_pale_blue,
-                         color_2=light_blue,
-                         color_3=dark_magenta,
-                         color_4=soft_magenta,
-                         color_5=generic_pale_grey
-                         )
-other_colors = ChartColor(color_1=pastel_orange,
-                          color_2=bold_orange,
-                          color_3=bold_red,
-                          color_4=generic_yellow,
-                          color_5=bold_dark_green
-                          )
-
-for pr_scen in gx_prices.columns:
-    try:
-        pr_scen_float = float(pr_scen.strip('%'))/100
-    except ValueError:
-        pr_scen_float = pr_scen
-
-    _y = [_ for _ in gx_prices.loc[:, pr_scen].values]
-    _x = [string_date(pd.to_datetime(_, utc=True)+MonthEnd(-1)+Day(1)) for _ in gx_prices.index]
-    _mode = ['lines+markers' if pr_scen_float in [pr_scen, 0.5, 0.25, 0.75] else
-             'markers'][0]
-    _markercolor = [base_colors.color_2 if pr_scen_float == pr_scen else
-                    base_colors.color_3 if pr_scen_float == 0.5 else
-                    other_colors.color_2 if pr_scen_float in [0.25, 0.75] else
-                    other_colors.color_1 if pr_scen_float in [0.10, 0.90] else
-                    other_colors.color_4][0]
-    _markersize = [11 if pr_scen_float in [pr_scen, 0.5] else
-                   10 if pr_scen_float in [0.25, 0.75] else
-                   8][0]
-    _markersymbol = ['circle-dot' if pr_scen_float in [pr_scen, 0.5] else
-                     'triangle-down' if pr_scen_float < 0.50 else
-                     'triangle-up'
-                     ][0]
-    _line_width = 2.0
-    _dash_dot = ['dash' if pr_scen_float in [0.50, 0.25, 0.75] else
-                 None][0]
-    _font_size = 12
-
-
-    chart_data[pr_scen] = go.Scattergl(
-        y=_y,
-        x=_x,
-        name=f'{gx_c_code} | {pr_scen}',
-        mode=_mode,
-        marker=dict(color=_markercolor,
-                    size=_markersize,
-                    symbol=_markersymbol
-                    ),
-        line=dict(width=_line_width,
-                  dash=_dash_dot,
-                  color=_markercolor),
-        text=[f' {_:,.2f}' for idx, _ in enumerate(_y)],  # alternating: if np.mod(idx,2) == 0 else ''
-        textposition=['top center' if np.mod(idx, 2) == 0 else 'bottom center' for idx, _ in
-                      enumerate(_y)],
-        textfont_size=_font_size,
-        textfont_color=_markercolor,
-        textfont_family='sans-serif'
-    )
-
-for pr_scen, series in chart_data.items():
-    fig.add_trace(series, row=1, col=1)
-
-    # add annotations for strip pricing
-    if 'Strip' in series['name']:
-        for idx, x in enumerate(series['x']):
-            y = series['y'][idx]
-            num_format = f'{y: ,.2f}'
-            # if this is a leverage chart, make it 0.00x
-            print(f'| Strip annotations: x = {x}, y = {y}')
-            fig.add_annotation(
-                x=x,
-                y=y,
-                xref="x",
-                yref="y",
-                text=num_format,
-                showarrow=True,
-                font=dict(
-                    family="sans-serif",
-                    size=_font_size + 1,
-                    color=series['marker']['color']
-                ),
-                align="center",
-                arrowhead=None,
-                arrowsize=1,
-                arrowwidth=1,
-                arrowcolor=series['marker']['color'],
-                ax=0 if np.mod(idx, 2) == 0 else 0,
-                ay=-25 if np.mod(idx, 2) == 0 else 25,
-                bordercolor=None,
-                borderwidth=None,
-                borderpad=1,
-                bgcolor='white',
-                opacity=1.00,
-                row=1,
-                col=1
-            )
-
-# Update xaxis properties
-fig.update_xaxes(dict(title_text=f'Futures Contract',
-                      nticks=25,
-                      tickangle=-45,
-                      tickfont_size=_font_size,
-                      gridcolor='rgba(175,175,175,0.75)'),
-                 row=1,
-                 col=1)
-# Update yaxis properties
-fig.update_yaxes(dict(title_text=f'{gx_c_code} | {gx_c_unit}',
-                      tickformat=',.2f',
-                      nticks=20,
-                      tickfont_size=_font_size,
-                      linecolor='rgba(100,100,100,0.75)',
-                      zeroline=True,
-                      zerolinecolor='rgba(80,80,80,0.75)',
-                      gridcolor='rgba(200,200,200,0.75)'),
-                 row=1,
-                 col=1)
-
-_width = 1500
-_height = 1250
-fig.update_layout(title=f'{gx_c_name} Futures | As of {string_date(trade_date)}',
-                  plot_bgcolor='rgba(255,255,255,1.0)',
-                  width=_width,
-                  height=_height,
-                  showlegend=True,
-                  legend=dict(title_text=None,  # 'Percentile Outcomes',
-                              orientation='v',
-                              y=1.00,
-                              x=1.01,
-                              font_size=_font_size)
-                  )
-
-
-
-# add a gas composition table as chart #2
-print(gx_gas_sample_input_df)
-chart_df = gx_gas_sample_input_df.reset_index()
-chart_df = chart_df[['metric', 'id', 'unit', 'value']]
-num_columns = len(chart_df.columns)
-chart_df.rename(columns={'id': 'ID',
-                         'metric': f'{gx_c_code} Component',
-                         'unit': 'Unit',
-                         'value': 'Value'}, inplace=True)
-column_alignment = ['left'] + ['center'] * (num_columns - 1)
-column_font_colors = ['rgb(40,40,40)'] * (num_columns)
-component_table = go.Table(
-    header=dict(values=[_ for _ in chart_df.columns],
-                font=dict(color=hex_to_rgba('#bc50aa', a=1.0, values=False),
-                          size=_font_size),
-                line_color='rgba(200,200,200,0.75)',
-                fill_color='white',
-                height=28,
-                align=column_alignment),
-    cells=dict(values=[chart_df.loc[:, _].tolist() for _ in chart_df.columns],
-               align=column_alignment,
-               line=dict(color='rgba(200,200,200,0.75)'),
-               font=dict(color=column_font_colors,
-                         size=_font_size),
-               format=[None] * (num_columns - 1) + [",.3f"],
-               # prefix = [None] + ['$'] *2,
-               # suffix=[None] * 4,
-               height=28,
-               fill=dict(color=['rgba(245,245,245, 1.00)'] + ['white'] * (num_columns - 1))))
-fig.add_trace(component_table, row=2, col=1)
-
-save_and_show(fig)
-
-
-# todo: show charts of each of the component month deltas - annotate the summary stats for each month delta for each component
-# todo: start tracking a histogram of the front month settlement for WGX(this may take a while, but will only need to be done once)
-# todo: build a heatmap for WGX and show historical statistics
