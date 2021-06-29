@@ -590,13 +590,14 @@ def load_capex_detail(_well_name: str):
         _capex_col = capex_category_input_map[cat]['capex_amt_col_name']
         _amount_k = dnc_capex_drivers[_capex_col][
             dnc_capex_drivers['CAPEX SCENARIO'] == _scenario
-            ].values[0]
+            ].values[0]*well_drivers['wi_pct']
 
         # add on incremental costs to _amount_k if category is "spud_drilling" or "frac"
         if _capex_category in increm_per_ft_capex:
             _increm_capex_col = increm_per_ft_capex[_capex_category]
             increm_total = dnc_capex_drivers[_increm_capex_col][
-                               dnc_capex_drivers['CAPEX SCENARIO'] == _scenario].values[0] * increm_ll / 1000
+                               dnc_capex_drivers['CAPEX SCENARIO'] == _scenario
+                               ].values[0] * increm_ll / 1000*well_drivers['wi_pct']
         else:
             increm_total = 0.0
         # add to _amount_k
@@ -670,6 +671,7 @@ def calc_capex():
         capex_facilities_k=filler_boots_df.copy(deep=True),
         capex_total_all_k=filler_boots_df.copy(deep=True),
     )
+
 
     # parse capex amounts and pay dates by category into model format
     # loop through raw capex categories (will match keys of capex_category_input_map)

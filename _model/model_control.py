@@ -31,10 +31,18 @@ modeled_wells_all = [
     "MUNSON C N285HU",
     "MUNSON C N286HM",
     "MUNSON C N287HU",
-    "FARMAR CB PU N734HU",
-    "FARMAR CC PU N735HM",
-    "FARMAR CC PU N736HU",
-    "FARMAR CD PU N738HU",
+    "MUNSON #1H",
+    "MUNSON #2H",
+    "MUNSON #3H",
+    "MUNSON #4H",
+    "MUNSON #5H",
+    "MUNSON #6H",
+    "MUNSON #7H",
+    "MUNSON #8H"
+    # "FARMAR CB PU N734HU",
+    # "FARMAR CC PU N735HM",
+    # "FARMAR CC PU N736HU",
+    # "FARMAR CD PU N738HU",
     # "Foreland I DUC 1",
     # "Foreland I DUC 2",
     # "Foreland I DUC 3",
@@ -130,7 +138,7 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '6/15/21'
+strip_pricing_date = '6/28/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 

@@ -35,7 +35,7 @@ dark_magenta = hex_to_rgba('#992088', a=1.0, values=True)
 soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=True)
 generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=True)
 generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=True)
-light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
+light_blue = hex_to_rgba('#488fff', a=1.0, values=True)
 
 
 bold_red = hex_to_rgba('#aa0000', a=1.0, values=True)
