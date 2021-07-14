@@ -473,7 +473,6 @@ def calc_newPDP_rolling_nav(subasset):
         "Capex - Facilities ($k)": 'frac_end'
     }
 
-
     # data frame for total rolling newPDP pv-x at the subasset level
     newPDP_rolling_pv_for_subasset = pd.DataFrame().reindex_like([_ for _ in net_realized_prices.values()][0]).fillna(0)
 
@@ -698,8 +697,8 @@ def calc_newPDP_rolling_nav(subasset):
             newPDP_net_cash_flow[col] -= newPDP_capex_for_well
 
         print(f'\n| Net newPDP Cash Flow >> {well}:\n{newPDP_net_cash_flow}')
-        master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
-        master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
+        # master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
+        # master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
         master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
 
         # rolling PV-x at the well level

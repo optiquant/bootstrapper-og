@@ -106,7 +106,7 @@ generic_well_count_by_sub_asset = {
     'Munson': 0,
     'Tracker': 110,
     'AMCo': 40,
-    'LeasingI': 51, #0,
+    'LeasingI': 51+150, #0,
     'Ganador': 90,#90,
     'Foreland I': 0,
     'LeasingII': 36,#60,
@@ -138,7 +138,7 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '6/28/21'
+strip_pricing_date = '7/12/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 

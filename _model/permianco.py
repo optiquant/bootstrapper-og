@@ -26,7 +26,7 @@ network_filepath = r'\/FILE01\/TDrive\/Finance-Strategy\/PermianCo Credit Comps\
 local_filename = sorted(filter(lambda x: ".csv" in x,os.listdir(local_filepath)))[-1]
 
 as_of_date = pd.to_datetime(local_filename.strip(".csv").split("-")[1])
-_q = input(f"\n| PermianCo bond comps updating as of >> {string_date(as_of_date)} >> Hit enter to continue.")
+_q = input(f"\n| PermianCo bond comps updating as of >> {string_date(as_of_date)} // UTC: {as_of_date.tzinfo} >> Hit enter to continue.")
 
 save_to_folder_local = local_filepath + f'/\\outputs/\\'
 save_to_folder_network = network_filepath
@@ -54,7 +54,7 @@ acceptable_fields = {
 }
 
 parse_dates = ['Issue Date', 'Maturity Date', 'Trade Date', 'Next Call Date', 'Next Put Date']
-input_column_dtypes = {
+column_datatypes = {
     "Ticker": "str",
     "Company Name": "str",
     "Security Description": "str",
@@ -103,9 +103,8 @@ def load_bond_prices():
     '''Load bond prices for permianco from local drive'''
     bond_prices = pd.read_csv(local_filepath + r'/' + local_filename,
                               header=1,
-                              dtype=input_column_dtypes,
-                              parse_dates=parse_dates
-                              )
+                              dtype=column_datatypes,
+                              parse_dates=parse_dates)
     print(bond_prices.info())
     return bond_prices
 
@@ -128,10 +127,10 @@ def clean_up_bond_prices(bond_prices):
         threshold = 0.80
         nan_share = nan_count / len(list(row))
         if nan_share >= threshold or row.trade_date != as_of_date:
-            print(f'| Dropping "NA" row >> Index = {row.Index} >> nan_count = {nan_count} // trade_date = {row.trade_date}')
-            print(f'| -- values = {list(row)}')
-            dropped_indexes.append(row.Index)
-            bond_prices.drop(index=[row.Index], inplace=True)
+                print(f'| -- Dropping "NA" row >> Index = {row.Index} >> nan_count = {nan_count} / nan_share = {nan_share} // trade_date = {row.trade_date}')
+                print(f'| -- values = {list(row)}')
+                dropped_indexes.append(row.Index)
+                bond_prices.drop(index=[row.Index], inplace=True)
 
     print(f'\n| Dropped Indexes >> {len(dropped_indexes)} >> {dropped_indexes}')
     print(f'\n| Clean Bond Pricing Data // As of date: {string_date(as_of_date)}')
@@ -190,7 +189,7 @@ def populate_bond_dataframes(bond_prices):
     save_to_excel(bond_data_finra, folder=save_to_folder_local, filename=f'bond_data_finra-{string_date(as_of_date)}.xlsx')
 
 
-def run_bond_charts(source='refinitiv'):
+def run_bond_charts(source='finra'):
     '''Bond charts. Source data can be "refinitiv" or "finra".'''
 
     _source_data_lookup = {
@@ -389,9 +388,9 @@ def run_bond_charts(source='refinitiv'):
         title='Current Prices',
         x=[_ for _ in source_data['security_description']],
         y={
-            'close_price': [_ for _ in source_data['bid_price']],
+            'close_price': [_ for _ in source_data['close_price']],
             'bid_price': [_ for _ in source_data['bid_price']],
-            'ask_price': [_ for _ in source_data['bid_price']]
+            'ask_price': [_ for _ in source_data['ask_price']]
         },
         data_labels=[
             f'${amt / 1000000:,.1f} | {desc}' for desc, amt in zip(

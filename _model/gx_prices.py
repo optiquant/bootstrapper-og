@@ -64,7 +64,31 @@ excluded_prices = {
 }
 
 # read in inputs
-gx_gas_sample_input_df = pd.read_excel(root_folder+"__GAS SAMPLE INPUT/gx_gas_sample_input.xlsx", sheet_name='input', index_col=[1])
+
+if _whichindex == 'd':
+    gx_c_nick = 'dgx'
+    gx_c_code = 'DGX'
+    gx_c_name = 'Dry Gas Index (DGX)'
+    gx_c_unit = '$/Mcf'
+    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/dgx_gas_sample_input.xlsx",
+                                           sheet_name='input', index_col=[1])
+
+elif _whichindex == 'w':
+    gx_c_nick = 'wgx'
+    gx_c_code = 'WGX'
+    gx_c_name = 'Wet Gas Index (WGX)'
+    gx_c_unit = '$/Mcf'
+    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/wgx_gas_sample_input.xlsx",
+                                           sheet_name='input', index_col=[1])
+
+elif _whichindex == 'v':
+    gx_c_nick = 'vgx'
+    gx_c_code = 'VGX'
+    gx_c_name = 'Vent Gas Index (VGX)'
+    gx_c_unit = '$/Mcf'
+    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/vgx_gas_sample_input.xlsx",
+                                           sheet_name='input', index_col=[1])
+
 gx_gas_sample_input = dict(gx_gas_sample_input_df)
 print(gx_gas_sample_input)
 
@@ -103,25 +127,6 @@ print(f'\n| gal_per_mcf >> {gal_per_mcf}')
 
 _1 = input('| Hit enter to continue if gas sample is ok >> ')
 gx_start_date = '1/1/2010'
-
-if _whichindex == 'd':
-    gx_c_nick = 'dgx'
-    gx_c_code = 'DGX'
-    gx_c_name = 'Dry Gas Index (DGX)'
-    gx_c_unit = '$/Mcf'
-
-elif _whichindex == 'w':
-    gx_c_nick = 'wgx'
-    gx_c_code = 'WGX'
-    gx_c_name = 'Wet Gas Index (WGX)'
-    gx_c_unit = '$/Mcf'
-
-elif _whichindex == 'v':
-    gx_c_nick = 'vgx'
-    gx_c_code = 'VGX'
-    gx_c_name = 'Vent Gas Index (VGX)'
-    gx_c_unit = '$/Mcf'
-
 
 
 # month pairs used to calculate price changes
@@ -517,7 +522,7 @@ def summary_stats_by_month_pair():
     return summary_stats
 
 
-def calc_wgx(summary_stats: dict):
+def calc_gas_index(summary_stats: dict):
     # calculate the next month from the last front month settle
 
     model_prices = pr.get_model_prices(strip_pricing_date=string_date(trade_date), start_date=string_date('7/31/20'))
@@ -535,7 +540,7 @@ def calc_wgx(summary_stats: dict):
     strip_dates = pd.date_range(start=strip_start, end=strip_end, freq='M', normalize=True, tz='UTC')
     print(f'\n| Strip dates:\n  {strip_dates}\n')
 
-    wgx = {}
+    gas_index = {}
 
     btu_adj = mmbtu_per_mcf_dry_gas
     if _whichindex == 'w':
@@ -546,7 +551,7 @@ def calc_wgx(summary_stats: dict):
         gas_shrink = 0.0
 
     for pr_scen in price_scenarios:
-        wgx[pr_scen] = {}
+        gas_index[pr_scen] = {}
         for strip_month in strip_dates:
             if 'strip' in pr_scen.lower():
                 # component prices
@@ -560,11 +565,11 @@ def calc_wgx(summary_stats: dict):
                 # calculate WGX
                 # WGX = (hh + waha) * mmbtu mcf wet gas conv + ((c2-t) + (c3-t) + (nc4-t) + (ic4-t) + (c5-t)) * gal-mcf conv'''
                 # the strip start / front month settle should be given.
-                wgx[pr_scen][string_date(strip_month)] = (gx_components['hh'] + gx_components[
+                gas_index[pr_scen][string_date(strip_month)] = (gx_components['hh'] + gx_components[
                     'waha_gas_diff']) * btu_adj * (1-gas_shrink)
 
                 if _whichindex != 'd':
-                    wgx[pr_scen][string_date(strip_month)] += (gx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
+                    gas_index[pr_scen][string_date(strip_month)] += (gx_components['ethane'] - t_and_f_per_ngl_gal) * gal_per_mcf[
                                                                  'ethane'] + \
                                                              (gx_components['propane'] - t_and_f_per_ngl_gal) * \
                                                              gal_per_mcf[
@@ -580,7 +585,7 @@ def calc_wgx(summary_stats: dict):
 
 
 
-    print(f'\n| {gx_c_code} as of {string_date(trade_date)}: {wgx}')
+    print(f'\n| {gx_c_code} as of {string_date(trade_date)}: {gas_index}')
 
     # re-sort month_pairs
     curr_month_pair = (np.mod(pd.to_datetime(strip_start).month, 12), np.mod(pd.to_datetime(strip_start).month, 12) + 1)
@@ -599,11 +604,11 @@ def calc_wgx(summary_stats: dict):
     print(gx_components)
 
     # iterator for the strip months
-    strip_contract_dates = [_ for _ in wgx[price_scenarios[0]]]
+    strip_contract_dates = [_ for _ in gas_index[price_scenarios[0]]]
 
     gx_prices = pd.DataFrame(index=price_scenarios[1:], columns=strip_contract_dates).fillna(0.0)
     # set the initial month equal to the latest front month settlement price for WGX - for all price scenarios (as an anchor point)
-    front_month_settle = wgx[price_scenarios[0]][strip_contract_dates[0]]
+    front_month_settle = gas_index[price_scenarios[0]][strip_contract_dates[0]]
     gx_prices.at[:, strip_contract_dates[0]] = front_month_settle
 
     # populate the rest of the curve and price scenarios based on the latest front month settle
@@ -633,7 +638,7 @@ def calc_wgx(summary_stats: dict):
 
 
     # append the strip
-    gx_prices.loc[price_scenarios[0], strip_contract_dates] = [_ for _ in wgx[price_scenarios[0]].values()]
+    gx_prices.loc[price_scenarios[0], strip_contract_dates] = [_ for _ in gas_index[price_scenarios[0]].values()]
 
     print(f'\n| {gx_c_code} simulated prices >>\n{gx_prices}')
 
@@ -711,7 +716,7 @@ historical_strip_shape(commodity_list=c_nicks)
 summary_stats = summary_stats_by_month_pair()
 
 # calc WGX
-gx_prices = calc_wgx(summary_stats)
+gx_prices = calc_gas_index(summary_stats)
 
 # make charts with legends
 fig = make_subplots(
