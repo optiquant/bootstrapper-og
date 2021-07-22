@@ -138,7 +138,7 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '3/31/21'
 model_start_date = '4/1/21'
 
-strip_pricing_date = '7/12/21'
+strip_pricing_date = '7/15/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 

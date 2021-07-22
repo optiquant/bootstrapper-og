@@ -1759,9 +1759,9 @@ def run_price_update(as_of_date=None,
         update_daily_prices(start_date=price_history_start)
 
         if as_of_date:
-            get_model_prices(strip_pricing_date=as_of_date, start_date='7/1/20')
+            get_model_prices(strip_pricing_date=as_of_date, start_date='9/1/20')
         else:
-            get_model_prices(strip_pricing_date=nymex_trade_date, start_date='7/1/20')
+            get_model_prices(strip_pricing_date=nymex_trade_date, start_date='9/1/20')
 
         #ratio_analysis_charts()
         global master_heatmap_data
