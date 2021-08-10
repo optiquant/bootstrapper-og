@@ -1849,6 +1849,7 @@ def adjust_for_inflation(unadjusted_prices: pd.DataFrame):
     )
     return inflation_adj_prices
 
+
 def get_mcs_start_end_dates(sim_end):
     global mcs_start_end_dates
     global SimDates
@@ -1868,6 +1869,7 @@ def get_mcs_start_end_dates(sim_end):
         'nat_gasoline': SimDates(sim_start='2013-01-01', sim_end=sim_end)
     }
     return mcs_start_end_dates
+
 
 def simulate_prices_all(sim_end, inflation_adjusted: bool):
     '''Returns simulated prices and statistics for all commodities in a namedtuple PriceStats:

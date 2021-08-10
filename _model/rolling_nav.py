@@ -424,8 +424,8 @@ def calc_newPDP_rolling_nav(subasset):
 
     # get well activity dates
     subasset_activity_dates = master_drilling_schedule.loc[
-                              [_ for _ in master_drilling_schedule.index if subasset.upper() in _.upper()], :
-                              ]
+                              [_ for _ in master_drilling_schedule.index if subasset.upper() in _.upper()],
+                              :]
     print(f'\n| Activity dates for {subasset}: {subasset_activity_dates}')
 
     # trim for pop dates greater than nav_months_limit (performance)
@@ -434,7 +434,11 @@ def calc_newPDP_rolling_nav(subasset):
     pop_dates = [_ for _ in pop_dates if _ <= limit_date]
     print(pop_dates)
     # _q = input('enter to continue')
-    subasset_activity_dates = subasset_activity_dates.iloc[:len(pop_dates), :]
+    # subasset_activity_dates = subasset_activity_dates.loc[:len(pop_dates), :]
+    subasset_activity_dates = subasset_activity_dates.loc[
+                              [True for _ in subasset_activity_dates['pop'] if pd.to_datetime(_, utc=True) > model_period[0] + MonthEnd(-1)],
+                              :]
+
     print(subasset_activity_dates)
     # _q = input('enter to continue')
 

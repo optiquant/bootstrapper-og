@@ -66,12 +66,12 @@ TANK BATTERY,0,0,0,0,0,0,0,0,0,0,0,0,0
 CAPITAL STRUCTURE, ,reversionary WI ,reversionary WI , , , , , , , , , ,reversionary WI 
 Acquisition Consideration,509000,4000,0,25000,31500,5700,193000,0,0,244700,0,0,0
 1L Borrowing Base,215000,0,0,25000,35000,75000,75000,80000,0,385000,0,0,0
-1L Debt at Model Start,203000,0,0,0,0,0,0,0,0,244700,0,0,0
+1L Debt at Model Start,195000,0,0,0,0,0,0,0,0,244700,0,0,0
 2L Debt at Model Start,90000,0,0,0,0,0,0,0,0,0,0,0,0
 Mezz Pref at Model Start,0,0,0,0,0,0,0,0,0,0,0,0,0
 Pref Equity at Model Start,286238.691,0,0,25000,0,0,0,0,0,0,0,0,0
 Other Equity at Model Start,0,0,0,0,0,0,177000,0,0,0,0,0,0
-BS Cash at Model Start,13708.722,0,0,0,31500,0,0,0,0,0,0,0,0
+BS Cash at Model Start,7282.92368,0,0,0,31500,0,0,0,0,0,0,0,0
 1L Interest - Cash,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475,0.0475
 1L Commitment Fee - Cash,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005,0.005
 2L Interest - Cash,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085,0.085

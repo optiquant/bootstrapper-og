@@ -79,10 +79,10 @@ pdp_wells_with_remaining_capex = [
     # "MUNSON C S284HM",
     # "MUNSON C S285HU",
     # "MUNSON C S286HM",
-    "FARMAR DD S548HM",
-    "FARMAR DC S545HM",
-    "FARMAR DB S544HU",
-    "FARMAR DA S541HM",
+    # "FARMAR DD S548HM",
+    # "FARMAR DC S545HM",
+    # "FARMAR DB S544HU",
+    # "FARMAR DA S541HM",
 
 ]
 
@@ -135,10 +135,10 @@ reassigned_type_curve_areas = {
 }
 
 # balance sheet date (used for capital structure at model start)
-balance_sheet_date = '3/31/21'
-model_start_date = '4/1/21'
+balance_sheet_date = '6/30/21'
+model_start_date = '7/1/21'
 
-strip_pricing_date = '7/15/21'
+strip_pricing_date = '8/6/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 
