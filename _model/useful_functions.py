@@ -350,14 +350,6 @@ def dict_structure(d, drilldown=False, key_sequence=[0], silent=False):
 
 
 
-def dict_deep_loop(d, key_sequence=[0]):
-    '''Coming soon: Returns objects from the deepest nested level of nested dict d.
-    Arguments:
-    | -- d: dict or OrderedDict(). nested dictionary
-    | -- key_sequence: list of ints. key sequence to drill down on, and return the deepest object.
-    '''
-    useful_functions('dict_deep_loop')
-    print('Coming soon.')
 
 
 
