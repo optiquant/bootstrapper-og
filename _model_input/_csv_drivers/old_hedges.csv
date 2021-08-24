@@ -1,62 +1,68 @@
 trade_date,counterparty,commodity,contract,hedge_type,contract_year,contract_months,vol_per_month,vol_unit,swap_price,call_price,premium,contract_start_mth,contract_end_mth,contract_length_months,contract_total_volume
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2022,Jan - Mar,0,Bbl,67,0,0,44592,44651,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2022,Apr - Jun,0,Bbl,65,0,0,44681,44742,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2022,Jul - Sep,0,Bbl,64,0,0,44773,44834,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2022,Oct - Dec,0,Bbl,62,0,0,44865,44926,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2023,Jan - Mar,0,Bbl,61,0,0,44957,45016,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2023,Apr - Jun,0,Bbl,60,0,0,45046,45107,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2023,Jul - Sep,0,Bbl,59,0,0,45138,45199,3,0
-44418,Bank,Oil,WTI,Swaps - Fixed Price,2023,Oct - Dec,0,Bbl,58,0,0,45230,45291,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2021,Oct - Dec,0,MMBtu,3.65,0,0,44500,44561,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Jan - Mar,0,MMBtu,3.65,0,0,44592,44651,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Apr - Jun,0,MMBtu,2.9,0,0,44681,44742,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Jul - Sep,0,MMBtu,2.9,0,0,44773,44834,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Oct - Dec,0,MMBtu,3,0,0,44865,44926,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Jan - Mar,0,MMBtu,3.1,0,0,44957,45016,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Apr - Jun,0,MMBtu,2.55,0,0,45046,45107,3,0
-44418,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Jul - Sep,0,MMBtu,2.6,0,0,45138,45199,3,0
-44418,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
-44418,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
-44418,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2022,Jan - Mar,0,Bbl,67,0,0,44592,44651,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2022,Apr - Jun,0,Bbl,65,0,0,44681,44742,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2022,Jul - Sep,0,Bbl,64,0,0,44773,44834,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2022,Oct - Dec,0,Bbl,62,0,0,44865,44926,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2023,Jan - Mar,0,Bbl,61,0,0,44957,45016,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2023,Apr - Jun,0,Bbl,60,0,0,45046,45107,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2023,Jul - Sep,0,Bbl,59,0,0,45138,45199,3,0
+44431,Bank,Oil,WTI,Swaps - Fixed Price,2023,Oct - Dec,0,Bbl,58,0,0,45230,45291,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2021,Oct - Dec,0,MMBtu,3.65,0,0,44500,44561,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Jan - Mar,0,MMBtu,3.65,0,0,44592,44651,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Apr - Jun,0,MMBtu,2.9,0,0,44681,44742,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Jul - Sep,0,MMBtu,2.9,0,0,44773,44834,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2022,Oct - Dec,0,MMBtu,3,0,0,44865,44926,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Jan - Mar,0,MMBtu,3.1,0,0,44957,45016,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Apr - Jun,0,MMBtu,2.55,0,0,45046,45107,3,0
+44431,Bank,Gas,Henry Hub,Swaps - Fixed Price,2023,Jul - Sep,0,MMBtu,2.6,0,0,45138,45199,3,0
+44431,Bank,Gas,Waha Diff,Swaps - Fixed Price,2023,Jan - Dec,0,MMBtu,-0.2,0,0,44957,45291,12,0
+44431,Bank,Gas,Waha Diff,Swaps - Fixed Price,2022,Jan - Dec,0,MMBtu,-0.25,0,0,44592,44926,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Ethane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.21,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Propane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.64,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,n-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,iso-Butane,Swaps - Fixed Price,2023,Jan - Dec,0,gal,0.75,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44431,Bank,NGL,Non-TET Nat. Gasoline,Swaps - Fixed Price,2023,Jan - Dec,0,gal,1.1,0,0,44957,45291,12,0
+44418,RBC Capital Markets,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Mar,80000,MMBtu,3,4.76,0,44957,45016,3,240000
+44418,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2023,Jan - Mar,4000,Bbl,55,66,0,44957,45016,3,12000
+44418,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Apr - Jun,16000,Bbl,60,68.1,0,44681,44742,3,48000
+44418,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Jul - Sep,7000,Bbl,60,66,0,44773,44834,3,21000
+44413,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2022,Apr - Dec,30000,MMBtu,2.5,4.74,0,44681,44926,9,270000
+44413,Fifth Third Bank,Oil,WTI,Collars - 2-Way,2022,Apr - Dec,8000,Bbl,60,65.25,0,44681,44926,9,72000
 44406,RBC Capital Markets,Gas,Henry Hub,Collars - 2-Way,2023,Jan - Dec,30000,MMBtu,2.6,3.37,0,44957,45291,12,360000
 44406,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2022,Jan - Dec,30000,MMBtu,3,4.31,0,44592,44926,12,360000
 44406,Wells Fargo,Gas,Henry Hub,Collars - 2-Way,2021,Oct - Dec,30000,MMBtu,3,7.035,0,44500,44561,3,90000

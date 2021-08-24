@@ -257,7 +257,8 @@ def load_well_drivers_dict():
             perfed_ll = float(live_ds.loc[well, 'PERFED LATERAL LENGTH'])
             base_ll_capex = float(live_ds.loc[well, 'BASE LL FOR CAPEX'])
             # THIS IS FROM ASSET-LEVEL DRIVERS!
-            base_ll_tc = float(asset_level_drivers.loc[sub_asset, 'BASE LL FOR CAPEX'])
+            # base_ll_tc = float(asset_level_drivers.loc[sub_asset, 'BASE LL FOR CAPEX'])
+            base_ll_tc = float(live_ds.loc[well, 'BASE LL FOR CAPEX'])
             tc_multiplier = min(perfed_ll / base_ll_tc, 1.30)
             well_num_on_pad = float(live_ds.loc[well, 'DRILL ORDER'])
             wells_on_pad = float(live_ds.loc[well, 'WELLS ON PAD'])

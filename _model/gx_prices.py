@@ -41,8 +41,10 @@ print(price_data_folders)
 
 # save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
 # save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
-save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
-root_folder = r'T:/Finance-Strategy/WGX/'
+# save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
+save_to_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/seasonal index/'
+# root_folder = r'T:/Finance-Strategy/WGX/'
+root_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/'
 
 default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
 convert_gal_to_mmbtu = False
