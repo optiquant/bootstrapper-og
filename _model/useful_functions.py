@@ -472,7 +472,7 @@ def save_to_excel(output_dataframe, folder='default', filename='test_file.xlsx')
     # make sure it's a valid dataframe
     if isinstance(output_dataframe, pd.DataFrame):
         if folder == 'default':
-            save_folder = f'C:/Users/vdesai/Desktop/Model/Python/__model tests/'
+            save_folder = r'C:/Users/vdesai/Desktop/Model/Python/__model tests/'
             full_filepath = f'{save_folder}{filename}'
         elif not (os.path.exists(f'{folder}')):
             # if folder does not exist, create it

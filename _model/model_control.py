@@ -31,14 +31,62 @@ modeled_wells_all = [
     "MUNSON C N285HU",
     "MUNSON C N286HM",
     "MUNSON C N287HU",
-    "MUNSON #1H",
-    "MUNSON #2H",
-    "MUNSON #3H",
-    "MUNSON #4H",
-    "MUNSON #5H",
-    "MUNSON #6H",
-    "MUNSON #7H",
-    "MUNSON #8H"
+    # "MUNSON #1H",
+    # "MUNSON #2H",
+    # "MUNSON #3H",
+    # "MUNSON #4H",
+    # "MUNSON #5H",
+    # "MUNSON #6H",
+    # "MUNSON #7H",
+    # "MUNSON #8H",
+    "Munson-Central // Well 1",
+    "Munson-Central // Well 2",
+    "Munson-Central // Well 3",
+    "Munson-Central // Well 4",
+    "Munson-Central // Well 5",
+    "Munson-Central // Well 6",
+    "Munson-Central // Well 7",
+    "Munson-Central // Well 8",
+    "Munson-Southwest // Well 9",
+    "Munson-Southwest // Well 10",
+    "Munson-Southwest // Well 11",
+    "Munson-Southwest // Well 12",
+    "Munson-Southwest // Well 13",
+    "Munson-Southwest // Well 14",
+    "Munson-Southwest // Well 15",
+    "Munson-North // Well 16",
+    "Munson-North // Well 17",
+    "Munson-North // Well 18",
+    "Munson-North // Well 19",
+    "Munson-North // Well 20",
+    "Munson-Central // Well 21",
+    "Munson-Central // Well 22",
+    "Munson-Central // Well 23",
+    "Munson-Central // Well 24",
+    "Munson-Central // Well 25",
+    "Munson-Central // Well 26",
+    "Munson-Central // Well 27",
+    "Munson-Central // Well 28",
+    "Munson-Southwest // Well 29",
+    "Munson-Southwest // Well 30",
+    "Munson-Southwest // Well 31",
+    "Munson-Southwest // Well 32",
+    "Munson-Southwest // Well 33",
+    "Munson-Southwest // Well 34",
+    "Munson-Southwest // Well 35",
+    "Munson-East // Well 36",
+    "Munson-East // Well 37",
+    "Munson-East // Well 38",
+    "Munson-East // Well 39",
+    "Munson-East // Well 40",
+    "Munson-Central // Well 41",
+    "Munson-Central // Well 42",
+    "Munson-Central // Well 43",
+    "Munson-Central // Well 44",
+    "Munson-Central // Well 45",
+    "Munson-Central // Well 46",
+    "Munson-Central // Well 47",
+    "Munson-Central // Well 48"
     # "FARMAR CB PU N734HU",
     # "FARMAR CC PU N735HM",
     # "FARMAR CC PU N736HU",
@@ -59,7 +107,6 @@ modeled_wells_all = [
     # "MunsonLeasing//Well 3",
     # "MunsonLeasing//Well 4"
 ]
-
 
 # modeled_wells_all = ["Ganador//GEN "+str(_+1) for _ in range(90)]
 # modeled_wells_all = ["LeasingII//GENERIC "+str(_+1) for _ in range(32)]
@@ -102,15 +149,15 @@ include_pdp_gas_marketing = {
 
 # number of generic wells
 generic_well_count_by_sub_asset = {
-    'Farmar': 92,#0,
+    'Farmar': 92,  # 0,
     'Munson': 0,
     'Tracker': 110,
     'AMCo': 40,
-    'LeasingI': 51+150, #0,
-    'Ganador': 90,#90,
+    'LeasingI': 51 + 150,  # 0,
+    'Ganador': 90,  # 90,
     'Foreland I': 0,
-    'LeasingII': 36,#60,
-    'Discovery': 125, #125
+    'LeasingII': 36,  # 60,
+    'Discovery': 125,  # 125
     'MunsonLeasing': 32
 }
 # monthly driver tab codes for PDP input and historical financials
@@ -138,9 +185,9 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '6/30/21'
 model_start_date = '7/1/21'
 
-strip_pricing_date = '8/23/21'
-flat_oil_scenario = False
-flat_gas_scenario = False
+strip_pricing_date = '8/30/21'
+flat_oil_scenario = True
+flat_gas_scenario = True
 
 model_months = 600
 chart_months = 24
@@ -392,5 +439,3 @@ def initialize():
 # -----------------------------------------------------------------------------------------------------------------------#
 # -----------------------------------------------------# EXECUTION #-----------------------------------------------------#
 # -----------------------------------------------------------------------------------------------------------------------#
-
-

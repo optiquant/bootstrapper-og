@@ -43,7 +43,7 @@ def initialize():
 
     # NAV months limit of 10 years (to reduce calculation intensity)
     global nav_months_limit
-    nav_months_limit = 144
+    nav_months_limit = 60
 
     # get the gross type curves from model drivers
     global tc_oil
@@ -179,7 +179,7 @@ def initialize():
     # except (ValueError, KeyError):
     #     currentPDP_discount_rate = 0.12
 
-    currentPDP_discount_rate = 0.12
+    currentPDP_discount_rate = 0.10
     print(f'| Using PDP discount rate of {currentPDP_discount_rate * 100:.2f}%')
 
     global newPDP_discount_rate
@@ -701,9 +701,10 @@ def calc_newPDP_rolling_nav(subasset):
             newPDP_net_cash_flow[col] -= newPDP_capex_for_well
 
         print(f'\n| Net newPDP Cash Flow >> {well}:\n{newPDP_net_cash_flow}')
-        # master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
-        # master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
-        # master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
+        master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
+        master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
+        master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
+
 
         # rolling PV-x at the well level
         newPDP_rolling_pv_for_well = newPDP_net_cash_flow.copy(deep=True)

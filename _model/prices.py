@@ -1956,7 +1956,8 @@ def simulate_prices_all(sim_end, inflation_adjusted: bool):
     print('\n| Summary Statistics for Simulated Prices >>>\n')
     print(summary_stats_all)
     # return a namedtuple for ease of access
-    proceed = input(f'\n| Price MCS complete. Proceed? Y/N ')
+    # proceed = input(f'\n| Price MCS complete. Proceed? Y/N ')
+    proceed = 'y'
 
     PriceStats = namedtuple('PriceStats', 'sim_prices summary_stats')
     return PriceStats(sim_prices=sim_prices_all, summary_stats=summary_stats_all)

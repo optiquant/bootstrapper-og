@@ -279,8 +279,8 @@ class HedgeTrade():
         global local_scenario_folder
         global network_scenario_folder
         # save to json
-        local_folder = local_scenario_folder + '/hedges/'
-        network_folder = network_scenario_folder + '/hedges/'
+        local_folder = local_scenario_folder + 'hedges/'
+        network_folder = network_scenario_folder + 'hedges/'
         ht = self.hedge_type.replace(" ", "_").lower()
         ct = self.contract.replace(" ", "_").lower()
         filename = f'{scenario_time_stamp}_{self.trade_id}_{ct}_{ht}.json'

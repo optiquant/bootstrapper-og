@@ -297,7 +297,6 @@ def load_well_drivers_dict():
     return well_drivers_dict
 
 
-
 def reassign_type_curves(well_drivers_dict: dict):
     '''Reassigns type curve areas for a sub-asset if multiple type curves are required.
     Args:
@@ -324,7 +323,8 @@ def reassign_type_curves(well_drivers_dict: dict):
         start_index = 0
         for sub_area, locations in sub_area_locations_dict.items():
             # get the first x well drivers
-            sub_asset_tc_list[start_index: start_index+locations] = [sub_area for _ in range(start_index, start_index+locations)]
+            sub_asset_tc_list[start_index: start_index + locations] = [sub_area for _ in
+                                                                       range(start_index, start_index + locations)]
             start_index += locations
 
         print(f'| sub_asset_tc_list: {sub_asset_tc_list}')
@@ -338,10 +338,9 @@ def reassign_type_curves(well_drivers_dict: dict):
         _reassigned = {well: drivers['tc_name'] for well, drivers in well_drivers_dict.items()}
         print(f'| Reassigned type curves:\n {_reassigned}')
 
-        #_q = input('Continue? >>> ')
+        # _q = input('Continue? >>> ')
 
     return well_drivers_dict
-
 
 
 def get_activity_dates_for(well: str):
@@ -367,7 +366,6 @@ def get_activity_dates_for(well: str):
         _r2w = [_ for _ in modeled_wells_all if 'GENERIC' not in _]
         _gw = [_ for _ in modeled_wells_all if 'GENERIC' in _]
 
-
         # if this is the first generic well, anchor the well activity start date to the later of the last rank 2 well, or the asset active date
         if well == _gw[0]:
             rank_2_wells_modeled = live_ds.loc[[_ in _r2w for _ in live_ds.index], :]
@@ -380,7 +378,7 @@ def get_activity_dates_for(well: str):
 
                 # set the well activity start date
                 # the later of the last rank 2 well, or the asset active date
-                _anchor_date = max(pd.to_datetime(final_rank_2_well['TD'],utc=True), asset_active_date)
+                _anchor_date = max(pd.to_datetime(final_rank_2_well['TD'], utc=True), asset_active_date)
                 well_activity_start_date = _anchor_date + rig_crew_timing[
                     'rig_move_to_next_pad'] + rig_crew_timing['permitted_to_spud']
             else:
@@ -414,8 +412,8 @@ def get_activity_dates_for(well: str):
         else:
             pad_spud = spud + rig_crew_timing[
                 'pad_spud_to_first_well_spud'] + (-rig_crew_timing[
-                'skid_td_to_next_spud']-rig_crew_timing[
-                'spud_to_td'])*(well_num_on_pad-1)
+                'skid_td_to_next_spud'] - rig_crew_timing[
+                                                      'spud_to_td']) * (well_num_on_pad - 1)
 
         td = spud + rig_crew_timing[
             'spud_to_td']
@@ -523,8 +521,6 @@ def check_live_ds_for_inputs(master_ds: pd.DataFrame):
     _q = input('continue? >>> ')
 
 
-
-
 def load_well_activity_dates_dict():
     '''Loads activity dates for all wells modeled.'''
     global well_activity_dates_dict
@@ -578,7 +574,7 @@ def shift_adjust_type_curves():
     return
 
 
-def save_production_engine_outputs(save_to='both'):
+def save_production_engine_outputs(save_to='local'):
     '''Saves key module outputs to excel.'''
     global production_engine_outputs
 
@@ -592,10 +588,10 @@ def save_production_engine_outputs(save_to='both'):
     for fp in fp_list:
         # save dataframes in production_engine_outputs
         for name, df in production_engine_outputs.items():
-            save_to_excel(output_dataframe=df, folder=fp + 'production\/',
+            save_to_excel(output_dataframe=df, folder=fp + r'production\/',
                           filename=f'{name}.xlsx')
             # update scenario filepaths
-            model_control.add_to_scenario_filepaths(tail='production\/' + f'{name}.xlsx')
+            model_control.add_to_scenario_filepaths(tail=r'production\/' + f'{name}.xlsx')
 
 
 # GROSS TYPE CURVE/WELLHEAD PRODUCTION
@@ -611,7 +607,8 @@ def calc_gross_wellhead_production():
         shift_index = model_period_indexed[pop_month.replace(tzinfo=None)]
         # get active month for this subasset
         subasset = model_drivers.get_sub_asset(well_name=well)
-        month_prior_to_active = pd.to_datetime(asset_level_drivers.at[subasset, 'Asset Active Date'], utc=True) + MonthEnd(-1)
+        month_prior_to_active = pd.to_datetime(asset_level_drivers.at[subasset, 'Asset Active Date'],
+                                               utc=True) + MonthEnd(-1)
         try:
             month_index_prior_to_active = model_period_indexed[month_prior_to_active.replace(tzinfo=None)]
         except KeyError:
