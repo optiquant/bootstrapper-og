@@ -43,7 +43,7 @@ def initialize():
 
     # NAV months limit of 10 years (to reduce calculation intensity)
     global nav_months_limit
-    nav_months_limit = 60
+    nav_months_limit = 72
 
     # get the gross type curves from model drivers
     global tc_oil
@@ -703,7 +703,7 @@ def calc_newPDP_rolling_nav(subasset):
         print(f'\n| Net newPDP Cash Flow >> {well}:\n{newPDP_net_cash_flow}')
         master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
         master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
-        master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
+        # master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
 
 
         # rolling PV-x at the well level
@@ -749,10 +749,10 @@ def calc_newPDP_rolling_nav(subasset):
 
         # add to the subasset level rolling PV
         newPDP_rolling_pv_for_subasset += newPDP_rolling_pv_for_well
-        master_outputs.update({f'newPDP_rolling_pv_{subasset}_{wellname_clean}': newPDP_rolling_pv_for_well})
+        # master_outputs.update({f'newPDP_rolling_pv_{subasset}_{wellname_clean}': newPDP_rolling_pv_for_well})
 
     # add to master outputs
-    master_outputs.update({f'newPDP_rolling_pv_{subasset}_total': newPDP_rolling_pv_for_subasset})
+    # master_outputs.update({f'newPDP_rolling_pv_{subasset}_total': newPDP_rolling_pv_for_subasset})
     # master_outputs.update({f'total_net_cash_flow': total_net_cash_flow,
     #                        f'rolling_nav_TOTAL_dev': rolling_nav_TOTAL_dev})
 
@@ -842,11 +842,11 @@ def grand_total_rolling_pv():
 
     for subasset in modeled_subassets:
         currentPDP_total = currentPDP_total.add(master_outputs[f'currentPDP_rolling_pv_{subasset}'])
-        newPDP_total = newPDP_total.add(master_outputs[f'newPDP_rolling_pv_{subasset}_total'])
+        # newPDP_total = newPDP_total.add(master_outputs[f'newPDP_rolling_pv_{subasset}_total'])
 
     master_outputs[f'rolling_nav_TOTAL_currentPDP'] = currentPDP_total
-    master_outputs[f'rolling_nav_TOTAL_newPDP'] = newPDP_total
-    master_outputs[f'rolling_nav_TOTAL_allPDP'] = currentPDP_total+newPDP_total
+    # master_outputs[f'rolling_nav_TOTAL_newPDP'] = newPDP_total
+    # master_outputs[f'rolling_nav_TOTAL_allPDP'] = currentPDP_total+newPDP_total
 
 
 def save_master_outputs():
