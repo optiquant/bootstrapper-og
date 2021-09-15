@@ -39,54 +39,54 @@ modeled_wells_all = [
     # "MUNSON #6H",
     # "MUNSON #7H",
     # "MUNSON #8H",
-    "Munson-Central // Well 1",
-    "Munson-Central // Well 2",
-    "Munson-Central // Well 3",
-    "Munson-Central // Well 4",
-    "Munson-Central // Well 5",
-    "Munson-Central // Well 6",
-    "Munson-Central // Well 7",
-    "Munson-Central // Well 8",
-    "Munson-Central // Well 9",
-    "Munson-Central // Well 10",
-    "Munson-Central // Well 11",
-    "Munson-Central // Well 12",
-    "Munson-Central // Well 13",
-    "Munson-Central // Well 14",
-    "Munson-Central // Well 15",
-    "Munson-Central // Well 16",
-    "Munson-Central // Well 17",
-    "Munson-Central // Well 18",
-    "Munson-Central // Well 19",
-    "Munson-Central // Well 20",
-    "Munson-Central // Well 21",
-    "Munson-Central // Well 22",
-    "Munson-Central // Well 23",
-    "Munson-Central // Well 24",
-    "Munson-North // Well 25",
-    "Munson-North // Well 26",
-    "Munson-North // Well 27",
-    "Munson-North // Well 28",
-    "Munson-North // Well 29",
-    "Munson-East // Well 30",
-    "Munson-East // Well 31",
-    "Munson-East // Well 32",
-    "Munson-East // Well 33",
-    "Munson-East // Well 34",
-    "Munson-Southwest // Well 35",
-    "Munson-Southwest // Well 36",
-    "Munson-Southwest // Well 37",
-    "Munson-Southwest // Well 38",
-    "Munson-Southwest // Well 39",
-    "Munson-Southwest // Well 40",
-    "Munson-Southwest // Well 41",
-    "Munson-Southwest // Well 42",
-    "Munson-Southwest // Well 43",
-    "Munson-Southwest // Well 44",
-    "Munson-Southwest // Well 45",
-    "Munson-Southwest // Well 46",
-    "Munson-Southwest // Well 47",
-    "Munson-Southwest // Well 48"
+    "Munson-Central//Well 1",
+    "Munson-Central//Well 2",
+    "Munson-Central//Well 3",
+    "Munson-Central//Well 4",
+    "Munson-Central//Well 5",
+    "Munson-Central//Well 6",
+    "Munson-Central//Well 7",
+    "Munson-Southwest//Well 8",
+    "Munson-Southwest//Well 9",
+    "Munson-Southwest//Well 10",
+    "Munson-Southwest//Well 11",
+    "Farmar-North//Well 12",
+    "Farmar-North//Well 13",
+    "Farmar-North//Well 14",
+    "Farmar-North//Well 15",
+    "Munson-Central//Well 16",
+    "Munson-Central//Well 17",
+    "Munson-Central//Well 18",
+    "Munson-Central//Well 19",
+    "Munson-Central//Well 20",
+    "Munson-Central//Well 21",
+    "Farmar-East//Well 22",
+    "Farmar-East//Well 23",
+    "Farmar-East//Well 24",
+    "Farmar-East//Well 25",
+    "Munson-Southwest//Well 26",
+    "Munson-Southwest//Well 27",
+    "Munson-Southwest//Well 28",
+    "Munson-Southwest//Well 29",
+    "Munson-Southwest//Well 30",
+    "Munson-Central//Well 31",
+    "Munson-Central//Well 32",
+    "Munson-Central//Well 33",
+    "Munson-Central//Well 34",
+    "Munson-Central//Well 35",
+    "Munson-Central//Well 36",
+    "Munson-Central//Well 37",
+    "Farmar-North//Well 38",
+    "Farmar-North//Well 39",
+    "Farmar-North//Well 40",
+    "Farmar-North//Well 41",
+    "Munson-Central//Well 42",
+    "Munson-Central//Well 43",
+    "Munson-Central//Well 44",
+    "Munson-Central//Well 45",
+    "Munson-Central//Well 46",
+    "Munson-Central//Well 47",
+    "Munson-Central//Well 48"
     # "FARMAR CB PU N734HU",
     # "FARMAR CC PU N735HM",
     # "FARMAR CC PU N736HU",
@@ -137,6 +137,7 @@ pdp_wells_with_remaining_capex = [
 include_pdp_gas_marketing = {
     'Farmar': True,
     'Munson': True,
+    'JV': True,
     'MunsonLeasing': True,
     'Tracker': False,
     'AMCo': False,
@@ -151,6 +152,7 @@ include_pdp_gas_marketing = {
 generic_well_count_by_sub_asset = {
     'Farmar': 92,  # 0,
     'Munson': 0,
+    'JV': 0,
     'Tracker': 110,
     'AMCo': 40,
     'LeasingI': 51 + 150,  # 0,
@@ -164,6 +166,7 @@ generic_well_count_by_sub_asset = {
 driver_input_codes = {
     'Farmar': 0,
     'Munson': 1,
+    'JV': 2,
     'MunsonLeasing': 3,
     'Tracker': 6,
     'AMCo': 7,
@@ -176,8 +179,8 @@ driver_input_codes = {
 
 reassigned_type_curve_areas = {
     'Tracker': {
-        'TRACKER-NORTH': 64,
-        'TRACKER-SOUTH': 46
+        'NORTHWEST': 64,
+        'SOUTHWEST': 46
     }
 }
 
@@ -185,9 +188,10 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '6/30/21'
 model_start_date = '7/1/21'
 
-strip_pricing_date = '8/30/21'
+strip_pricing_date = '9/10/21'
 flat_oil_scenario = True
 flat_gas_scenario = True
+flat_ngl_scenario = True
 
 model_months = 600
 chart_months = 24
@@ -397,6 +401,7 @@ def get_flat_gas_price():
         print('| Running strip prices for gas.\n')
 
 
+
 def get_flat_gas_start_date():
     global flat_gas_start_date
     return flat_gas_start_date
@@ -405,6 +410,17 @@ def get_flat_gas_start_date():
 def get_flat_oil_start_date():
     global flat_oil_start_date
     return flat_oil_start_date
+
+
+def get_flat_ngl_start_date():
+    global flat_ngl_start_date
+    if flat_ngl_scenario and 'flat_ngl_start_date' not in globals():
+        flat_ngl_start_date = pd.to_datetime(input(f'| Enter flat NGL price start date (m/d/yy) >>> '))
+        print(f'| Modeling flat NGL prices, based on ratio to WTI and HH')
+    else:
+        print('| Running strip prices for NGLs.\n')
+    return flat_ngl_start_date
+
 
 
 def get_non_mcs_scenario_label():
@@ -417,13 +433,13 @@ def get_non_mcs_scenario_label():
         if flat_oil_scenario and flat_gas_scenario:
             fop = get_flat_oil_price()
             fgp = get_flat_gas_price()
-            _non_mcs_scenario_label = f'${fop:.0f} WTI/\${fgp:.3f} HH'
+            _non_mcs_scenario_label = f'${fop:.0f} WTI\/${fgp:.3f} HH'
         elif flat_oil_scenario and not (flat_gas_scenario):
             fop = get_flat_oil_price()
-            _non_mcs_scenario_label = f'${fop:.0f} WTI/Strip {strip_pricing_date}'
+            _non_mcs_scenario_label = f'${fop:.0f} WTI\/Strip {strip_pricing_date}'
         elif not (flat_oil_scenario) and flat_gas_scenario:
             fgp = get_flat_gas_price()
-            _non_mcs_scenario_label = f'${fgp:.3f} HH/Strip {strip_pricing_date}'
+            _non_mcs_scenario_label = f'${fgp:.3f} HH\/Strip {strip_pricing_date}'
         else:
             _non_mcs_scenario_label = f"Strip {strip_pricing_date}"
 

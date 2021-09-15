@@ -1964,6 +1964,8 @@ def simulate_prices_all(sim_end, inflation_adjusted: bool):
 
 
 def update_flat_model_prices(model_prices):
+    global ngl_ratios
+
     # if flat price scenario is true
     if model_control.flat_oil_scenario:
         flat_oil_start_date = string_date(model_control.get_flat_oil_start_date())
@@ -1973,6 +1975,30 @@ def update_flat_model_prices(model_prices):
     if model_control.flat_gas_scenario:
         flat_gas_start_date = string_date(model_control.get_flat_gas_start_date())
         model_prices.loc[flat_gas_start_date:, 'HH Gas'] = model_control.get_flat_gas_price()
+
+    if model_control.flat_ngl_scenario:
+        global flat_ngl_start_date
+        flat_ngl_start_date = string_date(model_control.get_flat_ngl_start_date())
+
+        prior_date = model_prices.index[model_prices.index.get_loc(flat_ngl_start_date)-1]
+        ngls_ratio_to_hh = np.array(model_prices.loc[prior_date, 'Ethane Mt.Belvieu': 'Propane Mt.Belvieu LDH'].values / model_prices.loc[prior_date, 'HH Gas'])
+        ngls_ratio_to_wti = np.array(model_prices.loc[prior_date, 'n-Butane': 'Nat. Gasoline'].values/model_prices.loc[prior_date, 'WTI CMA'])
+        print(f'NGLs tied to HH: {ngls_ratio_to_hh}')
+        print(f'NGLs tied to WTI: {ngls_ratio_to_wti}')
+        ngl_ratios = dict(zip(ngl_list, np.concatenate((ngls_ratio_to_hh, ngls_ratio_to_wti))))
+        print(f'NGL ratios (all): {ngl_ratios}')
+
+        # print(model_prices.head(24))
+        # _1 = input('enter to continue >> ')
+        for ngl_name, ratio in ngl_ratios.items():
+            if any([_ in ngl_name for _ in ['Ethane', 'Propane']]):
+                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:, 'HH Gas'] * ratio
+            else:
+                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:, 'WTI CMA'] * ratio
+
+    print(model_prices.head(24))
+    # _1 = input('enter to continue >> ')
+
     return model_prices
 
 

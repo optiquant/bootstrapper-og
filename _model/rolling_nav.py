@@ -43,7 +43,7 @@ def initialize():
 
     # NAV months limit of 10 years (to reduce calculation intensity)
     global nav_months_limit
-    nav_months_limit = 72
+    nav_months_limit = 84
 
     # get the gross type curves from model drivers
     global tc_oil
@@ -228,7 +228,7 @@ def initialize():
     # rolling_nav_TOTAL_dev = pd.DataFrame().reindex_like(total_net_cash_flow).fillna(0)
 
 
-def calc_currentPDP_rolling_nav(subasset):
+def calc_rolling_pv_currentPDP(subasset):
     global total_net_cash_flow
     global rolling_nav_TOTAL_dev
 
@@ -376,7 +376,7 @@ def calc_currentPDP_rolling_nav(subasset):
         currentPDP_net_cash_flow[col] -= currentPDP_marketing_all
 
     print(f'\n| Net PDP Cash Flow >> {subasset}:\n{currentPDP_net_cash_flow}')
-    master_outputs.update({f'currentPDP_net_cash_flow_{subasset}': currentPDP_net_cash_flow})
+    # master_outputs.update({f'currentPDP_net_cash_flow_{subasset}': currentPDP_net_cash_flow})
 
 
     # rolling PV-x
@@ -391,7 +391,7 @@ def calc_currentPDP_rolling_nav(subasset):
                 # calc rolling PV for current PDP
                 values = currentPDP_rolling_pv.loc[date:, price_scenario].values
                 dates = currentPDP_rolling_pv.loc[date:, price_scenario].index.values
-                npv = return_functions.xnpv(rate=currentPDP_discount_rate, values=values, dates=dates)
+                npv = return_functions.npv(rate=currentPDP_discount_rate, values=values)#, dates=dates)
                 currentPDP_rolling_pv.at[date, price_scenario] = npv
 
                 # todo: calc rolling PV for remaining dev program cash flows
@@ -400,7 +400,7 @@ def calc_currentPDP_rolling_nav(subasset):
                 #
                 # values = total_net_cash_flow.loc[date:, price_scenario].values
                 # dates = total_net_cash_flow.loc[date:, price_scenario].index.values
-                # npv = return_functions.xnpv(rate=dev_program_discount_rate, values=values, dates=dates)
+                # npv = return_functions.npv(rate=dev_program_discount_rate, values=values, dates=dates)
                 # rolling_nav_TOTAL_dev.at[date, price_scenario] = npv
 
     currentPDP_rolling_pv.iloc[nav_months_limit:, :] = 0
@@ -415,7 +415,7 @@ def calc_currentPDP_rolling_nav(subasset):
     #                        'total_net_cash_flow': total_net_cash_flow})
 
 
-def calc_newPDP_rolling_nav(subasset):
+def calc_rolling_pv_newPDP(subasset):
     # Dev program / Single well PV-x
     # filter down the master drilling schedule to only this subasset
     global master_drilling_schedule
@@ -480,11 +480,12 @@ def calc_newPDP_rolling_nav(subasset):
     # data frame for total rolling newPDP pv-x at the subasset level
     newPDP_rolling_pv_for_subasset = pd.DataFrame().reindex_like([_ for _ in net_realized_prices.values()][0]).fillna(0)
 
-    # ----- SINGLE WELL CAPEX ----
-    # get capex scenario for each well
+
     for well in subasset_activity_dates.index:
+        # todo: confirm that capex is not needed any more
+        # ----- SINGLE WELL CAPEX ----
         newPDP_capex_for_well = pd.Series(index=model_period, dtype='float64').fillna(0)
-        # well = subasset_activity_dates.index[0]
+
         # if well is in D&C capex drivers, use it, else use generic
         if well in dnc_capex_drivers['CAPEX SCENARIO']:
             capex_scenario = well
@@ -515,8 +516,8 @@ def calc_newPDP_rolling_nav(subasset):
             except (IndexError, KeyError):
                 print(f'{activity_name} not found.')
 
-        print(well, pay_dates)
-        print(capex_amounts)
+        # print(well, pay_dates)
+        # print(capex_amounts)
 
         #  add capex to dev program capex for this well
         for capex_category, activity_name in capex_to_activity_mapper.items():
@@ -690,29 +691,28 @@ def calc_newPDP_rolling_nav(subasset):
         # master_outputs.update({'newPDP_marketing_all': newPDP_marketing_all})
 
         # # net newPDP cash flow at the well level
-        newPDP_net_cash_flow = newPDP_revenue_net_taxes_for_well.copy(deep=True).fillna(0)
+        # newPDP_net_cash_flow = newPDP_revenue_net_taxes_for_well.copy(deep=True).fillna(0)
         newPDP_ebitdax = newPDP_revenue_net_taxes_for_well.copy(deep=True).fillna(0)
 
-        for col in newPDP_net_cash_flow:
+        for col in newPDP_ebitdax:
             newPDP_ebitdax[col] -= newPDP_loe_all
             newPDP_ebitdax[col] -= newPDP_marketing_all
 
-            newPDP_net_cash_flow[col] += newPDP_ebitdax[col]
-            newPDP_net_cash_flow[col] -= newPDP_capex_for_well
+            # newPDP_net_cash_flow[col] += newPDP_ebitdax[col]
+            # newPDP_net_cash_flow[col] -= newPDP_capex_for_well
 
-        print(f'\n| Net newPDP Cash Flow >> {well}:\n{newPDP_net_cash_flow}')
+        # print(f'\n| Net newPDP Cash Flow >> {well}:\n{newPDP_net_cash_flow}')
+        print(f'\n| Net newPDP EBITDAX >> {well}:\n{newPDP_ebitdax}')
         master_outputs.update({f'newPDP_ebitdax_{wellname_clean}': newPDP_ebitdax})
         master_outputs.update({f'newPDP_capex_for_well_{wellname_clean}': newPDP_capex_for_well})
         # master_outputs.update({f'newPDP_net_cash_flow_{wellname_clean}': newPDP_net_cash_flow})
 
-
         # rolling PV-x at the well level
-        newPDP_rolling_pv_for_well = newPDP_net_cash_flow.copy(deep=True)
-        # zero out cash flow before POP month
-        newPDP_rolling_pv_for_well.at[:string_date(pop_month+MonthEnd(-1)), :] = 0.0
+        # newPDP_rolling_pv_for_well = newPDP_net_cash_flow.copy(deep=True)
+        newPDP_rolling_pv_for_well = pd.DataFrame().reindex_like(newPDP_ebitdax).fillna(0)
 
         # zero out dataframe if all negative (= well is in PDP)
-        if all([_<= 0 for _ in newPDP_rolling_pv_for_well.loc[:,:].values.ravel()]):
+        if all([_ <= 0 for _ in newPDP_rolling_pv_for_well.loc[:, :].values.ravel()]):
             newPDP_rolling_pv_for_well.at[:, :] = 0.0
 
         # roll through the dataframe
@@ -724,35 +724,24 @@ def calc_newPDP_rolling_nav(subasset):
                 #  calculate NPV for asset active month onwards
                 if date >= pop_month:
                     # calc rolling pv for new PDP
-                    values = newPDP_rolling_pv_for_well.loc[date:, price_scenario].values
-                    dates = newPDP_rolling_pv_for_well.loc[date:, price_scenario].index.values
+                    values = newPDP_ebitdax.loc[date:, price_scenario].values
+                    dates = newPDP_ebitdax.loc[date:, price_scenario].index.values
+                    # npv = return_functions.npv(rate=newPDP_discount_rate, values=values, periodicity=12)
+                    # The implementation below results in a closer match to Excel's native XNPV() function
                     npv = return_functions.xnpv(rate=newPDP_discount_rate, values=values, dates=dates)
                     newPDP_rolling_pv_for_well.at[date, price_scenario] = npv
-
-                    # todo: calc rolling PV for remaining dev program cash flows
-                    # subtract this new PDP cash flow wedge from this date onwards
-                    # total_net_cash_flow.loc[date:, price_scenario] -= newPDP_net_cash_flow.loc[date:, price_scenario]
-                    #
-                    # values = total_net_cash_flow.loc[date:, price_scenario].values
-                    # dates = total_net_cash_flow.loc[date:, price_scenario].index.values
-                    # npv = return_functions.xnpv(rate=dev_program_discount_rate, values=values, dates=dates)
-                    # rolling_nav_TOTAL_dev.at[date, price_scenario] = npv
-
 
         print(
             f'\n| Rolling newPDP PV-{newPDP_discount_rate * 100:.1f} >> {subasset} >> {wellname_clean}:\n{newPDP_rolling_pv_for_well.head(36)}'
         )
         # _q = input('\nHit enter to continue')
 
-        # zero out cash flows after the NAv month limit
-        newPDP_rolling_pv_for_well.iloc[nav_months_limit:, :] = 0
-
         # add to the subasset level rolling PV
         newPDP_rolling_pv_for_subasset += newPDP_rolling_pv_for_well
-        # master_outputs.update({f'newPDP_rolling_pv_{subasset}_{wellname_clean}': newPDP_rolling_pv_for_well})
+        master_outputs.update({f'newPDP_rolling_pv_{subasset}_{wellname_clean}': newPDP_rolling_pv_for_well})
 
     # add to master outputs
-    # master_outputs.update({f'newPDP_rolling_pv_{subasset}_total': newPDP_rolling_pv_for_subasset})
+    master_outputs.update({f'newPDP_rolling_pv_{subasset}_total': newPDP_rolling_pv_for_subasset})
     # master_outputs.update({f'total_net_cash_flow': total_net_cash_flow,
     #                        f'rolling_nav_TOTAL_dev': rolling_nav_TOTAL_dev})
 
@@ -830,9 +819,9 @@ def calc_rolling_pv(for_currentPDP:bool, for_newPDP:bool):
         }
 
 
-        calc_currentPDP_rolling_nav(subasset=subasset) if for_currentPDP else print(f'\n!! PDP rolling PV-{currentPDP_discount_rate:.1f} will not be run')
+        calc_rolling_pv_currentPDP(subasset=subasset) if for_currentPDP else print(f'\n!! PDP rolling PV-{currentPDP_discount_rate:.1f} will not be run')
 
-        calc_newPDP_rolling_nav(subasset=subasset) if for_newPDP else print(f'\n!! newPDP rolling PV-{newPDP_discount_rate:.1f} will not be run')
+        calc_rolling_pv_newPDP(subasset=subasset) if for_newPDP else print(f'\n!! newPDP rolling PV-{newPDP_discount_rate:.1f} will not be run')
 
 
 def grand_total_rolling_pv():
@@ -842,11 +831,11 @@ def grand_total_rolling_pv():
 
     for subasset in modeled_subassets:
         currentPDP_total = currentPDP_total.add(master_outputs[f'currentPDP_rolling_pv_{subasset}'])
-        # newPDP_total = newPDP_total.add(master_outputs[f'newPDP_rolling_pv_{subasset}_total'])
+        newPDP_total = newPDP_total.add(master_outputs[f'newPDP_rolling_pv_{subasset}_total'])
 
     master_outputs[f'rolling_nav_TOTAL_currentPDP'] = currentPDP_total
-    # master_outputs[f'rolling_nav_TOTAL_newPDP'] = newPDP_total
-    # master_outputs[f'rolling_nav_TOTAL_allPDP'] = currentPDP_total+newPDP_total
+    master_outputs[f'rolling_nav_TOTAL_newPDP'] = newPDP_total
+    master_outputs[f'rolling_nav_TOTAL_allPDP'] = currentPDP_total+newPDP_total
 
 
 def save_master_outputs():

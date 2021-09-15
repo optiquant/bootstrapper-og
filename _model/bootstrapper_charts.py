@@ -269,7 +269,8 @@ def bootstrapper_charts(chart_data_filepaths=[],
                 if any([_ == '50%' for _ in col_list]):
                     # formatting for each price _scenario line
                     # annotations (to implement formatting for data labels)
-                    if 'Strip' in col_name or '$' in col_name:
+                    # if 'Strip' in col_name or '$' in col_name:
+                    if '%' not in col_name or 'Strip' in col_name:
                         # REGULAR TEXT LABELS:
                         # _m = 'lines+markers+text' if chart_months <= 24 else 'lines+markers'
                         # FOR ANNOTATIONS
