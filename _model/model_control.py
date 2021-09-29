@@ -188,10 +188,10 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '6/30/21'
 model_start_date = '7/1/21'
 
-strip_pricing_date = '9/10/21'
-flat_oil_scenario = True
-flat_gas_scenario = True
-flat_ngl_scenario = True
+strip_pricing_date = '9/24/21'
+flat_oil_scenario = False
+flat_gas_scenario = False
+flat_ngl_scenario = False
 
 model_months = 600
 chart_months = 24
