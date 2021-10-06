@@ -1,4 +1,4 @@
-from _model.useful_functions import *
+from model_v1.useful_functions import *
 
 import os
 import pandas as pd

@@ -108,6 +108,8 @@ modeled_wells_all = [
     # "MunsonLeasing//Well 4"
 ]
 
+
+
 # modeled_wells_all = ["Ganador//GEN "+str(_+1) for _ in range(90)]
 # modeled_wells_all = ["LeasingII//GENERIC "+str(_+1) for _ in range(32)]
 
@@ -162,6 +164,7 @@ generic_well_count_by_sub_asset = {
     'Discovery': 125,  # 125
     'MunsonLeasing': 32
 }
+
 # monthly driver tab codes for PDP input and historical financials
 driver_input_codes = {
     'Farmar': 0,
@@ -399,7 +402,6 @@ def get_flat_gas_price():
         return flat_gas_price
     else:
         print('| Running strip prices for gas.\n')
-
 
 
 def get_flat_gas_start_date():

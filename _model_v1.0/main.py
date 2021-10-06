@@ -1,4 +1,4 @@
-import _model.run_model as run_model
+import model_v1.run_model as run_model
 
 import dash
 import dash_core_components as dcc

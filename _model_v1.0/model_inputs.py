@@ -1,5 +1,5 @@
-from _model.useful_functions import *
-import _model.type_curves as tc
+from model_v1.useful_functions import *
+import model_v1.type_curves as tc
 
 import pandas as pd
 
@@ -143,6 +143,7 @@ def load_rig_crew_timing():
     rig_crew_timing = {
         k: pd.to_timedelta(int(v), unit='d') for k, v in zip(rig_crew_timing.index, rig_crew_timing.values)
     }
+
     print(f'\n| Rig crew timing loaded >> {rig_crew_timing}')
     return rig_crew_timing
 

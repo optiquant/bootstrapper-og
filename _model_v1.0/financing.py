@@ -1,8 +1,8 @@
-import _model.model_control as model_control
-import _model.lookup as lookup
-import _model.model_drivers as model_drivers
-import _model.hedging as hedging
-from _model.useful_functions import *
+import model_v1.model_control as model_control
+import model_v1.lookup as lookup
+import model_v1.model_drivers as model_drivers
+import model_v1.hedging as hedging
+from model_v1.useful_functions import *
 
 from collections import namedtuple
 import pandas as pd

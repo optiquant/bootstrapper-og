@@ -1,9 +1,9 @@
-import _model.model_control as model_control
-import _model.model_drivers as model_drivers
-import _model.economics as economics
-import _model.financing as financing
-import _model.rolling_nav as rolling_nav
-import _model.bootstrapper_charts as bootstrapper_charts
+import model_v1.model_control as model_control
+import model_v1.model_drivers as model_drivers
+import model_v1.economics as economics
+import model_v1.financing as financing
+import model_v1.rolling_nav as rolling_nav
+import model_v1.bootstrapper_charts as bootstrapper_charts
 
 
 #----------------------------------------------------------------------------------------------------------------------#

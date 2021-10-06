@@ -1,12 +1,12 @@
-from _model.type_curves import TypeCurve
-from _model.useful_functions import *
-import _model.model_control as model_control
-import _model.model_drivers as model_drivers
-import _model.market as market
-import _model.prices as prices
-import _model.production_engine as production_engine
-import _model.return_functions as return_functions
-import _model.bootstrapper_charts as bootstrapper_charts
+from model_v1.type_curves import TypeCurve
+from model_v1.useful_functions import *
+import model_v1.model_control as model_control
+import model_v1.model_drivers as model_drivers
+import model_v1.market as market
+import model_v1.prices as prices
+import model_v1.production_engine as production_engine
+import model_v1.return_functions as return_functions
+import model_v1.bootstrapper_charts as bootstrapper_charts
 
 import pandas as pd
 import numpy as np
@@ -1778,6 +1778,7 @@ def update_model_data():
 
 
 def calc_cash_flow():
+    '''Calculates EBITDAX, Free Cash Flow, Cum. FCF, and NPV/Returns. '''
     global ebitdax
     global fcf
     global cumulative_fcf

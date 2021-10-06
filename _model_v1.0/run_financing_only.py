@@ -1,5 +1,5 @@
-import _model.bootstrapper_charts as bootstrapper_charts
-import _model.financing as financing
+import model_v1.bootstrapper_charts as bootstrapper_charts
+import model_v1.financing as financing
 
 financing.run_financing()
 bootstrapper_charts._initialize()
