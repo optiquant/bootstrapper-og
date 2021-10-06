@@ -1,5 +1,5 @@
-import model_v1.prices as pr
-from model_v1.useful_functions import *
+import _model_v1.prices as pr
+from _model_v1.useful_functions import *
 import os
 import pandas as pd
 import numpy as np

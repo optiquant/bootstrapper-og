@@ -1,4 +1,4 @@
-import model_v1.prices as pr
+import _model_v1.prices as pr
 
 import pandas as pd
 import numpy as np

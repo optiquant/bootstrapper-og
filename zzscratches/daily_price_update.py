@@ -1,5 +1,5 @@
 # BootStrapper OG scratch
-import model_v1.prices as pr
+import _model_v1.prices as pr
 
 # --------------------------------- PRICE UPDATES ---------------------------------
 # >>> DAILY PRICE UPDATE

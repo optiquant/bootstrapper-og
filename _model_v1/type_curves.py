@@ -1,5 +1,5 @@
-from model_v1.useful_functions import *
-import model_v1.model_drivers as model_drivers
+from _model_v1.useful_functions import *
+import _model_v1.model_drivers as model_drivers
 
 import pandas as pd
 import numpy as np

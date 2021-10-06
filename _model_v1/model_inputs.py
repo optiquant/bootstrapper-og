@@ -1,5 +1,5 @@
-from model_v1.useful_functions import *
-import model_v1.type_curves as tc
+from _model_v1.useful_functions import *
+import _model_v1.type_curves as tc
 
 import pandas as pd
 

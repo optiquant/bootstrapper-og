@@ -1,8 +1,8 @@
-import model_v1.model_inputs as model_inputs
-import model_v1.prices as pr
-import model_v1.model_control as model_control
-from model_v1.useful_functions import *
-import model_v1.type_curves as tc
+import _model_v1.model_inputs as model_inputs
+import _model_v1.prices as pr
+import _model_v1.model_control as model_control
+from _model_v1.useful_functions import *
+import _model_v1.type_curves as tc
 from pandas.tseries.offsets import MonthEnd
 
 from collections import namedtuple
