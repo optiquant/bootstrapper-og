@@ -987,10 +987,11 @@ def run_master_heatmap_charts(master_heatmap_data: dict):
     end_color = [100, 100, 100]
 
     # for whole figure
-    figure_width = _fig_width*3/2
-    figure_height = _fig_width*3/2
+    figure_width = _fig_width * 3 / 2
+    figure_height = _fig_width * 3 / 2
 
-    _subplot_titles = [f'{get_comdty_name(c_nick)} | {get_comdty_code(c_nick)} | {get_comdty_unit(c_nick)}' for c_nick in master_heatmap_data]
+    _subplot_titles = [f'{get_comdty_name(c_nick)} | {get_comdty_code(c_nick)} | {get_comdty_unit(c_nick)}' for c_nick
+                       in master_heatmap_data]
     heatmap_fig = make_subplots(
         rows=chart_rows,
         cols=chart_cols,
@@ -1041,7 +1042,6 @@ def run_master_heatmap_charts(master_heatmap_data: dict):
                     )
                 )
 
-
         # update heatmap fig
         heatmap_fig.add_heatmap(
             z=heatmap_chart_data['data'],
@@ -1055,7 +1055,6 @@ def run_master_heatmap_charts(master_heatmap_data: dict):
             row=_chart_row,
             col=_chart_col
         )
-
 
         heatmap_fig.update_xaxes(dict(side='bottom', tickangle=-45),
                                  row=_chart_row,
@@ -1189,7 +1188,7 @@ def daily_price_charts(c_nick, chart_data_dict, futures_to_attach, heatmap_chart
             # if idx is current trade date/final key of futures_to_attach
             if idx == len(futures_to_attach) - 1:
                 r, g, b, a = [210, 50, 0, 1.0]
-                _mode = 'lines+markers' #'lines+markers+text'
+                _mode = 'lines+markers'  # 'lines+markers+text'
                 _markersize = 8
                 _line_width = 2.0
                 _dash = None
@@ -1251,11 +1250,11 @@ def daily_price_charts(c_nick, chart_data_dict, futures_to_attach, heatmap_chart
                               legendgroup='grp1',
                               showlegend=_show_legend,
                               name=futures_to_attach[futures_trade_date].title,
-                              #text=data_labels,
-                              #textposition='top center',
-                              #textfont_size=_font_size,
-                              #textfont_color=f'rgba({r},{g},{b},{a})',  # 'black','crimson', #
-                              #textfont_family='sans-serif',
+                              # text=data_labels,
+                              # textposition='top center',
+                              # textfont_size=_font_size,
+                              # textfont_color=f'rgba({r},{g},{b},{a})',  # 'black','crimson', #
+                              # textfont_family='sans-serif',
                               connectgaps=True)
 
             # add_trace must be within futures loop to get all futures requested
@@ -1274,9 +1273,10 @@ def daily_price_charts(c_nick, chart_data_dict, futures_to_attach, heatmap_chart
                 count = 0
                 for y_idx, y_val in enumerate(futures_to_attach[futures_trade_date].y):
                     count += 1
-                    shift_direction = 1 if np.mod(y_idx,2) == 0 else -1
+                    shift_direction = 1 if np.mod(y_idx, 2) == 0 else -1
 
-                    print(f'--- {futures_trade_date} {y_val} --> annotation count: {count} >> xref = {_xref}, yref = {_yref}')
+                    print(
+                        f'--- {futures_trade_date} {y_val} --> annotation count: {count} >> xref = {_xref}, yref = {_yref}')
                     annotations.append(
                         go.layout.Annotation(
                             text=f"{y_val: .2f}",
@@ -1284,7 +1284,7 @@ def daily_price_charts(c_nick, chart_data_dict, futures_to_attach, heatmap_chart
                             y=y_val,
                             xref=_xref,
                             yref=_yref,
-                            yshift=18*shift_direction,
+                            yshift=18 * shift_direction,
                             showarrow=False,
                             bgcolor='rgba(255,255,255,0.75)',
                             font=dict(
@@ -1763,7 +1763,7 @@ def run_price_update(as_of_date=None,
         else:
             get_model_prices(strip_pricing_date=nymex_trade_date, start_date='9/1/20')
 
-        #ratio_analysis_charts()
+        # ratio_analysis_charts()
         global master_heatmap_data
         run_master_heatmap_charts(master_heatmap_data=master_heatmap_data)
         send_daily_price_update_email('vdesai@triplecrownresources.com', recipient_list)
@@ -1980,9 +1980,12 @@ def update_flat_model_prices(model_prices):
         global flat_ngl_start_date
         flat_ngl_start_date = string_date(model_control.get_flat_ngl_start_date())
 
-        prior_date = model_prices.index[model_prices.index.get_loc(flat_ngl_start_date)-1]
-        ngls_ratio_to_hh = np.array(model_prices.loc[prior_date, 'Ethane Mt.Belvieu': 'Propane Mt.Belvieu LDH'].values / model_prices.loc[prior_date, 'HH Gas'])
-        ngls_ratio_to_wti = np.array(model_prices.loc[prior_date, 'n-Butane': 'Nat. Gasoline'].values/model_prices.loc[prior_date, 'WTI CMA'])
+        prior_date = model_prices.index[model_prices.index.get_loc(flat_ngl_start_date) - 1]
+        ngls_ratio_to_hh = np.array(
+            model_prices.loc[prior_date, 'Ethane Mt.Belvieu': 'Propane Mt.Belvieu LDH'].values / model_prices.loc[
+                prior_date, 'HH Gas'])
+        ngls_ratio_to_wti = np.array(
+            model_prices.loc[prior_date, 'n-Butane': 'Nat. Gasoline'].values / model_prices.loc[prior_date, 'WTI CMA'])
         print(f'NGLs tied to HH: {ngls_ratio_to_hh}')
         print(f'NGLs tied to WTI: {ngls_ratio_to_wti}')
         ngl_ratios = dict(zip(ngl_list, np.concatenate((ngls_ratio_to_hh, ngls_ratio_to_wti))))
@@ -1992,9 +1995,11 @@ def update_flat_model_prices(model_prices):
         # _1 = input('enter to continue >> ')
         for ngl_name, ratio in ngl_ratios.items():
             if any([_ in ngl_name for _ in ['Ethane', 'Propane']]):
-                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:, 'HH Gas'] * ratio
+                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:,
+                                                                  'HH Gas'] * ratio
             else:
-                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:, 'WTI CMA'] * ratio
+                model_prices.at[flat_ngl_start_date:, ngl_name] = model_prices.loc[flat_ngl_start_date:,
+                                                                  'WTI CMA'] * ratio
 
     print(model_prices.head(24))
     # _1 = input('enter to continue >> ')
@@ -2087,11 +2092,13 @@ def get_bootstrap_prices(strip_pricing_date,
                 old_cols = bootstrap_prices[c_nick].columns.to_list()
                 new_cols = old_cols.copy()
                 new_cols[-1] = _non_mcs_scenario_label
-                bootstrap_prices[c_nick].rename(columns={old: new for old, new in zip(old_cols, new_cols)}, inplace=True)
+                bootstrap_prices[c_nick].rename(columns={old: new for old, new in zip(old_cols, new_cols)},
+                                                inplace=True)
 
                 # update flat price values
                 c_name = [k for k, v in model_price_sim_price_dict.items() if v == c_nick][0]
-                bootstrap_prices[c_nick].loc[model_prices.index, _non_mcs_scenario_label] = model_prices.loc[:, c_name].values
+                bootstrap_prices[c_nick].loc[model_prices.index, _non_mcs_scenario_label] = model_prices.loc[:,
+                                                                                            c_name].values
                 bootstrap_prices[c_nick].ffill(inplace=True)
 
                 print(bootstrap_prices[c_nick])
@@ -2133,7 +2140,6 @@ def get_bootstrap_prices(strip_pricing_date,
         print(model_prices, _non_mcs_scenario_label)
         # _q = input('continue?')
 
-
         # create a dataframe for each price _scenario for each commodity in the sim_prices index
         for c_nick in sim_prices.index:
             bootstrap_prices[c_nick] = pd.DataFrame(
@@ -2149,7 +2155,7 @@ def get_bootstrap_prices(strip_pricing_date,
             mod_pr = model_prices.loc[:, model_price_key]
 
             bootstrap_prices[c_nick].loc[: len(mod_pr), _non_mcs_scenario_label] = model_prices.loc[
-                                                                                         :, model_price_key]
+                                                                                   :, model_price_key]
             bootstrap_prices[c_nick].ffill(inplace=True)
 
         # save 1) 2) and 3) to price _scenario folder
@@ -2239,10 +2245,12 @@ def run_KDE(data, c_nick, rand_samples=10 ** 5):
     return results_dict
 
 
-def get_kde_bandwidth(update = {}):
+def get_kde_bandwidth(update):
     '''Returns dictionary with KDE bandwifth by commodity (keys = comdty_nick).
     Pass update = {comdty_nick: bandwidth} to update bandwidth for a commodity.'''
 
+    if update is None:
+        update = {}
     global kde_bandwidth
     if 'kde_bandwidth' not in globals():
         kde_bandwidth = {'wti': 0.3,
