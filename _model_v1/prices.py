@@ -2245,7 +2245,7 @@ def run_KDE(data, c_nick, rand_samples=10 ** 5):
     return results_dict
 
 
-def get_kde_bandwidth(update):
+def get_kde_bandwidth(update=None):
     '''Returns dictionary with KDE bandwifth by commodity (keys = comdty_nick).
     Pass update = {comdty_nick: bandwidth} to update bandwidth for a commodity.'''
 

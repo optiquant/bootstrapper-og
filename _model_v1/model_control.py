@@ -39,13 +39,13 @@ modeled_wells_all = [
     # "MUNSON #6H",
     # "MUNSON #7H",
     # "MUNSON #8H",
-    "Munson-Central//Well 1",
-    "Munson-Central//Well 2",
-    "Munson-Central//Well 3",
-    "Munson-Central//Well 4",
-    "Munson-Central//Well 5",
-    "Munson-Central//Well 6",
-    "Munson-Central//Well 7",
+    "ASSAULT S391H",
+    "ASSAULT S392H",
+    "ASSAULT S393H",
+    "ASSAULT S394H",
+    "ASSAULT S395H",
+    "ASSAULT S396H",
+    "ASSAULT S397H",
     "Munson-Southwest//Well 8",
     "Munson-Southwest//Well 9",
     "Munson-Southwest//Well 10",
@@ -107,8 +107,6 @@ modeled_wells_all = [
     # "MunsonLeasing//Well 3",
     # "MunsonLeasing//Well 4"
 ]
-
-
 
 # modeled_wells_all = ["Ganador//GEN "+str(_+1) for _ in range(90)]
 # modeled_wells_all = ["LeasingII//GENERIC "+str(_+1) for _ in range(32)]
@@ -191,7 +189,7 @@ reassigned_type_curve_areas = {
 balance_sheet_date = '6/30/21'
 model_start_date = '7/1/21'
 
-strip_pricing_date = '9/24/21'
+strip_pricing_date = '10/5/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 flat_ngl_scenario = False
@@ -422,7 +420,6 @@ def get_flat_ngl_start_date():
     else:
         print('| Running strip prices for NGLs.\n')
     return flat_ngl_start_date
-
 
 
 def get_non_mcs_scenario_label():
