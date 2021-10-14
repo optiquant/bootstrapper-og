@@ -1,14 +1,14 @@
 from _model_v1.useful_functions import *
-import _model_v1.model_drivers as model_drivers
-
+import model_control
 import pandas as pd
 import numpy as np
 import re
 import pprint
 from collections import namedtuple
 
-# model input folder from useful_functions -
-input_folder = root_folder_model_input()['root_folder']
+# todo: connect to model control
+input_folder = 'C:\\Users\\vdesai\\Git\\bootstrapper-og\\_model_input\\_csv_drivers\\'
+asset_level_drivers = pd.read_csv(input_folder+'asset_level_drivers.csv')
 
 # type curve namedtuple for TCs and EURs by production stream
 TypeCurve = namedtuple('TypeCurve',
@@ -43,26 +43,28 @@ class TypeCurves:
         self.type_curves_gas = self.type_curves_gas[sorted(self.type_curves_gas.columns)]
 
         self.type_curves_water = pd.read_csv(input_folder + "type_curves_water.csv")
-        self.type_curves_water.columns = [
-            _.replace(" Water", "") for _ in self.type_curves_water.columns]
+        self.type_curves_water.columns = [_.replace(" Water", "") for _ in self.type_curves_water.columns]
         self.type_curves_water = self.type_curves_water[sorted(self.type_curves_water.columns)]
 
-        print(f'\n| Oil type curves input:\n{self.type_curves_oil}')
-        print(f'\n| Gas type curves input:\n{self.type_curves_gas}')
-        print(f'\n| Water type curves input:\n{self.type_curves_water}')
+        # print(f'\n| Oil type curves input:\n{self.type_curves_oil}')
+        # print(f'\n| Gas type curves input:\n{self.type_curves_gas}')
+        # print(f'\n| Water type curves input:\n{self.type_curves_water}')
 
         self.tc_eur_oil = self.type_curves_oil.sum(axis=0)
         self.tc_eur_gas = self.type_curves_gas.sum(axis=0)
         self.tc_eur_water = self.type_curves_water.sum(axis=0)
-        print(f'\n| Oil type curves EUR (MBbl):\n{self.tc_eur_oil}')
-        print(f'\n| Gas type curves EUR (MMcf):\n{self.tc_eur_gas}')
-        print(f'\n| Water type curves EUR (MBbl):\n{self.tc_eur_water}')
+        # print(f'\n| Oil type curves EUR (MBbl):\n{self.tc_eur_oil}')
+        # print(f'\n| Gas type curves EUR (MMcf):\n{self.tc_eur_gas}')
+        # print(f'\n| Water type curves EUR (MBbl):\n{self.tc_eur_water}')
 
         self.tc_dict = dict(enumerate([_ for _ in self.type_curves_oil.columns]))
-        print(f'\n| Type Curves Modeled:')
-        pprint.pprint(self.tc_dict)
+        # print(f'\n| Type Curves Modeled:')
+        # pprint.pprint(self.tc_dict)
 
         self.gross_type_curves()
+
+    def __repr__(self):
+        return f"TypeCurves object: attributes --> {[_ for _ in self.__dict__.keys()]}"
 
     def gross_type_curves(self):
         return {'type_curves_oil': self.type_curves_oil,
@@ -71,8 +73,7 @@ class TypeCurves:
                 }
 
     def get_type_curve(self, sub_asset, type_curve_name=''):
-        '''Returns a namedtuple TypeCurve instance whose attributes
-        are gross type curves and EURs for each production stream.'''
+        '''Returns a namedtuple TypeCurve instance whose attributes are gross type curves and EURs for each production stream.'''
         for tc_name in self.tc_dict.values():
             if type_curve_name == tc_name:
                 name = tc_name
@@ -84,25 +85,40 @@ class TypeCurves:
                 water_eur = self.tc_eur_water[tc_name]
 
                 ### NGL YIELDS ###
-                # ngl_fields = [_ for _ in model_drivers._asset_level_drivers.columns if 'NGL Yield - Theoretical - ' in _]
-                # ngl_yields_theoretical = dict(model_drivers._asset_level_drivers.loc[sub_asset, ngl_fields])
+                ngl_fields = [_ for _ in asset_level_drivers.columns if
+                              'NGL Yield - Actual - ' in _]
+
+                # calc actual ngl yields based on ethane recovery/rejection
+                ngl_yields_actual = {
+                    k: float(v) for k, v in dict(asset_level_drivers.loc[sub_asset, ngl_fields])
+                }
+
+                ngl_fixed_recoveries = model_control.ngl_fixed_recoveries[model_control.ethane_mode]
+
+                ngl_yields_theoretical = dict(asset_level_drivers.loc[sub_asset, ngl_fields])
+                # convert string numerals to float
+                ngl_yields_theoretical = {
+                    fixed_recov_k: yields_v / fixed_recov_v for (yields_k, yields_v), (fixed_recov_k, fixed_recov_v) in zip(ngl_yields_actual.items(), ngl_fixed_recoveries.items())
+                }
+
+                # ngl_fixed_recoveries = model_control.ngl_fixed_recoveries[model_control.ethane_mode]
+                #
+                # ngl_yields_theoretical = dict(asset_level_drivers.loc[sub_asset, ngl_fields])
                 # # convert string numerals to float
-                # ngl_yields_theoretical = {k: float(v) for k, v in ngl_yields_theoretical.items()}
-                # ngl_fixed_recoveries = model_drivers.ngl_fixed_recoveries[model_drivers.ethane_mode]
-                # # calc actual ngl yields based on ethane recovery/rejection
+                # ngl_yields_theoretical = {
+                #     k: float(v) for k, v in ngl_yields_theoretical.items()
+                # }
+                #
                 # ngl_yields_actual = {
                 #     fr_k: yields_v * fr_v for (yields_k, yields_v), (fr_k, fr_v) in zip(
                 #         ngl_yields_theoretical.items(), ngl_fixed_recoveries.items()
                 #     )
                 # }
 
-                ngl_fields = [_ for _ in model_drivers._asset_level_drivers.columns if
-                              'NGL Yield - Actual - ' in _]
-                ngl_yields_actual = dict(model_drivers._asset_level_drivers.loc[sub_asset, ngl_fields])
-
-                # print('\n| Theoretical NGL yields (Bbl/Mcf):', ngl_yields_theoretical)
-                # print('| Ethane model modeled:', model_drivers.ethane_mode)
+                print('\n| Theoretical NGL yields (Bbl/Mcf):', ngl_yields_theoretical)
+                print('| Ethane model modeled:', model_control.ethane_mode)
                 print('| Actual NGL yields (Bbl/Mcf):', ngl_yields_actual)
+
 
                 # make NGL type curves for the single well
                 ethane = gas * ngl_yields_actual['ethane'] / 1000

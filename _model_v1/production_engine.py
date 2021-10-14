@@ -574,7 +574,7 @@ def shift_adjust_type_curves():
     return
 
 
-def save_production_engine_outputs(save_to='local'):
+def save_production_engine_outputs(save_to='both'):
     '''Saves key module outputs to excel.'''
     global production_engine_outputs
 
