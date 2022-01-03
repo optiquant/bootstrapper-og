@@ -22,131 +22,7 @@ import plotly.express as px
 
 
 
-'''Calculates the Wet Gas Price Index (WGX).'''
 
-trade_date = input('| Enter as of date for gas index update (m/d/yy) >> ')
-trade_date = pd.to_datetime(trade_date, utc=True)
-
-_whichindex = input('| Which index to calculate? Dry gas (D) / Wet Gas (W) / Vent Gas (V) >> ').lower()
-if _whichindex == 'd':
-    print('|-- Dry gas selected.')
-    c_nicks = ['hh', 'waha_gas_diff']
-else:
-    print('|-- Wet or vent gas selected.')
-    c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
-
-mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
-price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
-print(price_data_folders)
-
-# save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
-# save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
-# save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
-save_to_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/seasonal index/'
-# root_folder = r'T:/Finance-Strategy/WGX/'
-root_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/'
-
-default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
-convert_gal_to_mmbtu = False
-gal_mmbtu_conv_ratio = pr.get_conversion_ratios()['gal/mmbtu - energy']
-ngl_nicks = get_ngl_nicks()
-mcs_start_end_dates = pr.get_mcs_start_end_dates(sim_end=trade_date)
-
-
-error_log = []
-excluded_prices = {
-    'hh': [0.00],
-    'waha_gas_diff': [0.00],
-    'hsc_gas_diff': [0.00],
-    'ethane': [0.00],
-    'propane': [0.00],
-    'iso_butane': [0.00],
-    'n_butane': [0.00],
-    'nat_gasoline': [0.00]
-}
-
-# read in inputs
-
-if _whichindex == 'd':
-    gx_c_nick = 'dgx'
-    gx_c_code = 'DGX'
-    gx_c_name = 'Dry Gas Index (DGX)'
-    gx_c_unit = '$/Mcf'
-    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/dgx_gas_sample_input.xlsx",
-                                           sheet_name='input', index_col=[1])
-
-elif _whichindex == 'w':
-    gx_c_nick = 'wgx'
-    gx_c_code = 'WGX'
-    gx_c_name = 'Wet Gas Index (WGX)'
-    gx_c_unit = '$/Mcf'
-    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/wgx_gas_sample_input.xlsx",
-                                           sheet_name='input', index_col=[1])
-
-elif _whichindex == 'v':
-    gx_c_nick = 'vgx'
-    gx_c_code = 'VGX'
-    gx_c_name = 'Vent Gas Index (VGX)'
-    gx_c_unit = '$/Mcf'
-    gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/vgx_gas_sample_input.xlsx",
-                                           sheet_name='input', index_col=[1])
-
-gx_gas_sample_input = dict(gx_gas_sample_input_df)
-print(gx_gas_sample_input)
-
-
-input_map = {
-    "Tailgate BTU/CF": 'mmbtu_per_mcf_dry_gas',
-    "Gas Shrink - Sales": 'gas_shrink_sales',
-    "Gas Shrink - Vent": 'gas_shrink_vent',
-    "Ethane": None,
-    "Propane": None,
-    "Isobutane": None,
-    "Nor Butane": None,
-    "Nat Gasoline": None,
-    "Nat Gasoline": None,
-    "Hexanes": None
-}
-
-mmbtu_per_mcf_dry_gas = gx_gas_sample_input['value'].at['dry_gas_btu_cf']
-gas_shrink_sales = gx_gas_sample_input['value'].at['gas_shrink_sales']
-gas_shrink_vent = gx_gas_sample_input['value'].at['gas_shrink_vent']
-t_and_f_per_ngl_gal = gx_gas_sample_input['value'].at['ngl_tf_per_gal']
-
-# number of gallons per mcf
-gal_per_mcf = {
-    k: sum(v) for k, v in {'ethane': [gx_gas_sample_input['value'].at['c2']],
-                           'propane': [gx_gas_sample_input['value'].at['c3']],
-                           'n_butane': [gx_gas_sample_input['value'].at['nc4']],
-                           'iso_butane': [gx_gas_sample_input['value'].at['ic4']],
-                           'nat_gasoline': [gx_gas_sample_input['value'].at['ic5'],
-                                            gx_gas_sample_input['value'].at['nc5'],
-                                            gx_gas_sample_input['value'].at['c6']
-                                            ]
-                           }.items()
-}
-print(f'\n| gal_per_mcf >> {gal_per_mcf}')
-
-_1 = input('| Hit enter to continue if gas sample is ok >> ')
-gx_start_date = '1/1/2010'
-
-
-# month pairs used to calculate price changes
-month_pairs = [(1, 2),
-               (2, 3),
-               (3, 4),
-               (4, 5),
-               (5, 6),
-               (6, 7),
-               (7, 8),
-               (8, 9),
-               (9, 10),
-               (10, 11),
-               (11, 12),
-               (12, 1)]
-
-# dict to store calculated historical settlement price deltas for each month-pair
-historical_month_deltas = {}
 
 
 #----------------------------------------------------------------------------------------------------------------------#
@@ -710,200 +586,324 @@ def save_and_show(fig):
 
 
 # --- seasonal index --- #
+# read in inputs
+error_log = []
+excluded_prices = {
+    'hh': [0.00],
+    'waha_gas_diff': [0.00],
+    'hsc_gas_diff': [0.00],
+    'ethane': [0.00],
+    'propane': [0.00],
+    'iso_butane': [0.00],
+    'n_butane': [0.00],
+    'nat_gasoline': [0.00]
+}
 
-# calculate historical strip shapes
-historical_strip_shape(commodity_list=c_nicks)
+gx_start_date = '1/1/2010'
 
-# calculate summary stats
-summary_stats = summary_stats_by_month_pair()
 
-# calc WGX
-gx_prices = calc_gas_index(summary_stats)
+# month pairs used to calculate price changes
+month_pairs = [(1, 2),
+               (2, 3),
+               (3, 4),
+               (4, 5),
+               (5, 6),
+               (6, 7),
+               (7, 8),
+               (8, 9),
+               (9, 10),
+               (10, 11),
+               (11, 12),
+               (12, 1)]
 
-# make charts with legends
-fig = make_subplots(
-    rows=2,
-    cols=1,
-    horizontal_spacing=0.1,
-    vertical_spacing=0.12,
-    specs=[[{"type": "xy"}], [{"type": "table"}]]
-)
+# dict to store calculated historical settlement price deltas for each month-pair
+historical_month_deltas = {}
 
-chart_data = {}
+input_map = {
+    "Tailgate BTU/CF": 'mmbtu_per_mcf_dry_gas',
+    "Gas Shrink - Sales": 'gas_shrink_sales',
+    "Gas Shrink - Vent": 'gas_shrink_vent',
+    "Ethane": None,
+    "Propane": None,
+    "Isobutane": None,
+    "Nor Butane": None,
+    "Nat Gasoline": None,
+    "Nat Gasoline": None,
+    "Hexanes": None
+}
 
-# colors
-light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
-dark_magenta = hex_to_rgba('#992088', a=1.0, values=False)
-soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=False)
-generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=False)
-generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=False)
-bold_red = hex_to_rgba('#aa0000', a=1.0, values=False)
-bold_dark_green = hex_to_rgba('#005500', a=1.0, values=False)
-pastel_orange = hex_to_rgba('#e39f58', a=1.0, values=False)
-bold_orange = hex_to_rgba('#ff8202', a=1.0, values=False)
-generic_yellow = hex_to_rgba('#ffc332', a=1.0, values=False)
-ChartColor = namedtuple('ChartColor', ['color_1', 'color_2', 'color_3', 'color_4', 'color_5'])
-base_colors = ChartColor(color_1=generic_pale_blue,
-                         color_2=light_blue,
-                         color_3=dark_magenta,
-                         color_4=soft_magenta,
-                         color_5=generic_pale_grey
-                         )
-other_colors = ChartColor(color_1=pastel_orange,
-                          color_2=bold_orange,
-                          color_3=bold_red,
-                          color_4=generic_yellow,
-                          color_5=bold_dark_green
-                          )
+trade_date = input('| Enter as of date for gas index update (m/d/yy) >> ')
+trade_date = pd.to_datetime(trade_date, utc=True)
+# _whichindex = input('| Which index to calculate? Dry gas (D) / Wet Gas (W) / Vent Gas (V) >> ').lower()
+for _whichindex in ['w', 'v']:
+    '''Calculates the Wet/Vent Gas Price Index (WGX).'''
 
-for pr_scen in gx_prices.columns:
-    try:
-        pr_scen_float = float(pr_scen.strip('%')) / 100
-    except ValueError:
-        pr_scen_float = pr_scen
+    # save_to_folder = r'T:/Finance-Strategy/Price Analysis/'
+    # save_to_folder = r'T:/Finance-Strategy/Price Analysis/absolute time index/'
+    # save_to_folder = r'T:/Finance-Strategy/WGX/seasonal index/'
+    save_to_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/seasonal index/'
+    # root_folder = r'T:/Finance-Strategy/WGX/'
+    root_folder = r'//FILE01/TDrive/Finance-Strategy/WGX/'
 
-    _y = [_ for _ in gx_prices.loc[:, pr_scen].values]
-    _x = [string_date(pd.to_datetime(_, utc=True) + MonthEnd(-1) + Day(1)) for _ in gx_prices.index]
-    _mode = ['lines+markers' if pr_scen_float in [pr_scen, 0.5, 0.25, 0.75] else
-             'markers'][0]
-    _markercolor = [base_colors.color_2 if pr_scen_float == pr_scen else
-                    base_colors.color_3 if pr_scen_float == 0.5 else
-                    other_colors.color_2 if pr_scen_float in [0.25, 0.75] else
-                    other_colors.color_1 if pr_scen_float in [0.10, 0.90] else
-                    other_colors.color_4][0]
-    _markersize = [11 if pr_scen_float in [pr_scen, 0.5] else
-                   10 if pr_scen_float in [0.25, 0.75] else
-                   8][0]
-    _markersymbol = ['circle-dot' if pr_scen_float in [pr_scen, 0.5] else
-                     'triangle-down' if pr_scen_float < 0.50 else
-                     'triangle-up'
-                     ][0]
-    _line_width = 2.0
-    _dash_dot = ['dash' if pr_scen_float in [0.50, 0.25, 0.75] else
-                 None][0]
-    _font_size = 12
+    default_percentiles = [0.05, 0.10, 0.25, 0.50, 0.75, 0.90, 0.95]
+    convert_gal_to_mmbtu = False
+    gal_mmbtu_conv_ratio = pr.get_conversion_ratios()['gal/mmbtu - energy']
+    ngl_nicks = get_ngl_nicks()
+    mcs_start_end_dates = pr.get_mcs_start_end_dates(sim_end=trade_date)
 
-    chart_data[pr_scen] = go.Scattergl(
-        y=_y,
-        x=_x,
-        name=f'{gx_c_code} | {pr_scen}',
-        mode=_mode,
-        marker=dict(color=_markercolor,
-                    size=_markersize,
-                    symbol=_markersymbol
-                    ),
-        line=dict(width=_line_width,
-                  dash=_dash_dot,
-                  color=_markercolor),
-        text=[f' {_:,.2f}' for idx, _ in enumerate(_y)],  # alternating: if np.mod(idx,2) == 0 else ''
-        textposition=['top center' if np.mod(idx, 2) == 0 else 'bottom center' for idx, _ in
-                      enumerate(_y)],
-        textfont_size=_font_size,
-        textfont_color=_markercolor,
-        textfont_family='sans-serif'
+    if _whichindex == 'd':
+        print('|-- Dry gas selected.')
+        c_nicks = ['hh', 'waha_gas_diff']
+    else:
+        print('|-- Wet or vent gas selected.')
+        c_nicks = ['hh', 'waha_gas_diff', 'ethane', 'propane', 'iso_butane', 'n_butane', 'nat_gasoline']
+
+    if _whichindex == 'd':
+        gx_c_nick = 'dgx'
+        gx_c_code = 'DGX'
+        gx_c_name = 'Dry Gas Index (DGX)'
+        gx_c_unit = '$/Mcf'
+        gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/dgx_gas_sample_input.xlsx",
+                                               sheet_name='input', index_col=[1])
+
+    elif _whichindex == 'w':
+        gx_c_nick = 'wgx'
+        gx_c_code = 'WGX'
+        gx_c_name = 'Wet Gas Index (WGX)'
+        gx_c_unit = '$/Mcf'
+        gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/wgx_gas_sample_input.xlsx",
+                                               sheet_name='input', index_col=[1])
+
+    elif _whichindex == 'v':
+        gx_c_nick = 'vgx'
+        gx_c_code = 'VGX'
+        gx_c_name = 'Vent Gas Index (VGX)'
+        gx_c_unit = '$/Mcf'
+        gx_gas_sample_input_df = pd.read_excel(root_folder + "__GAS SAMPLE INPUT/vgx_gas_sample_input.xlsx",
+                                               sheet_name='input', index_col=[1])
+
+    mcs_data_folders = {c_nick: pr.root_folder_mcs_data(c_nick)['root_folder'] for c_nick in c_nicks}
+    price_data_folders = {c_nick: pr.root_folder_price_data(c_nick)['root_folder'] for c_nick in c_nicks}
+    print(price_data_folders)
+
+    gx_gas_sample_input = dict(gx_gas_sample_input_df)
+    print(gx_gas_sample_input)
+
+    mmbtu_per_mcf_dry_gas = gx_gas_sample_input['value'].at['dry_gas_btu_cf']
+    gas_shrink_sales = gx_gas_sample_input['value'].at['gas_shrink_sales']
+    gas_shrink_vent = gx_gas_sample_input['value'].at['gas_shrink_vent']
+    t_and_f_per_ngl_gal = gx_gas_sample_input['value'].at['ngl_tf_per_gal']
+
+    # number of gallons per mcf
+    gal_per_mcf = {
+        k: sum(v) for k, v in {'ethane': [gx_gas_sample_input['value'].at['c2']],
+                               'propane': [gx_gas_sample_input['value'].at['c3']],
+                               'n_butane': [gx_gas_sample_input['value'].at['nc4']],
+                               'iso_butane': [gx_gas_sample_input['value'].at['ic4']],
+                               'nat_gasoline': [gx_gas_sample_input['value'].at['ic5'],
+                                                gx_gas_sample_input['value'].at['nc5'],
+                                                gx_gas_sample_input['value'].at['c6']
+                                                ]
+                               }.items()
+    }
+    print(f'\n| gal_per_mcf >> {gal_per_mcf}')
+
+    # _1 = input('| Hit enter to continue if gas sample is ok >> ')
+
+
+    # calculate historical strip shapes
+    historical_strip_shape(commodity_list=c_nicks)
+
+    # calculate summary stats
+    summary_stats = summary_stats_by_month_pair()
+
+    # calc WGX
+    gx_prices = calc_gas_index(summary_stats)
+
+    # make charts with legends
+    fig = make_subplots(
+        rows=2,
+        cols=1,
+        horizontal_spacing=0.1,
+        vertical_spacing=0.12,
+        specs=[[{"type": "xy"}], [{"type": "table"}]]
     )
 
-for pr_scen, series in chart_data.items():
-    fig.add_trace(series, row=1, col=1)
+    chart_data = {}
 
-    # add annotations for strip pricing
-    if 'Strip' in series['name']:
-        for idx, x in enumerate(series['x']):
-            y = series['y'][idx]
-            num_format = f'{y: ,.2f}'
-            # if this is a leverage chart, make it 0.00x
-            print(f'| Strip annotations: x = {x}, y = {y}')
-            fig.add_annotation(
-                x=x,
-                y=y,
-                xref="x",
-                yref="y",
-                text=num_format,
-                showarrow=True,
-                font=dict(
-                    family="sans-serif",
-                    size=_font_size + 1,
-                    color=series['marker']['color']
-                ),
-                align="center",
-                arrowhead=None,
-                arrowsize=1,
-                arrowwidth=1,
-                arrowcolor=series['marker']['color'],
-                ax=0 if np.mod(idx, 2) == 0 else 0,
-                ay=-25 if np.mod(idx, 2) == 0 else 25,
-                bordercolor=None,
-                borderwidth=None,
-                borderpad=1,
-                bgcolor='white',
-                opacity=1.00,
-                row=1,
-                col=1
-            )
+    # colors
+    light_blue = hex_to_rgba('#488fff', a=1.0, values=False)
+    dark_magenta = hex_to_rgba('#992088', a=1.0, values=False)
+    soft_magenta = hex_to_rgba('#d277e5', a=1.0, values=False)
+    generic_pale_grey = hex_to_rgba('#f1f1f1', a=1.0, values=False)
+    generic_pale_blue = hex_to_rgba('#c4cef6', a=1.0, values=False)
+    bold_red = hex_to_rgba('#aa0000', a=1.0, values=False)
+    bold_dark_green = hex_to_rgba('#005500', a=1.0, values=False)
+    pastel_orange = hex_to_rgba('#e39f58', a=1.0, values=False)
+    bold_orange = hex_to_rgba('#ff8202', a=1.0, values=False)
+    generic_yellow = hex_to_rgba('#ffc332', a=1.0, values=False)
+    ChartColor = namedtuple('ChartColor', ['color_1', 'color_2', 'color_3', 'color_4', 'color_5'])
+    base_colors = ChartColor(color_1=generic_pale_blue,
+                             color_2=light_blue,
+                             color_3=dark_magenta,
+                             color_4=soft_magenta,
+                             color_5=generic_pale_grey
+                             )
+    other_colors = ChartColor(color_1=pastel_orange,
+                              color_2=bold_orange,
+                              color_3=bold_red,
+                              color_4=generic_yellow,
+                              color_5=bold_dark_green
+                              )
 
-# Update xaxis properties
-fig.update_xaxes(dict(title_text=f'Futures Contract',
-                      nticks=25,
-                      tickangle=-45,
-                      tickfont_size=_font_size,
-                      gridcolor='rgba(175,175,175,0.75)'),
-                 row=1,
-                 col=1)
-# Update yaxis properties
-fig.update_yaxes(dict(title_text=f'{gx_c_code} | {gx_c_unit}',
-                      tickformat=',.2f',
-                      nticks=20,
-                      tickfont_size=_font_size,
-                      linecolor='rgba(100,100,100,0.75)',
-                      zeroline=True,
-                      zerolinecolor='rgba(80,80,80,0.75)',
-                      gridcolor='rgba(200,200,200,0.75)'),
-                 row=1,
-                 col=1)
+    for pr_scen in gx_prices.columns:
+        try:
+            pr_scen_float = float(pr_scen.strip('%')) / 100
+        except ValueError:
+            pr_scen_float = pr_scen
 
-_width = 1500
-_height = 1250
-fig.update_layout(title=f'{gx_c_name} Futures | As of {string_date(trade_date)}',
-                  plot_bgcolor='rgba(255,255,255,1.0)',
-                  width=_width,
-                  height=_height,
-                  showlegend=True,
-                  legend=dict(title_text=None,  # 'Percentile Outcomes',
-                              orientation='v',
-                              y=1.00,
-                              x=1.01,
-                              font_size=_font_size)
-                  )
+        _y = [_ for _ in gx_prices.loc[:, pr_scen].values]
+        _x = [string_date(pd.to_datetime(_, utc=True) + MonthEnd(-1) + Day(1)) for _ in gx_prices.index]
+        _mode = ['lines+markers' if pr_scen_float in [pr_scen, 0.5, 0.25, 0.75] else
+                 'markers'][0]
+        _markercolor = [base_colors.color_2 if pr_scen_float == pr_scen else
+                        base_colors.color_3 if pr_scen_float == 0.5 else
+                        other_colors.color_2 if pr_scen_float in [0.25, 0.75] else
+                        other_colors.color_1 if pr_scen_float in [0.10, 0.90] else
+                        other_colors.color_4][0]
+        _markersize = [11 if pr_scen_float in [pr_scen, 0.5] else
+                       10 if pr_scen_float in [0.25, 0.75] else
+                       8][0]
+        _markersymbol = ['circle-dot' if pr_scen_float in [pr_scen, 0.5] else
+                         'triangle-down' if pr_scen_float < 0.50 else
+                         'triangle-up'
+                         ][0]
+        _line_width = 2.0
+        _dash_dot = ['dash' if pr_scen_float in [0.50, 0.25, 0.75] else
+                     None][0]
+        _font_size = 12
 
-# add a gas composition table as chart #2
-print(gx_gas_sample_input_df)
-chart_df = gx_gas_sample_input_df.reset_index()
-chart_df = chart_df[['metric', 'id', 'unit', 'value']]
-num_columns = len(chart_df.columns)
-chart_df.rename(columns={'id': 'ID',
-                         'metric': f'{gx_c_code} Component',
-                         'unit': 'Unit',
-                         'value': 'Value'}, inplace=True)
-column_alignment = ['left'] + ['center'] * (num_columns - 1)
-column_font_colors = ['rgb(40,40,40)'] * (num_columns)
-component_table = go.Table(
-    header=dict(values=[_ for _ in chart_df.columns],
-                font=dict(color=hex_to_rgba('#bc50aa', a=1.0, values=False),
-                          size=_font_size),
-                line_color='rgba(200,200,200,0.75)',
-                fill_color='white',
-                height=28,
-                align=column_alignment),
-    cells=dict(values=[chart_df.loc[:, _].tolist() for _ in chart_df.columns],
-               align=column_alignment,
-               line=dict(color='rgba(200,200,200,0.75)'),
-               font=dict(color=column_font_colors,
-                         size=_font_size),
-               format=[None] * (num_columns - 1) + [",.3f"],
-               # prefix = [None] + ['$'] *2,
-               # suffix=[None] * 4,
-               height=28,
-               fill=dict(color=['rgba(245,245,245, 1.00)'] + ['white'] * (num_columns - 1))))
-fig.add_trace(component_table, row=2, col=1)
+        chart_data[pr_scen] = go.Scattergl(
+            y=_y,
+            x=_x,
+            name=f'{gx_c_code} | {pr_scen}',
+            mode=_mode,
+            marker=dict(color=_markercolor,
+                        size=_markersize,
+                        symbol=_markersymbol
+                        ),
+            line=dict(width=_line_width,
+                      dash=_dash_dot,
+                      color=_markercolor),
+            text=[f' {_:,.2f}' for idx, _ in enumerate(_y)],  # alternating: if np.mod(idx,2) == 0 else ''
+            textposition=['top center' if np.mod(idx, 2) == 0 else 'bottom center' for idx, _ in
+                          enumerate(_y)],
+            textfont_size=_font_size,
+            textfont_color=_markercolor,
+            textfont_family='sans-serif'
+        )
 
-save_and_show(fig)
+    for pr_scen, series in chart_data.items():
+        fig.add_trace(series, row=1, col=1)
+
+        # add annotations for strip pricing
+        if 'Strip' in series['name']:
+            for idx, x in enumerate(series['x']):
+                y = series['y'][idx]
+                num_format = f'{y: ,.2f}'
+                # if this is a leverage chart, make it 0.00x
+                print(f'| Strip annotations: x = {x}, y = {y}')
+                fig.add_annotation(
+                    x=x,
+                    y=y,
+                    xref="x",
+                    yref="y",
+                    text=num_format,
+                    showarrow=True,
+                    font=dict(
+                        family="sans-serif",
+                        size=_font_size + 1,
+                        color=series['marker']['color']
+                    ),
+                    align="center",
+                    arrowhead=None,
+                    arrowsize=1,
+                    arrowwidth=1,
+                    arrowcolor=series['marker']['color'],
+                    ax=0 if np.mod(idx, 2) == 0 else 0,
+                    ay=-25 if np.mod(idx, 2) == 0 else 25,
+                    bordercolor=None,
+                    borderwidth=None,
+                    borderpad=1,
+                    bgcolor='white',
+                    opacity=1.00,
+                    row=1,
+                    col=1
+                )
+
+    # Update xaxis properties
+    fig.update_xaxes(dict(title_text=f'Futures Contract',
+                          nticks=25,
+                          tickangle=-45,
+                          tickfont_size=_font_size,
+                          gridcolor='rgba(175,175,175,0.75)'),
+                     row=1,
+                     col=1)
+    # Update yaxis properties
+    fig.update_yaxes(dict(title_text=f'{gx_c_code} | {gx_c_unit}',
+                          tickformat=',.2f',
+                          nticks=20,
+                          tickfont_size=_font_size,
+                          linecolor='rgba(100,100,100,0.75)',
+                          zeroline=True,
+                          zerolinecolor='rgba(80,80,80,0.75)',
+                          gridcolor='rgba(200,200,200,0.75)'),
+                     row=1,
+                     col=1)
+
+    _width = 1500
+    _height = 1250
+    fig.update_layout(title=f'{gx_c_name} Futures | As of {string_date(trade_date)}',
+                      plot_bgcolor='rgba(255,255,255,1.0)',
+                      width=_width,
+                      height=_height,
+                      showlegend=True,
+                      legend=dict(title_text=None,  # 'Percentile Outcomes',
+                                  orientation='v',
+                                  y=1.00,
+                                  x=1.01,
+                                  font_size=_font_size)
+                      )
+
+    # add a gas composition table as chart #2
+    print(gx_gas_sample_input_df)
+    chart_df = gx_gas_sample_input_df.reset_index()
+    chart_df = chart_df[['metric', 'id', 'unit', 'value']]
+    num_columns = len(chart_df.columns)
+    chart_df.rename(columns={'id': 'ID',
+                             'metric': f'{gx_c_code} Component',
+                             'unit': 'Unit',
+                             'value': 'Value'}, inplace=True)
+    column_alignment = ['left'] + ['center'] * (num_columns - 1)
+    column_font_colors = ['rgb(40,40,40)'] * (num_columns)
+    component_table = go.Table(
+        header=dict(values=[_ for _ in chart_df.columns],
+                    font=dict(color=hex_to_rgba('#bc50aa', a=1.0, values=False),
+                              size=_font_size),
+                    line_color='rgba(200,200,200,0.75)',
+                    fill_color='white',
+                    height=28,
+                    align=column_alignment),
+        cells=dict(values=[chart_df.loc[:, _].tolist() for _ in chart_df.columns],
+                   align=column_alignment,
+                   line=dict(color='rgba(200,200,200,0.75)'),
+                   font=dict(color=column_font_colors,
+                             size=_font_size),
+                   format=[None] * (num_columns - 1) + [",.3f"],
+                   # prefix = [None] + ['$'] *2,
+                   # suffix=[None] * 4,
+                   height=28,
+                   fill=dict(color=['rgba(245,245,245, 1.00)'] + ['white'] * (num_columns - 1))))
+    fig.add_trace(component_table, row=2, col=1)
+
+    save_and_show(fig)

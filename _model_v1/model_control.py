@@ -26,49 +26,36 @@ Attributes of model_control are of the following types:
 # ----------------------------------------------------------------------------------------------------------------------#
 
 modeled_wells_all = [
-    "MUNSON C N283HU",
-    "MUNSON C N284HM",
-    "MUNSON C N285HU",
-    "MUNSON C N286HM",
-    "MUNSON C N287HU",
-    # "MUNSON #1H",
-    # "MUNSON #2H",
-    # "MUNSON #3H",
-    # "MUNSON #4H",
-    # "MUNSON #5H",
-    # "MUNSON #6H",
-    # "MUNSON #7H",
-    # "MUNSON #8H",
-    "ASSAULT S391H",
-    "ASSAULT S392H",
-    "ASSAULT S393H",
-    "ASSAULT S394H",
-    "ASSAULT S395H",
-    "ASSAULT S396H",
-    "ASSAULT S397H",
-    "Munson-Southwest//Well 8",
-    "Munson-Southwest//Well 9",
-    "Munson-Southwest//Well 10",
-    "Munson-Southwest//Well 11",
-    "Farmar-North//Well 12",
-    "Farmar-North//Well 13",
-    "Farmar-North//Well 14",
-    "Farmar-North//Well 15",
-    "Munson-Central//Well 16",
-    "Munson-Central//Well 17",
-    "Munson-Central//Well 18",
-    "Munson-Central//Well 19",
-    "Munson-Central//Well 20",
-    "Munson-Central//Well 21",
+    "ASSAULT S391HU",
+    "ASSAULT S392HD",
+    "ASSAULT S393HA",
+    "ASSAULT S394HM",
+    "ASSAULT S395HU",
+    "ASSAULT S396HD",
+    "ASSAULT S397HU",
+    "WAR ADMIRAL S441HA",
+    "WAR ADMIRAL S442HM",
+    "WAR ADMIRAL S443HU",
+    "WAR ADMIRAL S444HD",
+    "WAR ADMIRAL S445HA",
+    "WAR ADMIRAL S446HM",
+    "HALCOMB S275H",
+    "HALCOMB S276H",
+    "Scott-Southwest//Well 1",
+    "Scott-Southwest//Well 2",
+    "Scott-Southwest//Well 3",
+    "Scott-Southwest//Well 4",
+    "Scott-Southwest//Well 5",
+    "Scott-Southwest//Well 6",
+    "Scott-Southwest//Well 7",
+    "MUNSON C N211H",
+    "MUNSON C N212H",
+    "MUNSON C N213H",
+    "MUNSON C N214H",
     "Farmar-East//Well 22",
     "Farmar-East//Well 23",
     "Farmar-East//Well 24",
     "Farmar-East//Well 25",
-    "Munson-Southwest//Well 26",
-    "Munson-Southwest//Well 27",
-    "Munson-Southwest//Well 28",
-    "Munson-Southwest//Well 29",
-    "Munson-Southwest//Well 30",
     "Munson-Central//Well 31",
     "Munson-Central//Well 32",
     "Munson-Central//Well 33",
@@ -87,25 +74,6 @@ modeled_wells_all = [
     "Munson-Central//Well 46",
     "Munson-Central//Well 47",
     "Munson-Central//Well 48"
-    # "FARMAR CB PU N734HU",
-    # "FARMAR CC PU N735HM",
-    # "FARMAR CC PU N736HU",
-    # "FARMAR CD PU N738HU",
-    # "Foreland I DUC 1",
-    # "Foreland I DUC 2",
-    # "Foreland I DUC 3",
-    # "Foreland I DUC 4",
-    # "Foreland I DUC 5",
-    # "Foreland I DUC 6",
-    # "Foreland I DUC 7",
-    # "LeasingII//Well 1",
-    # "LeasingII//Well 2",
-    # "LeasingII//Well 3",
-    # "LeasingII//Well 4",
-    # "MunsonLeasing//Well 1",
-    # "MunsonLeasing//Well 2",
-    # "MunsonLeasing//Well 3",
-    # "MunsonLeasing//Well 4"
 ]
 
 # modeled_wells_all = ["Ganador//GEN "+str(_+1) for _ in range(90)]
@@ -116,20 +84,11 @@ modeled_wells_all = [
 # False --> model will only use the input working capital balance (excel-based)
 include_remaining_pdp_capex = True
 pdp_wells_with_remaining_capex = [
-    # "HALCOMB A S271HU",
-    # "HALCOMB A S288HM",
-    # "HALCOMB A S287HU",
-    # "HALCOMB A S286HD",
-    # "HALCOMB A S273HU",
-    # "HALCOMB A S274HM",
-    # "HALCOMB A S274HA",
-    # "MUNSON C S284HM",
-    # "MUNSON C S285HU",
-    # "MUNSON C S286HM",
-    # "FARMAR DD S548HM",
-    # "FARMAR DC S545HM",
-    # "FARMAR DB S544HU",
-    # "FARMAR DA S541HM",
+    "MUNSON C N283HU",
+    "MUNSON C N284HM",
+    "MUNSON C N285HU",
+    "MUNSON C N286HM",
+    "MUNSON C N287HU",
 
 ]
 
@@ -186,10 +145,10 @@ reassigned_type_curve_areas = {
 }
 
 # balance sheet date (used for capital structure at model start)
-balance_sheet_date = '6/30/21'
-model_start_date = '7/1/21'
+balance_sheet_date = '9/30/21'
+model_start_date = '10/1/21'
 
-strip_pricing_date = '10/12/21'
+strip_pricing_date = '11/30/21'
 flat_oil_scenario = False
 flat_gas_scenario = False
 flat_ngl_scenario = False

@@ -52,7 +52,7 @@ scenario_filepaths_all = model_control.get_scenario_filepaths_all()
 def root_folder_daily_prices():
     '''Returns filepath for daily price updates.'''
     filepath = f'C:\\Users\\vdesai\\Git\\bootstrapper-og\\daily_price_updates\\'
-    print(f'/n| Daily price updates location: {filepath}')
+    print(f'/n| Price updates location: {filepath}')
     return {'parent_folder': filepath.strip('daily_price_updates\\'),
             'root_folder': filepath}
 
@@ -1648,18 +1648,18 @@ def send_daily_price_update_email(sender, recipients):
 
     today = get_dates('wti', date_type='end')
 
-    mail.Subject = f'Daily Market Update - {today}'
+    mail.Subject = f'Weekly Market Update - {today}'
 
     global bodytext
     bodytext = '''
     <b>
     <p style="font-size:20px">
-    Daily Market Update
+    Weekly Market Update
     </p>
     </b>
     <p style="font-size:15px">
     <br>
-    Attached is the daily commodity price update, along with current futures prices in excel.
+    Attached is the weekly commodity price update, along with current futures prices in excel.
     <br>
     <br>
     <i>

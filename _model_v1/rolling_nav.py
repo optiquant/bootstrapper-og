@@ -422,9 +422,10 @@ def calc_rolling_pv_newPDP(subasset):
     global total_net_cash_flow
     global dev_program_discount_rate
 
+
     # get well activity dates
     subasset_activity_dates = master_drilling_schedule.loc[
-                              [_ for _ in master_drilling_schedule.index if subasset.upper() in _.upper()],
+                              [well for well in master_drilling_schedule.index if subasset.upper() == model_drivers.get_sub_asset(well).upper()],
                               :]
     print(f'\n| Activity dates for {subasset}: {subasset_activity_dates}')
 

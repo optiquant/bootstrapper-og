@@ -7,13 +7,13 @@ pad_spud_to_first_well_spud,0
 spud_to_td,9
 skid_td_to_next_spud,0
 final_td_to_rig_release,0
-rig_move_to_next_pad,5
+rig_move_to_next_pad,15
 rig_release_to_frac_start,5
 frac_days_per_well,7
 frac_end_to_drill_out_start,1
 drill_out_days_per_well,3
 completion_end_to_pop_date,1
-frac_fleet_move_to_next_pad,3
+frac_fleet_move_to_next_pad,15
 pop_date_to_first_oil,0
 pop_date_to_loe,30
 spud_to_post_drill_filing_req,90
