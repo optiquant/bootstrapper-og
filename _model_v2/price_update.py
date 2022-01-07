@@ -136,8 +136,10 @@ def normalize_daily_data(settlement_data):
             price_data_json.trade_date = pd.to_datetime(price_data_json.trade_date).dt.strftime('%Y-%m-%d')
             price_data_json.contract_date = pd.to_datetime(price_data_json.contract_date).dt.strftime('%Y-%m-%d')
             price_data_json.last_trade_date = pd.to_datetime(price_data_json.last_trade_date).dt.strftime('%Y-%m-%d')
+
             # save to drive
             trade_date = f'{price_data_json.trade_date[0]}'
+
             # if this is the most recent settlement, updated the current trade date
             if hist_day == max(settlement_data.keys()):
                 global CURRENT_TRADE_DATE
@@ -226,11 +228,21 @@ def build_heatmap_charts(heatmap_data):
 
 settlement_data = get_nymex_settlement_data()
 normalize_daily_data(settlement_data)
-# todo: make charts!
+
+# make charts
+# heatmaps
 price_data_dict = get_heatmap_price_data()
 heatmap_data = build_heatmap_data(price_data_dict)
 build_heatmap_charts(heatmap_data)
 
-# heatmaps
-# fig, axs = plt.subplots(nrows=4, ncols=3)
+# todo: make the heatmaps into one big plot
+
+# recent 5 days strip movement for each commodity
+# historical front month settlement price history
+# historical front month settlement histogram and stats
+# perhaps KDE? just for kicks ;)
+
+# todo: set up automatic email to company
+
+
 
