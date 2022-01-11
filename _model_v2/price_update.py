@@ -16,20 +16,20 @@ pd.set_option('display.max_columns', None)
 # commodity reference
 # {comdty_code: [comdty_name, comdty_desc, comdty_nick, comdty_unit, comdty_scale]
 COMDTY_REF = {
-    'CS': ['WTI CMA', 'Wti Financial Futures', 'wti_cma', '$/Bbl', 5.00],
-    'CL': ['WTI Oil', 'Light Sweet Crude Oil Futures', 'wti', '$/Bbl', 5.00],
-    'WTT': ['MidCush - WTT', 'Wti Midland (argus) Vs. Wti Trade Month Futures', 'midcush_wtt', '$/Bbl', 1.00],
-    'FF': ['MidCush - FF', 'Wti Midland(argus) Vs. Wti Financial Futures', 'midcush_ff', '$/Bbl', 1.00],
-    'CY': ['Brent Oil', 'Brent Financial Futures', 'brent', '$/Bbl', 5.00],
-    # 'HCL': ['WTI Houston Oil', 'Wti Houston Crude Oil Futures', 'wti_hou', '$/Bbl', 5.00],
+    'CS': ['WTI CMA', 'Wti Financial Futures', 'wti_cma', '$/Bbl', 2.00],
+    'CL': ['WTI Oil', 'Light Sweet Crude Oil Futures', 'wti', '$/Bbl', 2.00],
+    'WTT': ['MidCush - WTT', 'Wti Midland (argus) Vs. Wti Trade Month Futures', 'midcush_wtt', '$/Bbl', 0.10],
+    'FF': ['MidCush - FF', 'Wti Midland(argus) Vs. Wti Financial Futures', 'midcush_ff', '$/Bbl', 0.10],
+    'CY': ['Brent Oil', 'Brent Financial Futures', 'brent', '$/Bbl', 2.00],
+    # 'HCL': ['WTI Houston Oil', 'Wti Houston Crude Oil Futures', 'wti_hou', '$/Bbl', 1.00],
     'NG': ['HH Gas', 'Henry Hub Natural Gas Futures', 'hh', '$/MMBtu', 0.50],
-    # 'NW': ['Waha Diff', 'Waha Natural Gas (platts Iferc) Basis Futures', 'waha_gas_diff', '$/MMBtu', 0.50],
-    # 'NHN': ['HSC Gas Diff', 'Houston Ship Channel Natural Gas (platts Iferc) Ba', 'hsc_gas_diff', '$/MMBtu', 0.50],
+    # 'NW': ['Waha Diff', 'Waha Natural Gas (platts Iferc) Basis Futures', 'waha_gas_diff', '$/MMBtu', 0.25],
+    # 'NHN': ['HSC Gas Diff', 'Houston Ship Channel Natural Gas (platts Iferc) Ba', 'hsc_gas_diff', '$/MMBtu', 0.25],
     'C0': ['Ethane Mt.Belvieu', 'Mont Belvieu Ethane (opis) Futures', 'ethane', '$/gal', 0.05],
-    'B0': ['Propane Mt.Belvieu LDH', 'Mont Belvieu Ldh Propane (opis) Futures', 'propane', '$/gal', 0.10],
-    'D0': ['n-Butane', 'Mont Belvieu Normal Butane (opis) Futures', 'n_butane', '$/gal', 0.1],
-    '8I': ['iso-Butane', 'Mont Belvieu Iso-butane (opis) Futures', 'iso_butane', '$/gal', 0.1],
-    '7Q': ['Nat. Gasoline', 'Mont Belvieu Natural Gasoline (opis) Futures', 'nat_gasoline', '$/gal', 0.20]
+    'B0': ['Propane Mt.Belvieu LDH', 'Mont Belvieu Ldh Propane (opis) Futures', 'propane', '$/gal', 0.05],
+    'D0': ['n-Butane', 'Mont Belvieu Normal Butane (opis) Futures', 'n_butane', '$/gal', 0.05],
+    '8I': ['iso-Butane', 'Mont Belvieu Iso-butane (opis) Futures', 'iso_butane', '$/gal', 0.05],
+    '7Q': ['Nat. Gasoline', 'Mont Belvieu Natural Gasoline (opis) Futures', 'nat_gasoline', '$/gal', 0.05]
 }
 
 
@@ -86,9 +86,9 @@ def get_nymex_settlement_data():
                            comdty_desc=lambda x: [COMDTY_REF[_][1] for _ in x['ID']],
                            comdty_nick=lambda x: [COMDTY_REF[_][2] for _ in x['ID']],
                            trade_date=lambda x: x['BizDt'].astype('datetime64[D]'),
-                           contract_year=lambda x: x['MatDt'].str.slice(stop=4).astype('int64'),
-                           contract_month=lambda x: x['MatDt'].str.slice(start=5, stop=7).astype('int64'),
-                           contract_date=lambda x: [datetime(year=y, month=m, day=28) + MonthEnd(1) for y, m in
+                           contract_year=lambda x: x['MMY'].astype('str').str.slice(stop=4).astype('int64'),
+                           contract_month=lambda x: x['MMY'].astype('str').str.slice(start=4).astype('int64'),
+                           contract_date=lambda x: [datetime(year=y, month=m, day=28) + MonthEnd(0) for y, m in
                                                     zip(x.contract_year, x.contract_month)],
                            future_month_index=lambda x: range(len(x['ID'])),
                            settle_price=lambda x: x['SettlePrice'],
@@ -173,6 +173,64 @@ def get_heatmap_price_data():
     return price_data_dict
 
 
+def manual_update_function():
+    """Helper function for manual updates of historical price data. Update as necessary."""
+
+    # _fp = 'c:/users/viren/documents/consulting/_price_data/'
+    # # use this to update individual price data jsons
+    # dates = ['2021-12-31', '2021-12-30', '2021-12-29']
+    # files = [os.path.join(_fp, f'{c_code}/_prices_{c_code}_{date}.json') for c_code in COMDTY_REF for date in dates]
+    # print(files)
+    #
+    # # regex to get the comdty_code from the filename
+    # _ptrn = re.compile(r'\s*(?<=(s\_){1})(\w{2})(?=(\_{1}\d{4}))*')
+
+    _fp = 'c:/users/viren/documents/consulting/_price_data/nymex_price_data/'
+    files = [os.path.join(_fp, 'nymex.settle.20211229.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20211230.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20211231.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20220103.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20220104.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20220105.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20220106.s.csv'),
+             os.path.join(_fp, 'nymex.settle.20220107.s.csv')
+             ]
+    # todo: continue here: fix contract year and month in the raw data csvs!
+    for f in files:
+        print(f)
+        data = pd.read_csv(f)
+        # show only the relevant columns
+        print('>>> prior:\n', data.head()[['MMY', 'contract_year', 'contract_month', 'contract_date']])
+        # updates contract_date col for the dates chosen
+        data = data.assign(contract_year=lambda x: x['MMY'].astype('str').str.slice(stop=4).astype('int64'),
+                           contract_month=lambda x: x['MMY'].astype('str').str.slice(start=4).astype('int64'),
+                           contract_date=lambda x: [datetime(year=y, month=m, day=28) + MonthEnd(0) for y, m in
+                                                    zip(x.contract_year, x.contract_month)])
+        # show only the relevant columns
+        print('>>> updated:\n', data.head()[['MMY', 'contract_year', 'contract_month', 'contract_date']])
+        # convert dates to readable form
+        data.trade_date = pd.to_datetime(data.trade_date).dt.strftime('%Y-%m-%d')
+        data.contract_date = pd.to_datetime(data.contract_date).dt.strftime('%Y-%m-%d')
+        data.last_trade_date = pd.to_datetime(data.last_trade_date).dt.strftime('%Y-%m-%d')
+        data.to_csv(f)
+
+    # for f in files:
+    #     print(f)
+    #     data = pd.read_json(f)
+    #     # show only the relevant columns
+    #     print('>>> prior:\n', data.head()[['comdty_code', 'contract_year', 'contract_month', 'contract_date']])
+    #     # updates contract_date col for the dates chosen
+    #     data = data.assign(contract_date=lambda x: [datetime(year=y, month=m, day=28) + MonthEnd(0) for y, m in
+    #                                                 zip(x.contract_year, x.contract_month)])
+    #     # show only the relevant columns
+    #     print('>>> updated:\n', data.head()[['comdty_code', 'contract_year', 'contract_month', 'contract_date']])
+    #     # convert dates to readable form
+    #     data.trade_date = pd.to_datetime(data.trade_date).dt.strftime('%Y-%m-%d')
+    #     data.contract_date = pd.to_datetime(data.contract_date).dt.strftime('%Y-%m-%d')
+    #     data.last_trade_date = pd.to_datetime(data.last_trade_date).dt.strftime('%Y-%m-%d')
+    #     data.to_json(f)
+
+
 def build_heatmap_data(price_data_dict):
     heatmaps = {}
     for c_code, price_dfs in price_data_dict.items():
@@ -194,6 +252,8 @@ def build_heatmap_data(price_data_dict):
         print(f'| {c_code} >>\n', strip_delta_t_minus)
         heatmaps[c_code] = strip_delta_t_minus
     return heatmaps
+
+
 
 def build_heatmap_charts(heatmap_data):
     for idx, (c_code, chart_data) in enumerate(heatmap_data.items()):
@@ -226,14 +286,21 @@ def build_heatmap_charts(heatmap_data):
 # --------------------------------------------- EXECUTION ------------------------------------------- #
 # --------------------------------------------------------------------------------------------------- #
 
-settlement_data = get_nymex_settlement_data()
-normalize_daily_data(settlement_data)
+# use this to update historical data jsons from the raw data
+
+
+# settlement_data = get_nymex_settlement_data()
+# normalize_daily_data(settlement_data)
+# manual_update_function()
+
+# todo: after base pricing update: need input for HCL, Waha basis, HSC basis
+# todo: after base pricing update: calc VGX/WGX (Waha/HSC basis is needed)
 
 # make charts
 # heatmaps
-price_data_dict = get_heatmap_price_data()
-heatmap_data = build_heatmap_data(price_data_dict)
-build_heatmap_charts(heatmap_data)
+# price_data_dict = get_heatmap_price_data()
+# heatmap_data = build_heatmap_data(price_data_dict)
+# build_heatmap_charts(heatmap_data)
 
 # todo: make the heatmaps into one big plot
 
