@@ -201,7 +201,7 @@ def manual_update_function():
              os.path.join(_fp, 'nymex.settle.20220106.s.csv'),
              os.path.join(_fp, 'nymex.settle.20220107.s.csv')
              ]
-    # todo: continue here: fix contract year and month in the raw data csvs!
+
     for f in files:
         print(f)
         data = pd.read_csv(f)
@@ -328,10 +328,10 @@ def build_price_update_charts():
                           )
         if c_code in ['NG']:
             ax.legend(loc='upper right', title=c_name)
-            _xytext = (10, 15)
+            _xytext = (0, 10)
         else:
             ax.legend(loc='upper right', title=c_name)
-            _xytext = (20, 25)
+            _xytext = (0, 10)
 
         # annotate latest strip
         latest_prices = price_data[price_data['trade_date'] == strip_chart_dates[-1]]
@@ -342,12 +342,14 @@ def build_price_update_charts():
         _spf.drop(columns=['Legend'], inplace=True)
         STRIP_PRICING_FILE[c_code] = _spf
 
-        for x, y in zip(latest_prices['contract_date'].values,
-                        latest_prices['settle_price'].values):
+        for idx, (x, y) in enumerate(zip(latest_prices['contract_date'].values,
+                                         latest_prices['settle_price'].values)):
+            # adjust position to alternate above or below
+            _txt = _xytext if idx % 2 == 0 else (_xytext[0], _xytext[1])
             ax.annotate(text=f'{y:.2f}',  # annotation text
                         xy=(x, y),  # datapoint being labeled
                         xycoords='data',  # coordinate system for xy
-                        xytext=_xytext,  # where should the text be
+                        xytext=_txt,  # where should the text be
                         textcoords='offset points',  # coordinate system for xytext
                         ha='center',  # horizontal alignment of the text
                         size=9,  # fontsize
@@ -360,6 +362,7 @@ def build_price_update_charts():
                                   ),  # what should the box look like
                         arrowprops=dict(
                             arrowstyle='-',
+                            ls='dashed',
                             color=sns.color_palette(palette, n_colors=7)[-1])  # what should the line look like
                         )
 
