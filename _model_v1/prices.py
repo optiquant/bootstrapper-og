@@ -247,7 +247,7 @@ def make_price_data(data):
                   'contract_date': contract_dates,
                   'contract_year': data['CONTRACT YEAR'],
                   'contract_mth': data['CONTRACT MONTH'],
-                  'future_mth_idx': data.index,
+                  'future_mth_idx': pd.Index(range(0, len(data.index))),
                   'settle_price': data['SETTLE'],
                   'open_interest': data['PRIOR INT'],
                   'volume': data['EST. VOL'],
