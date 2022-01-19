@@ -1,3 +1,4 @@
+import mpld3 as mpld3
 import requests
 import io
 import os
@@ -506,6 +507,11 @@ def build_price_update_charts():
         plt.show()
         plt.close(fig)
 
+        # html_str = mpld3.fig_to_html(fig)
+        # html_file = open(f"{_fp.replace('.png', '')}.html", "w")
+        # html_file.write(html_str)
+        # html_file.close()
+
 
 # ------------ MASTER HEATMAP AND STRIP PRICING DATA ------------- #
 def build_master_heatmap():
@@ -547,6 +553,11 @@ def build_master_heatmap():
     plt.savefig(_fp)
     plt.show()
     plt.close(fig)
+
+    # html_str = mpld3.fig_to_html(fig)
+    # html_file = open(f"{_fp.replace('.png','')}.html", "w")
+    # html_file.write(html_str)
+    # html_file.close()
 
 def save_strip_pricing_data():
     # make a big dataframe
