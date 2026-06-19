@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.svg" alt="bootstrapper-og" width="470">
+  <img src="assets/logo.svg" alt="bootstrapper-og" width="520">
 </p>
 
 <p align="center">
