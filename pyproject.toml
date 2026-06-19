@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bootstrapper-og"
+version = "0.1.0"
+description = "Auditable ANN retrieval evaluation harness with a native-Streamlit education layer."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+authors = [{ name = "OptiQuant Analytics" }]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
+    "pyarrow>=14",
+    "scipy>=1.11",
+    "faiss-cpu>=1.7",
+    "pypdf>=4.0",
+    "pydantic>=2.5",
+    "streamlit>=1.30",
+    "plotly>=5.18",
+]
+
+[project.optional-dependencies]
+# The documented v0 default embedding (BAAI/bge-small-en-v1.5). Requires a HuggingFace
+# model download; install where network egress to huggingface.co is permitted.
+embed = ["sentence-transformers>=2.2"]
+# Gate 3: sparse / hybrid retrieval.
+sparse = ["rank-bm25>=0.2.2"]
+# Gate 4: education-layer toy graphs.
+edu = ["networkx>=3.1"]
+dev = ["pytest>=7.4", "mypy>=1.8", "ruff>=0.3"]
+
+[project.scripts]
+bootstrapper = "bootstrapper.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["bootstrapper*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+# Pre-existing, unrelated projects in this repo are out of scope for this tool.
+extend-exclude = ["_model_v1", "_model_v2", "_model_input", "zzscratches", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+# A stray empty __init__.py at the repo root (from an unrelated project) would otherwise make
+# mypy treat the repo as a package with an invalid (hyphenated) name; derive module names from
+# explicit bases instead.
+explicit_package_bases = true
+namespace_packages = true
+mypy_path = "."
+exclude = ['^_model_v1/', '^_model_v2/', '^_model_input/', '^zzscratches/', '^\.venv/', '^__init__\.py$']
+
+# faiss, rank_bm25 and sentence_transformers ship no type stubs. Per project convention
+# we declare per-module untyped overrides here rather than scattering `# type: ignore`.
+[[tool.mypy.overrides]]
+module = [
+    "faiss",
+    "faiss.*",
+    "rank_bm25",
+    "sentence_transformers",
+    "sentence_transformers.*",
+    "pandas",
+    "plotly",
+    "plotly.*",
+]
+ignore_missing_imports = true
