@@ -1,14 +1,48 @@
-# bootstrapper-og
+<p align="center">
+  <img src="assets/logo.svg" alt="bootstrapper-og" width="470">
+</p>
 
-An **auditable retrieval-evaluation harness** for approximate-nearest-neighbour (ANN) search
-over documents, paired with a native-Streamlit, math-driven **education layer**.
+<p align="center">
+  <em>An open lab for ANN retrieval over documents — measure it, then learn the theory against your own runs.</em>
+</p>
 
-The harness ingests a corpus, sweeps a grid of *embedding models × ANN index families ×
-retrievers*, and reports retrieval quality (recall@k, nDCG@k, MRR) with **bootstrap confidence
-intervals**, alongside latency, index memory and build time. Every retrieved chunk is pinned to
-an immutable, content-hashed source artifact for reproducible audit.
+<p align="center">
+  <a href="LICENSE"><img alt="License: Apache 2.0" src="https://img.shields.io/badge/License-Apache_2.0-4f46e5.svg"></a>
+  <img alt="Python 3.11+" src="https://img.shields.io/badge/python-3.11%2B-4f46e5.svg">
+  <img alt="status: perpetual beta" src="https://img.shields.io/badge/status-perpetual%20beta-f59e0b.svg">
+</p>
 
-The engine is **dataset-agnostic**; finance is the first loaded dataset. Perpetual beta.
+## In plain terms
+
+When you search a pile of documents — or ask an AI assistant a question about them — something has
+to find the handful of passages most likely to hold the answer. The modern way to do that is
+**approximate nearest-neighbour (ANN) search** over text embeddings. There are many ways to build
+that index, and they trade **accuracy** for **speed** and **memory** in ways that are easy to get
+wrong and hard to see.
+
+**bootstrapper-og measures those trade-offs honestly, on real data, and then teaches you the ideas
+behind them using your own results.** Point it at a set of documents and questions; it tries
+different embedding models and index types and tells you — with proper error bars — how often each
+one actually found the right passage, how fast it was, and how much memory it used. Every result it
+returns is traceable back to the exact source text it came from.
+
+It exists to make its operator an ANN expert by *forcing measurement* instead of hand-waving — and
+then teaching each concept (Voronoi cells, product quantization, HNSW graphs, the bootstrap) against
+the numbers you just produced.
+
+> 💝 **A gift to the community.** Free and open source under the **Apache 2.0** license — use it,
+> fork it, teach with it, build on it. Contributions and ideas are welcome.
+
+---
+
+### For the technically inclined
+
+An **auditable retrieval-evaluation harness** for ANN search over documents, paired with a
+native-Streamlit, math-driven **education layer**. It ingests a corpus, sweeps a grid of *embedding
+models × ANN index families × retrievers*, and reports retrieval quality (recall@k, nDCG@k, MRR)
+with **bootstrap confidence intervals**, alongside latency, index memory and build time. Every
+retrieved chunk is pinned to an immutable, content-hashed source artifact for reproducible audit.
+The engine is **dataset-agnostic**; finance is the first loaded dataset.
 
 > **Status: Gate 1 (vertical slice) complete.** FinanceBench mini → page-aware extraction →
 > token-window chunking → content-addressed snapshots → cached embeddings → FAISS **Flat + HNSW**
@@ -129,3 +163,16 @@ ruff check bootstrapper tests
 - **Gate 4.** Education layer: the canonical TEACHING grid + toy illustrators + run-wired
   explorers + the Learn tab over an ordered ANN syllabus.
 - **Gate 5.** Hardening + production deploy to `bootstrapper-og.com`.
+
+## Contributing
+
+Issues, ideas and pull requests are welcome — whether that's a new index family, a dataset
+adapter, a sharper explainer for the Learn tab, or just a question. Keep the engine in
+`bootstrapper/core/` dataset-agnostic, keep Streamlit read-only, and run `pytest`, `mypy` and
+`ruff` before opening a PR.
+
+## License
+
+Released under the [Apache License 2.0](LICENSE) — © 2026 Viren Desai. A gift to the community:
+free to use, modify and build upon, with patent protection and attribution. Enjoy, and build
+something good with it.
