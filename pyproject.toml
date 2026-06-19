@@ -5,11 +5,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bootstrapper-og"
 version = "0.1.0"
-description = "Auditable ANN retrieval evaluation harness with a native-Streamlit education layer."
+description = "An open lab for ANN retrieval over documents: measure it, then learn the theory against your own runs."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "Proprietary" }
-authors = [{ name = "OptiQuant Analytics" }]
+license = { text = "Apache-2.0" }
+authors = [{ name = "Viren Desai" }]
+keywords = ["ann", "vector-search", "retrieval", "faiss", "rag", "evaluation", "education", "streamlit"]
+classifiers = [
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Development Status :: 4 - Beta",
+]
 dependencies = [
     "numpy>=1.26",
     "pandas>=2.0",
@@ -45,8 +54,7 @@ addopts = "-q"
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-# Pre-existing, unrelated projects in this repo are out of scope for this tool.
-extend-exclude = ["_model_v1", "_model_v2", "_model_input", "zzscratches", ".venv"]
+extend-exclude = [".venv"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "C4", "SIM", "RUF"]
@@ -56,13 +64,7 @@ ignore = ["E501"]
 python_version = "3.11"
 strict = true
 plugins = ["pydantic.mypy"]
-# A stray empty __init__.py at the repo root (from an unrelated project) would otherwise make
-# mypy treat the repo as a package with an invalid (hyphenated) name; derive module names from
-# explicit bases instead.
-explicit_package_bases = true
-namespace_packages = true
-mypy_path = "."
-exclude = ['^_model_v1/', '^_model_v2/', '^_model_input/', '^zzscratches/', '^\.venv/', '^__init__\.py$']
+exclude = ['^\.venv/']
 
 # faiss, rank_bm25 and sentence_transformers ship no type stubs. Per project convention
 # we declare per-module untyped overrides here rather than scattering `# type: ignore`.

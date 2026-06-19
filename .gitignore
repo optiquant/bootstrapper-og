@@ -141,3 +141,6 @@ dmypy.json
 /runs/registry.sqlite
 # A small sample run (manifest.json + metrics.parquet) is committed so the app is demonstrable
 # on a fresh clone; its bulky per-chunk snapshots are not (Drill-down lands in Gate 2).
+
+# JetBrains IDE settings
+.idea/
