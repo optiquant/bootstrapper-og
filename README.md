@@ -80,28 +80,61 @@ bootstrapper/
 tests/         metrics · labeling · chunking · snapshot · embeddings · indices · sweep (end-to-end)
 ```
 
-## Install
+## Getting started
+
+`bootstrapper` is a **command-line tool**: you run it in a terminal (Terminal on macOS/Linux, or
+PowerShell on Windows) — not inside Python or the app. The `bootstrapper` command only exists *after*
+you install the project, and it must run inside the virtual environment you installed it into. Look
+for `(.venv)` at the start of your prompt; if you open a fresh terminal later, re-activate first.
+
+Run everything from the repository folder: the CLI writes its output (`runs/`, `snapshots/`,
+`cache/`, `data/`) into the current directory, and the app reads from there.
+
+### Quick start (bash — macOS / Linux)
 
 ```bash
-python -m venv .venv && . .venv/bin/activate
-pip install -e ".[dev]"          # engine + CLI + app + test/lint tooling
-pip install -e ".[dev,embed]"    # additionally installs sentence-transformers (the bge-small default)
-```
+# 1. Get the code and enter the folder
+git clone https://github.com/optiquant/bootstrapper-og
+cd bootstrapper-og
 
-## Quickstart
+# 2. Create and activate a virtual environment — your prompt should then show "(.venv)"
+python -m venv .venv
+source .venv/bin/activate
 
-```bash
-# 1. Execute a run (heavy work; offline after the first PDF fetch).
-bootstrapper run --dataset financebench-mini --grid gate1          # real bge-small embeddings
-bootstrapper run --dataset financebench-mini --grid gate1-smoke    # deterministic offline encoder
+# 3. Install — this is what creates the `bootstrapper` command
+pip install -e ".[dev,embed]"     # "embed" adds sentence-transformers for the bge-small default
+# pip install -e ".[dev]"         # lighter: engine + CLI + app only (use the offline grid below)
 
+# 4. Run a sweep (the heavy work; offline after the first PDF fetch)
+bootstrapper run --dataset financebench-mini --grid gate1          # real bge-small (needs internet + "embed")
+# bootstrapper run --dataset financebench-mini --grid gate1-smoke  # deterministic offline encoder, no download
+
+# 5. Browse the results (read-only)
 bootstrapper list-runs
-
-# 2. Browse the results (read-only).
 streamlit run bootstrapper/app/streamlit_app.py
 ```
 
-Point the app at an artifact root with `BOOTSTRAPPER_ROOT` (defaults to the current directory).
+### Windows (PowerShell)
+
+Identical, except activate the environment with:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+### Notes
+
+- **`(.venv)` must be showing.** That means the environment is active and `bootstrapper` is on your
+  PATH. Opened a new terminal? Re-run `source .venv/bin/activate` (or the PowerShell line) first, or
+  you'll get `command not found`.
+- **`gate1` vs `gate1-smoke`.** `gate1` downloads the `bge-small` model from Hugging Face on first
+  use (needs internet and the `embed` extra). `gate1-smoke` uses a deterministic offline encoder —
+  no download — and is perfect for a quick smoke test.
+- **Fallback.** If `bootstrapper` isn't found but the install succeeded, the same command works as
+  `python -m bootstrapper.cli run --dataset financebench-mini --grid gate1`.
+- **Artifact location.** The app reads runs from the current directory by default; point it elsewhere
+  with `BOOTSTRAPPER_ROOT=/path/to/artifacts streamlit run bootstrapper/app/streamlit_app.py`.
+- Requires **Python 3.11+**.
 
 ### Embedding providers
 
