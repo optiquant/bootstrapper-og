@@ -164,6 +164,56 @@ ruff check bootstrapper tests
   explorers + the Learn tab over an ordered ANN syllabus.
 - **Gate 5.** Hardening + production deploy to `bootstrapper-og.com`.
 
+## References & further reading
+
+Every concept this project measures and teaches, linked to its canonical source. The Learn tab
+(Gate 4) will walk through these against your own runs — this list is the syllabus's bibliography.
+
+**Foundations**
+
+- **Why high dimensions are weird** — Beyer, Goldstein, Ramakrishnan & Shaft, *When Is "Nearest
+  Neighbor" Meaningful?* (ICDT 1999). [doi:10.1007/3-540-49257-7_15](https://doi.org/10.1007/3-540-49257-7_15)
+- **The bootstrap** (confidence intervals as a metric's sampling distribution over queries) —
+  Efron, *Bootstrap Methods: Another Look at the Jackknife* (Annals of Statistics, 1979).
+  [doi:10.1214/aos/1176344552](https://doi.org/10.1214/aos/1176344552)
+- **nDCG** (ranking evaluation) — Järvelin & Kekäläinen, *Cumulated Gain-based Evaluation of IR
+  Techniques* (ACM TOIS, 2002). [doi:10.1145/582415.582418](https://doi.org/10.1145/582415.582418)
+
+**ANN index families**
+
+- **Faiss** (the engine v0 builds on) — Douze et al., *The Faiss library* (2024).
+  [arXiv:2401.08281](https://arxiv.org/abs/2401.08281); GPU foundations in Johnson, Douze &
+  Jégou, *Billion-scale similarity search with GPUs* (2017). [arXiv:1702.08734](https://arxiv.org/abs/1702.08734)
+- **IVF + Product Quantization** (and IVFADC = IVFPQ) — Jégou, Douze & Schmid, *Product
+  Quantization for Nearest Neighbor Search* (IEEE TPAMI, 2011).
+  [doi:10.1109/TPAMI.2010.57](https://doi.org/10.1109/TPAMI.2010.57)
+- **HNSW** proximity graphs — Malkov & Yashunin, *Efficient and Robust Approximate Nearest
+  Neighbor Search Using Hierarchical Navigable Small World Graphs* (2016/2018).
+  [arXiv:1603.09320](https://arxiv.org/abs/1603.09320)
+
+**Retrieval & embeddings**
+
+- **BM25** (sparse lexical baseline) — Robertson & Zaragoza, *The Probabilistic Relevance
+  Framework: BM25 and Beyond* (2009). [doi:10.1561/1500000019](https://doi.org/10.1561/1500000019)
+- **Reciprocal Rank Fusion** (hybrid retrieval) — Cormack, Clarke & Büttcher, *Reciprocal Rank
+  Fusion Outperforms Condorcet and Individual Rank Learning Methods* (SIGIR 2009).
+  [doi:10.1145/1571941.1572114](https://doi.org/10.1145/1571941.1572114)
+- **Dense passage retrieval** — Karpukhin et al., *Dense Passage Retrieval for Open-Domain
+  Question Answering* (2020). [arXiv:2004.04906](https://arxiv.org/abs/2004.04906)
+- **Sentence embeddings** — Reimers & Gurevych, *Sentence-BERT* (2019).
+  [arXiv:1908.10084](https://arxiv.org/abs/1908.10084)
+- **BGE** (the default embedding model, `bge-small-en-v1.5`) — Xiao, Liu, Zhang & Muennighoff,
+  *C-Pack: Packaged Resources to Advance General Text Embedding* (2023).
+  [arXiv:2309.07597](https://arxiv.org/abs/2309.07597)
+
+**Context & dataset**
+
+- **Retrieval-augmented generation** (why any of this matters for LLMs) — Lewis et al.,
+  *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks* (2020).
+  [arXiv:2005.11401](https://arxiv.org/abs/2005.11401)
+- **FinanceBench** (the first loaded dataset) — Islam et al., *FinanceBench: A New Benchmark for
+  Financial Question Answering* (2023). [arXiv:2311.11944](https://arxiv.org/abs/2311.11944)
+
 ## Contributing
 
 Issues, ideas and pull requests are welcome — whether that's a new index family, a dataset
