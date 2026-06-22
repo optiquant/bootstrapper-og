@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bootstrapper-og · run explorer</title>
+  <meta name="description" content="A read-only explorer for bootstrapper-og ANN retrieval-evaluation runs: recall, nDCG and MRR with bootstrap confidence intervals." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand">
+        <span class="logo">bootstrapper<span class="logo-accent">-og</span></span>
+        <span class="tagline">run explorer</span>
+      </div>
+      <nav class="links">
+        <a href="https://github.com/optiquant/bootstrapper-og" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/optiquant/bootstrapper-og#http-api" target="_blank" rel="noopener">API docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <p>
+        A read-only window onto frozen retrieval-evaluation runs — recall, nDCG and MRR with
+        bootstrap confidence intervals, plus latency, build time and index memory. No terminal
+        required.
+      </p>
+    </section>
+
+    <section class="source card">
+      <div class="source-row">
+        <label>
+          <input type="radio" name="src" value="bundled" checked />
+          Bundled sample
+        </label>
+        <label>
+          <input type="radio" name="src" value="live" />
+          Live API
+        </label>
+        <input
+          id="api-base"
+          type="url"
+          placeholder="https://your-bootstrapper-api.example.com"
+          disabled
+          aria-label="API base URL"
+        />
+        <button id="reload" type="button">Load</button>
+      </div>
+      <p class="source-hint" id="source-hint">
+        Showing the sample run committed to the repository. To point at your own data, run
+        <code>bootstrapper-api</code> locally (or deploy it) and switch to <strong>Live API</strong>.
+      </p>
+    </section>
+
+    <div class="grid">
+      <section class="runs card" aria-label="Runs">
+        <h2>Runs</h2>
+        <div id="runs-status" class="status">Loading…</div>
+        <ul id="runs-list" class="runs-list"></ul>
+      </section>
+
+      <section class="detail card" aria-label="Run detail">
+        <div id="detail" class="detail-empty">Select a run to see its results.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>bootstrapper-og · Apache-2.0</span>
+      <a href="https://github.com/optiquant/bootstrapper-og" target="_blank" rel="noopener">source</a>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>

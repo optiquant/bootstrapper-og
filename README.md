@@ -12,6 +12,15 @@
   <img alt="status: perpetual beta" src="https://img.shields.io/badge/status-perpetual%20beta-f59e0b.svg">
 </p>
 
+<p align="center">
+  <a href="https://optiquant.github.io/bootstrapper-og/"><img alt="Live: run explorer" src="https://img.shields.io/badge/%E2%96%B6%20live-run%20explorer-4f46e5.svg"></a>
+</p>
+
+<p align="center">
+  <strong><a href="https://optiquant.github.io/bootstrapper-og/">🔎 Open the run explorer →</a></strong>
+  &nbsp;·&nbsp; a browser-based UI for the results, no install required
+</p>
+
 ## In plain terms
 
 When you search a pile of documents — or ask an AI assistant a question about them — something has
@@ -51,7 +60,8 @@ That engine is consumed three ways, and it never depends on any of them:
 - **Over HTTP** — a thin, read-only **FastAPI service** (`bootstrapper.service`) exposes frozen
   runs as JSON, so any non-Python client can consume them.
 - **Through frontends** — a read-only **Streamlit dashboard** for the operator, and (in progress)
-  a **public UI** for non-technical users that talks to the HTTP API (`web/`).
+  a **public UI** for non-technical users that talks to the HTTP API
+  ([`web/`](web/) → [live run explorer](https://optiquant.github.io/bootstrapper-og/)).
 
 > **Status: Gate 1 (vertical slice) complete.** FinanceBench mini → page-aware extraction →
 > token-window chunking → content-addressed snapshots → cached embeddings → FAISS **Flat + HNSW**
@@ -118,7 +128,7 @@ a thin HTTP boundary, and frontends that depend *downward only*.
 └────────────────────────────┘   └─────────┬───────────────────┘
                  ▲                          │  HTTP (JSON)
    imports       │                ┌─────────┴───────────────────┐
-┌────────────────┴───────────┐    │ web/  — public UI (planned) │  non-technical users
+┌────────────────┴───────────┐    │ web/  — public UI (Pages)   │  non-technical users
 │ bootstrapper.app (Streamlit)│   └─────────────────────────────┘
 │ internal dashboard, `app`  │
 └────────────────────────────┘
@@ -157,7 +167,7 @@ bootstrapper/
   app/         streamlit_app + views/ (run_browser, compare) — internal dashboard (`app` extra)
   cli.py       `bootstrapper run ...`
   __init__.py  curated public API (re-exports + __all__)
-web/           public, non-technical UI (planned) — consumes the HTTP service
+web/           public, non-technical UI (static site on GitHub Pages) — consumes the HTTP service
 tests/         metrics · labeling · chunking · snapshot · embeddings · indices · sweep (end-to-end)
 ```
 
@@ -301,8 +311,10 @@ bootstrapper-api            # http://127.0.0.1:8000  · interactive docs at /doc
 | `GET /runs/{run_id}` | one run manifest |
 | `GET /runs/{run_id}/metrics` | that run's long-format metrics as JSON records |
 
-The public, non-technical UI lives under [`web/`](web/) (planned) and talks to these endpoints —
-it is a client of the HTTP service, never an importer of the engine.
+The public, non-technical UI lives under [`web/`](web/) — a static site published to GitHub
+Pages at **<https://optiquant.github.io/bootstrapper-og/>** — and talks to these endpoints. It is
+a client of the HTTP service, never an importer of the engine, and ships with a bundled sample so
+it works standalone before any live API exists.
 
 ## Development
 
@@ -324,7 +336,7 @@ ruff check bootstrapper tests
 - **Gate 5.** Hardening + production deploy to `bootstrapper-og.com`.
 
 **In parallel (frontends track).** The engine + HTTP API are the load-bearing product surface for
-technical teams; the read-only Streamlit dashboard and the planned public UI (`web/`) are
+technical teams; the read-only Streamlit dashboard and the public UI (`web/`, on GitHub Pages) are
 optional frontends layered on top. Expanding the API (auth, pagination, run drill-down) and
 building the public UI proceed alongside the gates above.
 
