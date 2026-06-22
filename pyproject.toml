@@ -19,6 +19,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Development Status :: 4 - Beta",
 ]
+# Base install = the engine (SDK) + CLI only. It carries NO UI dependency, so a technical team
+# can `pip install bootstrapper-og` and `import bootstrapper` without pulling a web/dashboard
+# stack. Frontends live behind the `app` / `api` extras below.
 dependencies = [
     "numpy>=1.26",
     "pandas>=2.0",
@@ -27,11 +30,13 @@ dependencies = [
     "faiss-cpu>=1.7",
     "pypdf>=4.0",
     "pydantic>=2.5",
-    "streamlit>=1.30",
-    "plotly>=5.18",
 ]
 
 [project.optional-dependencies]
+# Internal Streamlit dashboard (read-only run browser + compare). Frontend, not engine.
+app = ["streamlit>=1.30", "plotly>=5.18"]
+# HTTP service layer: the read-only API the public UI talks to (`bootstrapper.service`).
+api = ["fastapi>=0.110", "uvicorn>=0.27"]
 # The documented v0 default embedding (BAAI/bge-small-en-v1.5). Requires a HuggingFace
 # model download; install where network egress to huggingface.co is permitted.
 embed = ["sentence-transformers>=2.2"]
@@ -39,10 +44,17 @@ embed = ["sentence-transformers>=2.2"]
 sparse = ["rank-bm25>=0.2.2"]
 # Gate 4: education-layer toy graphs.
 edu = ["networkx>=3.1"]
-dev = ["pytest>=7.4", "mypy>=1.8", "ruff>=0.3"]
+# Dev pulls both frontends so `mypy bootstrapper` and the full test suite resolve every import.
+dev = [
+    "pytest>=7.4",
+    "mypy>=1.8",
+    "ruff>=0.3",
+    "bootstrapper-og[app,api]",
+]
 
 [project.scripts]
 bootstrapper = "bootstrapper.cli:main"
+bootstrapper-api = "bootstrapper.service.app:run"
 
 [tool.setuptools.packages.find]
 include = ["bootstrapper*"]

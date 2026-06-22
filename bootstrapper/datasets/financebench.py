@@ -18,8 +18,6 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
 
-from pypdf import PdfReader
-
 from bootstrapper.core.chunking import Chunker, TokenWindowChunker
 from bootstrapper.datasets.base import Document, Evidence, Query
 
@@ -124,6 +122,10 @@ class FinanceBenchAdapter:
         if not pdf_path.exists():
             pdf_path.parent.mkdir(parents=True, exist_ok=True)
             pdf_path.write_bytes(_http_get(_pdf_url(doc_name)))
+        # Lazy import: pypdf is only needed to extract PDF pages, so importing the adapter (and
+        # thus the public SDK) stays light and never pulls a PDF stack until a corpus is read.
+        from pypdf import PdfReader
+
         reader = PdfReader(str(pdf_path))
         extracted = [(page.extract_text() or "") for page in reader.pages]
         cache.parent.mkdir(parents=True, exist_ok=True)
