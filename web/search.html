@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>bootstrapper-og · search your docs</title>
+  <meta name="description" content="Index a local folder of documents with the bootstrapper-og local runner and search it interactively." />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div class="brand">
+        <span class="logo">bootstrapper<span class="logo-accent">-og</span></span>
+        <span class="tagline">search your docs</span>
+      </div>
+      <nav class="links">
+        <a href="./index.html">Run explorer</a>
+        <a href="https://github.com/optiquant/bootstrapper-og" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <p>
+        Point the <strong>local runner</strong> at a folder of documents on your machine (a Box
+        Drive mount counts — it's just a path), build an index, and search it. Everything runs
+        locally; nothing is uploaded.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>1 · Connect the local runner</h2>
+      <div class="source-row">
+        <input id="runner-base" type="url" value="http://127.0.0.1:8011" aria-label="Local runner base URL" />
+        <button id="ping" type="button">Check</button>
+      </div>
+      <p class="source-hint" id="runner-hint">
+        Start it with <code>pip install -e ".[api]"</code> then <code>bootstrapper-search</code>,
+        and press <strong>Check</strong>.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>2 · Build an index</h2>
+      <div class="form-grid">
+        <label>Folder path
+          <input id="path" type="text" placeholder="/Users/you/Documents/filings" />
+        </label>
+        <label>Embedding
+          <select id="embedding">
+            <option value="hashing-256">hashing-256 (offline, lexical)</option>
+            <option value="bge-small">bge-small (semantic, needs the embed extra)</option>
+          </select>
+        </label>
+        <label>Index
+          <select id="index-family">
+            <option value="flat">flat (exact)</option>
+            <option value="hnsw">hnsw (approximate)</option>
+          </select>
+        </label>
+        <button id="build" type="button">Build</button>
+      </div>
+      <p class="source-hint" id="build-hint">Connect the runner first.</p>
+    </section>
+
+    <section class="card">
+      <h2>3 · Search</h2>
+      <div class="source-row">
+        <input id="query" type="text" placeholder="Ask a question about your documents…" disabled aria-label="Query" />
+        <input id="k" type="number" min="1" max="50" value="10" disabled aria-label="Number of results" />
+        <button id="search" type="button" disabled>Search</button>
+      </div>
+      <div id="results"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>bootstrapper-og · Apache-2.0</span>
+      <a href="https://github.com/optiquant/bootstrapper-og#http-api" target="_blank" rel="noopener">API docs</a>
+    </div>
+  </footer>
+
+  <script src="./search.js"></script>
+</body>
+</html>

@@ -55,6 +55,7 @@ dev = [
 [project.scripts]
 bootstrapper = "bootstrapper.cli:main"
 bootstrapper-api = "bootstrapper.service.app:run"
+bootstrapper-search = "bootstrapper.service.local:run"
 
 [tool.setuptools.packages.find]
 include = ["bootstrapper*"]

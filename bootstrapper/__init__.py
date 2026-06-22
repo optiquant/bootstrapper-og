@@ -47,6 +47,7 @@ from bootstrapper.core.metrics import (
 )
 from bootstrapper.core.retrievers import DenseRetriever, Retriever
 from bootstrapper.core.run import RunManifest, RunStore, new_run_id, now_iso
+from bootstrapper.core.search import SearchHit, SearchIndex
 from bootstrapper.core.snapshot import (
     SnapshotRecord,
     SnapshotStore,
@@ -56,6 +57,7 @@ from bootstrapper.core.snapshot import (
 from bootstrapper.core.sweep import SweepResult, run_sweep
 from bootstrapper.datasets.base import DatasetAdapter, Document, Evidence, Query
 from bootstrapper.datasets.financebench import FinanceBenchAdapter
+from bootstrapper.datasets.folder import LocalFolderAdapter
 
 __version__ = "0.1.0"
 
@@ -77,10 +79,13 @@ __all__ = [
     "HashingEmbeddingProvider",
     "Index",
     "IndexSpec",
+    "LocalFolderAdapter",
     "Query",
     "Retriever",
     "RunManifest",
     "RunStore",
+    "SearchHit",
+    "SearchIndex",
     "SentenceTransformerProvider",
     "SnapshotRecord",
     "SnapshotStore",

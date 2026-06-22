@@ -7,9 +7,15 @@ terminal.
 
 **Live:** https://optiquant.github.io/bootstrapper-og/
 
-It is a pure static site (`index.html` + `app.js` + `styles.css`), deployed to GitHub Pages by
+It is a pure static site, deployed to GitHub Pages by
 [`.github/workflows/pages.yml`](../.github/workflows/pages.yml) on every push to `main` that
-touches `web/`.
+touches `web/`. Two pages:
+
+- **`index.html`** — the **run explorer**: browse frozen evaluation runs (read-only API or the
+  bundled sample).
+- **`search.html`** — **search your docs**: drives the local runner (`bootstrapper-search`) to
+  index a folder on your machine and search it interactively. See
+  [Search your own documents](../README.md#search-your-own-documents-local-runner).
 
 ## How it fits the architecture
 
@@ -77,4 +83,6 @@ for m in manifests:
 - [x] Frontend stack chosen — dependency-free static site (HTML/CSS/JS)
 - [x] Read-only run browser wired to the API shape, with bundled-sample fallback
 - [x] Deployed to GitHub Pages
+- [x] Search-your-docs page wired to the local runner (`search.html`)
 - [ ] Point at the live API once it is deployed to a public URL
+- [ ] Phase 2: measured evaluation over your own docs (synthetic queries, Gate 3)

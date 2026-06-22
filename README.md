@@ -160,15 +160,15 @@ the engine over HTTP rather than importing it — so it can be any stack and dep
 
 ```
 bootstrapper/
-  core/        chunking · snapshot · embeddings · indices · retrievers · labeling · metrics · sweep · run
-  datasets/    base (DatasetAdapter protocol + dataclasses) · financebench
+  core/        chunking · snapshot · embeddings · indices · retrievers · labeling · metrics · sweep · run · search
+  datasets/    base (DatasetAdapter protocol + dataclasses) · financebench · folder (local/Box corpus)
   config/      grids (named config grids, incl. the offline smoke grid)
-  service/     FastAPI app: read-only HTTP over frozen runs (`api` extra)
+  service/     app (read-only HTTP over frozen runs) · local (local runner: index + search your docs)
   app/         streamlit_app + views/ (run_browser, compare) — internal dashboard (`app` extra)
   cli.py       `bootstrapper run ...`
   __init__.py  curated public API (re-exports + __all__)
-web/           public, non-technical UI (static site on GitHub Pages) — consumes the HTTP service
-tests/         metrics · labeling · chunking · snapshot · embeddings · indices · sweep (end-to-end)
+web/           static UI on GitHub Pages: run explorer (index.html) + search (search.html)
+tests/         metrics · labeling · chunking · snapshot · embeddings · indices · sweep · search · folder
 ```
 
 ## Getting started
@@ -315,6 +315,49 @@ The public, non-technical UI lives under [`web/`](web/) — a static site publis
 Pages at **<https://optiquant.github.io/bootstrapper-og/>** — and talks to these endpoints. It is
 a client of the HTTP service, never an importer of the engine, and ships with a bundled sample so
 it works standalone before any live API exists.
+
+## Search your own documents (local runner)
+
+The `api` extra also ships a **local runner** (`bootstrapper.service.local`) that does the one
+thing the read-only API deliberately won't: ingest your own documents and **run retrieval over
+them, on your machine**. Point it at any folder — a Box Drive (or other cloud-drive) mount is
+just a local path — and it chunks, embeds and indexes the corpus in memory, then answers
+free-text queries with ranked, provenance-pinned passages. Nothing is uploaded; nothing is
+frozen. It is a *separate* app from the published API on purpose, so the public surface never
+gains a doc-ingesting endpoint.
+
+```bash
+pip install -e ".[api]"            # add ".[embed]" for the semantic bge-small encoder
+bootstrapper-search                # http://127.0.0.1:8011 · interactive docs at /docs
+```
+
+Then open the **Search your docs** page of the run explorer
+([`web/search.html`](web/search.html)), point it at `http://127.0.0.1:8011`, give it a folder,
+and search. Because the runner is on your machine, the GitHub Pages UI can call it from your
+browser directly (CORS is enabled).
+
+| method & path | does |
+|---------------|------|
+| `POST /sessions` | ingest a folder → build an in-memory index, returns a `session_id` |
+| `GET /sessions` | list active sessions |
+| `POST /sessions/{id}/search` | rank passages for a query (text + source locus + cosine score) |
+| `DELETE /sessions/{id}` | drop a session |
+
+Or drive it straight from Python — no service required:
+
+```python
+from bootstrapper import LocalFolderAdapter, HashingEmbeddingProvider, SearchIndex
+
+adapter = LocalFolderAdapter("~/Documents/filings")          # local or Box Drive path
+index = SearchIndex.build(adapter.documents(), HashingEmbeddingProvider(256), chunker=adapter.chunker)
+for hit in index.search("what was annual revenue?", k=5):
+    print(f"{hit.score:.3f}  {hit.doc_id} p{hit.page}: {hit.text[:80]}")
+```
+
+> **Search vs. evaluation.** This is interactive *retrieval* — it needs no ground truth. Turning
+> it into a *measured* evaluation (recall/nDCG/MRR) over your own corpus needs a labeled query
+> set; auto-generating one is the **synthetic query generator** on the Gate 3 roadmap, the next
+> step for "evaluate my own docs".
 
 ## Development
 
