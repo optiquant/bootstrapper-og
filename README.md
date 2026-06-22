@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <em>An open lab for ANN retrieval over documents — measure it, then learn the theory against your own runs.</em>
+  <em>A library-first, auditable engine for measuring ANN retrieval over documents — importable as a Python package, served over an HTTP API, with frontends on top.</em>
 </p>
 
 <p align="center">
@@ -37,12 +37,21 @@ the numbers you just produced.
 
 ### For the technically inclined
 
-An **auditable retrieval-evaluation harness** for ANN search over documents, paired with a
-native-Streamlit, math-driven **education layer**. It ingests a corpus, sweeps a grid of *embedding
-models × ANN index families × retrievers*, and reports retrieval quality (recall@k, nDCG@k, MRR)
-with **bootstrap confidence intervals**, alongside latency, index memory and build time. Every
+bootstrapper-og is a **library first**. At its core is an **auditable retrieval-evaluation
+engine** for ANN search over documents: ingest a corpus, sweep a grid of *embedding models × ANN
+index families × retrievers*, and report retrieval quality (recall@k, nDCG@k, MRR) with
+**bootstrap confidence intervals**, alongside latency, index memory and build time. Every
 retrieved chunk is pinned to an immutable, content-hashed source artifact for reproducible audit.
 The engine is **dataset-agnostic**; finance is the first loaded dataset.
+
+That engine is consumed three ways, and it never depends on any of them:
+
+- **As a Python package** — `import bootstrapper` and call the curated API (below). This is the
+  surface technical teams build on.
+- **Over HTTP** — a thin, read-only **FastAPI service** (`bootstrapper.service`) exposes frozen
+  runs as JSON, so any non-Python client can consume them.
+- **Through frontends** — a read-only **Streamlit dashboard** for the operator, and (in progress)
+  a **public UI** for non-technical users that talks to the HTTP API (`web/`).
 
 > **Status: Gate 1 (vertical slice) complete.** FinanceBench mini → page-aware extraction →
 > token-window chunking → content-addressed snapshots → cached embeddings → FAISS **Flat + HNSW**
@@ -51,13 +60,82 @@ The engine is **dataset-agnostic**; finance is the first loaded dataset.
 
 ---
 
+## Use it as a library
+
+The engine installs as a normal Python package with a curated public API — prefer these
+top-level names over deep module paths:
+
+```bash
+pip install bootstrapper-og          # engine + CLI, no UI dependencies
+```
+
+```python
+from bootstrapper import (
+    FinanceBenchAdapter, HashingEmbeddingProvider, RunStore, get_grid, run_sweep,
+)
+
+store = RunStore(".")                                  # artifact root (runs/, snapshots/, cache/)
+result = run_sweep(
+    adapter=FinanceBenchAdapter(subset="mini"),
+    grid=get_grid("gate1-smoke"),                      # offline, deterministic encoder
+    providers={"hashing-256": HashingEmbeddingProvider(dim=256)},
+    store=store,
+    cache_root="cache/embeddings",
+    git_sha="unknown",
+)
+print(result.manifest.run_id, result.coverage.summary())
+
+# read a frozen run back
+manifest = store.load_manifest(result.manifest.run_id)
+metrics = store.load_metrics(result.manifest.run_id)   # long-format pandas DataFrame
+```
+
+`from bootstrapper import *` (or `bootstrapper.__all__`) is the stable contract: the sweep entry
+point (`run_sweep`, `SweepResult`), run persistence (`RunStore`, `RunManifest`), dataset types
+(`Document`, `Query`, `Evidence`, `DatasetAdapter`, `FinanceBenchAdapter`), grids (`GridConfig`,
+`get_grid`), embedding providers, index/retriever builders, metrics and the snapshot store. The
+subpackages `bootstrapper.core`, `bootstrapper.datasets` and `bootstrapper.config` each expose
+their own curated `__all__`.
+
+---
+
+## Architecture: engine → service → frontends
+
+bootstrapper-og follows the **library-first / API-first** pattern used by tools like **MLflow**
+(Python API + tracking server UI), **dbt** (`dbt-core` + dbt Cloud), **Great Expectations** (core
+library + GX Cloud) and **LangChain** (`langchain-core` + LangServe + LangSmith): a pure engine,
+a thin HTTP boundary, and frontends that depend *downward only*.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  bootstrapper.core / datasets / config   — the engine (SDK)  │  pure Python, no UI deps
+└─────────────────────────────────────────────────────────────┘
+                 ▲                         ▲
+   imports       │                         │  imports
+┌────────────────┴───────────┐   ┌─────────┴───────────────────┐
+│ bootstrapper.cli           │   │ bootstrapper.service        │  FastAPI, `api` extra
+│ (runs sweeps, freezes runs)│   │ (read-only HTTP over runs)  │
+└────────────────────────────┘   └─────────┬───────────────────┘
+                 ▲                          │  HTTP (JSON)
+   imports       │                ┌─────────┴───────────────────┐
+┌────────────────┴───────────┐    │ web/  — public UI (planned) │  non-technical users
+│ bootstrapper.app (Streamlit)│   └─────────────────────────────┘
+│ internal dashboard, `app`  │
+└────────────────────────────┘
+```
+
+The engine carries **no UI dependency**: a base `pip install bootstrapper-og` pulls neither
+Streamlit nor FastAPI. Each frontend is an **optional extra**, and the non-technical UI consumes
+the engine over HTTP rather than importing it — so it can be any stack and deploy independently.
+
 ## Architecture principles (non-negotiable)
 
-1. **Dataset-agnostic engine.** `bootstrapper/core/` imports nothing finance-specific. Finance
-   lives entirely behind a `DatasetAdapter` in `bootstrapper/datasets/`.
+1. **Library-first, UI-agnostic engine.** `bootstrapper/core/` imports nothing finance-specific
+   **and nothing UI-specific**. Streamlit and FastAPI live behind the `app` / `api` extras;
+   `import bootstrapper` never pulls a frontend.
 2. **Precomputed-run model.** A run = (corpus × config-grid × query-set), executed offline by the
-   CLI and frozen as immutable artifacts. **Streamlit is read-only** and imports nothing that
-   builds an index.
+   CLI and frozen as immutable artifacts. **The Streamlit app and the HTTP service are read-only**
+   and import nothing that builds an index.
 3. **Embedding cache** keyed by `(embedding_model_id, chunk_id)` — sweeping indices never
    re-embeds.
 4. **Content-addressed snapshots.** Every chunk is stored under `sha256(text)` with its source
@@ -75,20 +153,37 @@ bootstrapper/
   core/        chunking · snapshot · embeddings · indices · retrievers · labeling · metrics · sweep · run
   datasets/    base (DatasetAdapter protocol + dataclasses) · financebench
   config/      grids (named config grids, incl. the offline smoke grid)
-  app/         streamlit_app + views/ (run_browser, compare)
+  service/     FastAPI app: read-only HTTP over frozen runs (`api` extra)
+  app/         streamlit_app + views/ (run_browser, compare) — internal dashboard (`app` extra)
   cli.py       `bootstrapper run ...`
+  __init__.py  curated public API (re-exports + __all__)
+web/           public, non-technical UI (planned) — consumes the HTTP service
 tests/         metrics · labeling · chunking · snapshot · embeddings · indices · sweep (end-to-end)
 ```
 
 ## Getting started
 
-`bootstrapper` is a **command-line tool**: you run it in a terminal (Terminal on macOS/Linux, or
-PowerShell on Windows) — not inside Python or the app. The `bootstrapper` command only exists *after*
-you install the project, and it must run inside the virtual environment you installed it into. Look
-for `(.venv)` at the start of your prompt; if you open a fresh terminal later, re-activate first.
+To *produce* runs you use the **`bootstrapper` command-line tool**: you run it in a terminal
+(Terminal on macOS/Linux, or PowerShell on Windows) — not inside Python or a frontend. The
+`bootstrapper` command only exists *after* you install the project, and it must run inside the
+virtual environment you installed it into. Look for `(.venv)` at the start of your prompt; if you
+open a fresh terminal later, re-activate first. (To *consume* runs from your own code, see
+[Use it as a library](#use-it-as-a-library) above.)
 
 Run everything from the repository folder: the CLI writes its output (`runs/`, `snapshots/`,
-`cache/`, `data/`) into the current directory, and the app reads from there.
+`cache/`, `data/`) into the current directory, and the frontends read from there.
+
+### Install extras
+
+| extra | adds | for |
+|-------|------|-----|
+| *(base)* | engine + `bootstrapper` CLI | importing the SDK, running sweeps |
+| `embed` | `sentence-transformers` | the `bge-small` default embedding (needs a HF download) |
+| `app` | `streamlit`, `plotly` | the internal read-only dashboard |
+| `api` | `fastapi`, `uvicorn` | the HTTP service layer (`bootstrapper-api`) |
+| `sparse` | `rank-bm25` | Gate 3 sparse / hybrid retrieval |
+| `edu` | `networkx` | Gate 4 education-layer toy graphs |
+| `dev` | `pytest`, `mypy`, `ruff` (+ `app`, `api`) | development & CI |
 
 ### Quick start (bash — macOS / Linux)
 
@@ -101,17 +196,21 @@ cd bootstrapper-og
 python -m venv .venv
 source .venv/bin/activate
 
-# 3. Install — this is what creates the `bootstrapper` command
-pip install -e ".[dev,embed]"     # "embed" adds sentence-transformers for the bge-small default
-# pip install -e ".[dev]"         # lighter: engine + CLI + app only (use the offline grid below)
+# 3. Install — base is engine + CLI; add the extras you need
+pip install -e ".[dev,embed]"     # dev (incl. app + api) + sentence-transformers for bge-small
+# pip install -e ".[app]"         # lighter: engine + CLI + Streamlit dashboard only
+# pip install -e .                # lightest: engine + CLI only (consume the SDK / offline grid)
 
 # 4. Run a sweep (the heavy work; offline after the first PDF fetch)
 bootstrapper run --dataset financebench-mini --grid gate1          # real bge-small (needs internet + "embed")
 # bootstrapper run --dataset financebench-mini --grid gate1-smoke  # deterministic offline encoder, no download
 
-# 5. Browse the results (read-only)
+# 5a. Browse the results in the internal dashboard (read-only; needs the "app" extra)
 bootstrapper list-runs
 streamlit run bootstrapper/app/streamlit_app.py
+
+# 5b. ...or serve them over HTTP for any client (read-only; needs the "api" extra)
+bootstrapper-api                  # http://127.0.0.1:8000  (interactive docs at /docs)
 ```
 
 ### Windows (PowerShell)
@@ -132,8 +231,13 @@ Identical, except activate the environment with:
   no download — and is perfect for a quick smoke test.
 - **Fallback.** If `bootstrapper` isn't found but the install succeeded, the same command works as
   `python -m bootstrapper.cli run --dataset financebench-mini --grid gate1`.
-- **Artifact location.** The app reads runs from the current directory by default; point it elsewhere
-  with `BOOTSTRAPPER_ROOT=/path/to/artifacts streamlit run bootstrapper/app/streamlit_app.py`.
+- **Artifact location.** Both frontends read runs from the current directory by default; point
+  them elsewhere with the `BOOTSTRAPPER_ROOT` env var, e.g.
+  `BOOTSTRAPPER_ROOT=/path/to/artifacts streamlit run bootstrapper/app/streamlit_app.py` or
+  `BOOTSTRAPPER_ROOT=/path/to/artifacts bootstrapper-api`.
+- **API host/port.** `bootstrapper-api` binds `127.0.0.1:8000`; override with
+  `BOOTSTRAPPER_API_HOST` / `BOOTSTRAPPER_API_PORT`, or run `uvicorn bootstrapper.service.app:app`
+  directly for autoreload and worker options.
 - Requires **Python 3.11+**.
 
 ### Embedding providers
@@ -177,12 +281,34 @@ runs/registry.sqlite          convenience index for the Run Browser (rebuildable
 
 `data/` (fetched PDFs + extracted pages), `cache/` (embeddings), `snapshots/` and the sqlite
 registry are git-ignored and regenerated by `bootstrapper run`. A tiny sample run (`manifest.json`
-+ `metrics.parquet`) **is** committed so the app is demonstrable on a fresh clone.
++ `metrics.parquet`) **is** committed so the frontends are demonstrable on a fresh clone.
+
+## HTTP API
+
+The `api` extra adds a thin, read-only **FastAPI** service (`bootstrapper.service.app`) over the
+frozen runs — the boundary the public UI consumes, and a language-agnostic way for any team to
+read results. It never builds an index.
+
+```bash
+pip install -e ".[api]"
+bootstrapper-api            # http://127.0.0.1:8000  · interactive docs at /docs
+```
+
+| method & path | returns |
+|---------------|---------|
+| `GET /health` | liveness + the resolved artifact root |
+| `GET /runs` | list run manifests (newest first) |
+| `GET /runs/{run_id}` | one run manifest |
+| `GET /runs/{run_id}/metrics` | that run's long-format metrics as JSON records |
+
+The public, non-technical UI lives under [`web/`](web/) (planned) and talks to these endpoints —
+it is a client of the HTTP service, never an importer of the engine.
 
 ## Development
 
 ```bash
-pytest          # metrics & labeling vs hand-computed cases; end-to-end sweep smoke test
+pip install -e ".[dev]"     # engine + CLI + both frontends + pytest/mypy/ruff
+pytest                      # metrics & labeling vs hand-computed cases; end-to-end sweep smoke test
 mypy bootstrapper tests     # strict, clean
 ruff check bootstrapper tests
 ```
@@ -196,6 +322,11 @@ ruff check bootstrapper tests
 - **Gate 4.** Education layer: the canonical TEACHING grid + toy illustrators + run-wired
   explorers + the Learn tab over an ordered ANN syllabus.
 - **Gate 5.** Hardening + production deploy to `bootstrapper-og.com`.
+
+**In parallel (frontends track).** The engine + HTTP API are the load-bearing product surface for
+technical teams; the read-only Streamlit dashboard and the planned public UI (`web/`) are
+optional frontends layered on top. Expanding the API (auth, pagination, run drill-down) and
+building the public UI proceed alongside the gates above.
 
 ## References & further reading
 
@@ -250,9 +381,10 @@ Every concept this project measures and teaches, linked to its canonical source.
 ## Contributing
 
 Issues, ideas and pull requests are welcome — whether that's a new index family, a dataset
-adapter, a sharper explainer for the Learn tab, or just a question. Keep the engine in
-`bootstrapper/core/` dataset-agnostic, keep Streamlit read-only, and run `pytest`, `mypy` and
-`ruff` before opening a PR.
+adapter, an API endpoint, a sharper explainer for the Learn tab, or just a question. Keep the
+engine in `bootstrapper/core/` dataset-agnostic **and free of any UI/service dependency**, keep
+the Streamlit app and the HTTP service read-only, and run `pytest`, `mypy` and `ruff` before
+opening a PR.
 
 ## License
 
