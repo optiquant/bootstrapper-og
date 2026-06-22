@@ -1,10 +1,15 @@
-# `web/` — public UI/UX (placeholder)
+# `web/` — public run explorer (GitHub Pages)
 
-This directory is reserved for the **public, non-technical frontend** of bootstrapper-og: a UI
-that a non-technical user can interact with to explore retrieval-evaluation runs without ever
-touching Python or a terminal.
+The **public, non-technical frontend** of bootstrapper-og: a static, browser-based run explorer
+that anyone can open to browse retrieval-evaluation runs — recall, nDCG and MRR with bootstrap
+confidence intervals, plus latency, build time and index memory — without touching Python or a
+terminal.
 
-It is **not built yet** — this is the scaffolded boundary, not the implementation.
+**Live:** https://optiquant.github.io/bootstrapper-og/
+
+It is a pure static site (`index.html` + `app.js` + `styles.css`), deployed to GitHub Pages by
+[`.github/workflows/pages.yml`](../.github/workflows/pages.yml) on every push to `main` that
+touches `web/`.
 
 ## How it fits the architecture
 
@@ -15,37 +20,61 @@ bootstrapper.core / datasets / config   ← the engine (pure Python SDK)
 bootstrapper.service  (FastAPI, the `api` extra)   ← HTTP boundary
             │  HTTP (JSON)
             ▼
-web/  (this directory)                              ← public, non-technical UI
+web/  (this directory, GitHub Pages)               ← public, non-technical UI
 ```
 
-The public UI is a **client of the HTTP service layer**, not of the Python package. It speaks to
-`bootstrapper.service.app` over HTTP/JSON and never imports the engine. That decoupling is
-deliberate: the UI can be any stack (static + fetch, HTMX, React, …), deploy independently, and
-be rewritten without touching the engine.
+The UI is a **client of the HTTP service**, never an importer of the engine. It speaks the same
+JSON shape as `bootstrapper.service.app` (`/runs`, `/runs/{id}`, `/runs/{id}/metrics`) and can
+read from two interchangeable sources:
 
-## Talking to the service
+| source | what it reads | when |
+|--------|---------------|------|
+| **Bundled sample** (default) | static JSON under [`data/`](data/) | so the Pages site works standalone, with the run committed to the repo |
+| **Live API** | a running `bootstrapper-api` (enter its base URL) | your own data, locally or once deployed to a live URL |
 
-Start the API (from a checkout with artifacts in the working directory):
+The bundled fixtures mirror the API exactly, so switching sources changes only the base path.
+
+## Run it locally
+
+It is just static files — open `web/index.html` directly, or serve the folder:
+
+```bash
+python -m http.server -d web 8080      # http://localhost:8080
+```
+
+To drive it from real data, start the API in another terminal and point the **Live API** field
+at it:
 
 ```bash
 pip install -e ".[api]"
-bootstrapper-api          # serves on http://127.0.0.1:8000
+bootstrapper-api                       # http://127.0.0.1:8000 (CORS-enabled)
 ```
 
-Then the UI consumes:
+## Regenerating the bundled fixtures
 
-| Endpoint | Purpose |
-|----------|---------|
-| `GET /health` | liveness + resolved artifact root |
-| `GET /runs` | list run manifests (newest first) |
-| `GET /runs/{run_id}` | one run manifest |
-| `GET /runs/{run_id}/metrics` | that run's metrics as JSON records |
+The fixtures under `data/` are derived from the runs in the working directory. Regenerate them
+whenever you commit a new sample run:
 
-Interactive API docs are served at `http://127.0.0.1:8000/docs` once the service is running.
+```python
+import json
+from pathlib import Path
+from bootstrapper.core.run import RunStore
+
+store, out = RunStore("."), Path("web/data")
+out.mkdir(parents=True, exist_ok=True)
+manifests = store.list_runs()
+(out / "runs.json").write_text(json.dumps([m.model_dump() for m in manifests], indent=2))
+for m in manifests:
+    (out / f"{m.run_id}.json").write_text(m.model_dump_json(indent=2))
+    (out / f"{m.run_id}.metrics.json").write_text(
+        json.dumps(store.load_metrics(m.run_id).to_dict(orient="records"))
+    )
+```
 
 ## Status
 
 - [x] Service-layer boundary scaffolded (`bootstrapper/service/`)
-- [ ] Choose the frontend stack
-- [ ] Wire a minimal read-only run browser to `/runs`
-- [ ] Deploy alongside the API
+- [x] Frontend stack chosen — dependency-free static site (HTML/CSS/JS)
+- [x] Read-only run browser wired to the API shape, with bundled-sample fallback
+- [x] Deployed to GitHub Pages
+- [ ] Point at the live API once it is deployed to a public URL

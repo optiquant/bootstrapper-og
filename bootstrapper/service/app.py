@@ -26,13 +26,33 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 
 from bootstrapper.core.run import RunManifest, RunStore
+
+#: Where the public, non-technical UI is published (GitHub Pages for now).
+UI_URL = "https://optiquant.github.io/bootstrapper-og/"
 
 app = FastAPI(
     title="bootstrapper-og API",
     summary="Read-only HTTP access to frozen ANN retrieval-evaluation runs.",
+    description=(
+        "Read-only HTTP boundary over frozen runs produced by `bootstrapper run`.\n\n"
+        f"A browser-based run explorer that consumes this API lives at <{UI_URL}>."
+    ),
     version="0.1.0",
+)
+
+# The served data is public and read-only, so CORS is permissive by default to let the static UI
+# (GitHub Pages or a future live URL) call the API from another origin. Restrict via the
+# BOOTSTRAPPER_API_CORS env var (comma-separated origins) when you deploy.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        o.strip() for o in os.environ.get("BOOTSTRAPPER_API_CORS", "*").split(",") if o.strip()
+    ],
+    allow_methods=["GET"],
+    allow_headers=["*"],
 )
 
 
@@ -40,6 +60,18 @@ def _store() -> RunStore:
     """Resolve the artifact root the same way the Streamlit app does."""
 
     return RunStore(Path(os.environ.get("BOOTSTRAPPER_ROOT", ".")))
+
+
+@app.get("/")
+def root() -> dict[str, Any]:
+    """Service banner: where the docs and the public UI live."""
+
+    return {
+        "service": "bootstrapper-og API",
+        "ui": UI_URL,
+        "docs": "/docs",
+        "endpoints": ["/health", "/runs", "/runs/{run_id}", "/runs/{run_id}/metrics"],
+    }
 
 
 @app.get("/health")
