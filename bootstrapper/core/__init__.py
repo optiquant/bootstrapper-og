@@ -23,6 +23,7 @@ from bootstrapper.core.metrics import (
 )
 from bootstrapper.core.retrievers import DenseRetriever, Retriever
 from bootstrapper.core.run import RunManifest, RunStore, new_run_id, now_iso
+from bootstrapper.core.search import SearchHit, SearchIndex
 from bootstrapper.core.snapshot import (
     SnapshotRecord,
     SnapshotStore,
@@ -46,6 +47,8 @@ __all__ = [
     "Retriever",
     "RunManifest",
     "RunStore",
+    "SearchHit",
+    "SearchIndex",
     "SentenceTransformerProvider",
     "SnapshotRecord",
     "SnapshotStore",

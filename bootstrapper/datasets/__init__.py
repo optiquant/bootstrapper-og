@@ -7,11 +7,13 @@ the dataclasses an adapter yields. FinanceBench is the first loaded dataset.
 
 from bootstrapper.datasets.base import DatasetAdapter, Document, Evidence, Query
 from bootstrapper.datasets.financebench import FinanceBenchAdapter
+from bootstrapper.datasets.folder import LocalFolderAdapter
 
 __all__ = [
     "DatasetAdapter",
     "Document",
     "Evidence",
     "FinanceBenchAdapter",
+    "LocalFolderAdapter",
     "Query",
 ]
